@@ -30,8 +30,50 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--g1:#2d6a2d;--g2:#3d8b3d;--g3:#5aab5a;--g6:#e0f2e0;--g7:#f0faf0;--bg:#e8f5e8;--bg3:#fff;--text:#1a2e1a;--text2:#3d5c3d;--text3:#6b896b;--brd:#c5dfc5;--brd2:#d8eed8;--r:10px;--font:system-ui,sans-serif}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+body.dark{--g1:#5aab5a;--g2:#6dc46d;--g3:#7dc87d;--g6:#0e2a0e;--g7:#0a1e0a;--bg:#0d1f0d;--bg3:#162416;--text:#d4f0d4;--text2:#a8cfa8;--text3:#6b946b;--brd:#2a4a2a;--brd2:#1e361e}
+body.dark #hdr{background:#0a1a0a}
+body.dark .modal{background:#162416}
+body.dark .srch{color:var(--text)}
+body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-color:var(--brd)}
+/* Settings gear button */
+#btn-settings{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.2s;border:1px solid rgba(255,255,255,.25);flex-shrink:0}
+#btn-settings:hover{background:rgba(255,255,255,.32)}
+/* Settings drawer */
+#settings-drawer{position:fixed;top:0;right:-320px;width:300px;max-width:92vw;height:100%;background:var(--bg3);z-index:600;box-shadow:-4px 0 24px rgba(0,0,0,.25);transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+#settings-drawer.open{right:0}
+#settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:599}
+#settings-overlay.open{display:block}
+.sdr-hdr{background:var(--g1);color:#fff;padding:18px 16px 14px;display:flex;align-items:center;gap:10px}
+.sdr-hdr-title{font-size:16px;font-weight:800;flex:1}
+.sdr-close{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
+.sdr-section{padding:16px;border-bottom:1px solid var(--brd2)}
+.sdr-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:12px}
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang-btn{padding:10px 8px;border-radius:8px;border:2px solid var(--brd);background:var(--bg);color:var(--text);font-size:13px;font-weight:700;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.lang-btn .flag{font-size:22px}
+.lang-btn.on{border-color:var(--g3);background:var(--g6);color:var(--g1)}
+.theme-row{display:flex;gap:8px}
+.theme-btn{flex:1;padding:10px 8px;border-radius:8px;border:2px solid var(--brd);background:var(--bg);color:var(--text);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.theme-btn.on{border-color:var(--g3);background:var(--g6);color:var(--g1)}
+.loc-sdr-btn{width:100%;padding:12px 14px;border-radius:8px;border:2px solid var(--brd);background:var(--bg);color:var(--text);font-size:13px;font-weight:600;text-align:left;display:flex;align-items:center;gap:10px;transition:.15s}
+.loc-sdr-btn.granted{border-color:var(--g3);background:var(--g6);color:var(--g1)}
+/* Map location button */
+.map-loc-btn{position:absolute;top:10px;right:10px;z-index:400;background:#fff;border:2px solid var(--brd);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--g1);box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:6px}
+.map-loc-btn:hover{background:var(--g6)}
+#revier-map-wrap{position:relative}
+/* Pin note styles */
+.rv-pin{background:var(--bg);border:1px solid var(--brd2);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.rv-pin-top{display:flex;align-items:center;gap:10px}
+.rv-pin-note{font-size:12px;color:var(--text2);margin-top:6px;padding:6px 8px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd2);line-height:1.5;white-space:pre-wrap}
+.rv-pin-note-input{width:100%;margin-top:6px;padding:6px 8px;border:1px solid var(--brd);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg3);color:var(--text);resize:none;line-height:1.5}
+.rv-pin-note-input:focus{outline:none;border-color:var(--g3)}
+.rv-pin-actions{display:flex;gap:6px;margin-top:6px}
+.rv-pin-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--brd);background:var(--bg3);color:var(--text3);transition:.15s}
+.rv-pin-btn:hover{background:var(--g6);color:var(--g1);border-color:var(--g3)}
+.rv-pin-btn.del{border-color:#ffcdd2;color:#c62828}
+.rv-pin-btn.del:hover{background:#ffebee}
 button{cursor:pointer;font-family:var(--font);border:none;background:none}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
 #hdr{background:var(--g1);color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .hi{max-width:1080px;margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:10px;height:52px}
 .logo{font-weight:800;font-size:18px;color:#fff}
@@ -277,45 +319,43 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
   </div>
 </div>
 
-<!-- Location Request Banner -->
-<div id="loc-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a3a5c;color:#fff;padding:12px 16px;z-index:1001;box-shadow:0 -3px 12px rgba(0,0,0,.25)">
-  <div style="display:flex;align-items:center;gap:10px;max-width:1080px;margin:0 auto">
-    <div style="font-size:26px;flex-shrink:0">📍</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:700;font-size:14px" data-t="loc_title">Share your location?</div>
-      <div style="font-size:11px;opacity:.8" data-t="loc_sub">For golden hour, map & wildlife chances near you</div>
-    </div>
-    <button onclick="requestLocation()" style="padding:8px 16px;background:#4caf50;color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0">📍 <span data-t="loc_yes">Allow</span></button>
-    <button onclick="dismissLocation()" style="padding:8px 12px;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer;flex-shrink:0" data-t="loc_no">Later</button>
-  </div>
-</div>
 <!-- iOS Install Guide Popup -->
 <div id="ios-popup">
   <div class="ios-modal">
     <button class="ios-close" onclick="document.getElementById('ios-popup').classList.remove('show')">✕</button>
-    <div class="ios-title">📲 Přidat Wildify na plochu</div>
-    <div class="ios-sub">Postupuj podle těchto 3 kroků v Safari</div>
+    <div class="ios-title">📲 Install / Instalovat / Inštalovať / Installieren</div>
+    <div class="ios-sub">Safari & Chrome Guide</div>
+    
     <div class="ios-step">
       <div class="ios-num">1</div>
-      <div class="ios-step-text">
-        <strong>Klepni na tlačítko Sdílet</strong>
-        <span>Ikona čtverce se šipkou nahoru — dole uprostřed obrazovky</span>
+      <div class="ios-step-text" style="display: flex; flex-direction: column; gap: 3px;">
+        <div>🇬🇧 Tap <strong>Share</strong> (📤 bottom) or <strong>Menu</strong> (⋮ top)</div>
+        <div>🇨🇿 Klepni na <strong>Sdílet</strong> (📤 dole) nebo <strong>Menu</strong> (⋮ nahoře)</div>
+        <div>🇸🇰 Klepni na <strong>Zdieľať</strong> (📤 dole) alebo <strong>Menu</strong> (⋮ hore)</div>
+        <div>🇩🇪 Tippe auf <strong>Teilen</strong> (📤 unten) oder <strong>Menü</strong> (⋮ oben)</div>
       </div>
     </div>
+    
     <div class="ios-step">
       <div class="ios-num">2</div>
-      <div class="ios-step-text">
-        <strong>Přejdi dolů a klepni na „Přidat na plochu"</strong>
-        <span>Ikona vypadá jako čtverec s plusem (+)</span>
+      <div class="ios-step-text" style="display: flex; flex-direction: column; gap: 3px;">
+        <div>🇬🇧 Select <strong>'Add to Home Screen'</strong></div>
+        <div>🇨🇿 Zvol <strong>„Přidat na plochu“</strong></div>
+        <div>🇸🇰 Zvoľ <strong>„Pridať na plochu“</strong></div>
+        <div>🇩🇪 Wähle <strong>'Zum Startbildschirm'</strong></div>
       </div>
     </div>
+    
     <div class="ios-step">
       <div class="ios-num">3</div>
-      <div class="ios-step-text">
-        <strong>Klepni na „Přidat" vpravo nahoře</strong>
-        <span>Wildify se přidá na tvoji domovskou obrazovku</span>
+      <div class="ios-step-text" style="display: flex; flex-direction: column; gap: 3px;">
+        <div>🇬🇧 Tap <strong>'Add'</strong> or <strong>'Install'</strong></div>
+        <div>🇨🇿 Klepni na <strong>„Přidat“</strong> nebo <strong>„Nainstalovat“</strong></div>
+        <div>🇸🇰 Klepni na <strong>„Pridať“</strong> alebo <strong>„Nainštalovať“</strong></div>
+        <div>🇩🇪 Tippe auf <strong>'Hinzufügen'</strong> oder <strong>'Installieren'</strong></div>
       </div>
     </div>
+    
     <div class="ios-arrow">⬇️</div>
   </div>
 </div>
@@ -324,14 +364,59 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
   <div class="hi">
     <div class="logo">🌿 Wildify<span style="opacity:.6;font-weight:400">.eu</span></div>
     <div class="hs"></div>
-    <div style="display:flex;gap:3px">
-      <button class="lb on" onclick="setLang('en')">EN</button>
-      <button class="lb" onclick="setLang('cs')">CS</button>
-      <button class="lb" onclick="setLang('sk')">SK</button>
-      <button class="lb" onclick="setLang('de')">DE</button>
-    </div>
     <button id="btn-install-hdr" onclick="showInstallUI()">📲 Instalovat</button>
+    <button id="btn-settings" onclick="openSettings()" title="Settings / Nastavení">⚙️</button>
   </div>
+</div>
+
+<!-- Settings Drawer -->
+<div id="settings-overlay" onclick="closeSettings()"></div>
+<div id="settings-drawer">
+  <div class="sdr-hdr">
+    <div class="sdr-hdr-title">⚙️ <span data-t="sdr_title">Settings</span></div>
+    <button class="sdr-close" onclick="closeSettings()">✕</button>
+  </div>
+  <!-- Language -->
+  <div class="sdr-section">
+    <div class="sdr-section-title" data-t="sdr_lang">Language</div>
+    <div class="lang-grid">
+      <button class="lang-btn on" id="lbtn-en" onclick="setLang('en');renderLangBtns()"><span class="flag">🇬🇧</span>English</button>
+      <button class="lang-btn" id="lbtn-cs" onclick="setLang('cs');renderLangBtns()"><span class="flag">🇨🇿</span>Čeština</button>
+      <button class="lang-btn" id="lbtn-sk" onclick="setLang('sk');renderLangBtns()"><span class="flag">🇸🇰</span>Slovenština</button>
+      <button class="lang-btn" id="lbtn-de" onclick="setLang('de');renderLangBtns()"><span class="flag">🇩🇪</span>Deutsch</button>
+    </div>
+  </div>
+  <!-- Theme -->
+  <div class="sdr-section">
+    <div class="sdr-section-title" data-t="sdr_theme">Appearance</div>
+    <div class="theme-row">
+      <button class="theme-btn on" id="theme-light" onclick="setTheme('light')">☀️ <span data-t="sdr_light">Light</span></button>
+      <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')">🌙 <span data-t="sdr_dark">Dark</span></button>
+    </div>
+  </div>
+  <!-- Location -->
+  <div class="sdr-section">
+    <div class="sdr-section-title" data-t="sdr_loc">Location</div>
+    <button class="loc-sdr-btn" id="loc-sdr-btn" onclick="requestLocationFromSettings()">
+      <span style="font-size:22px">📍</span>
+      <div>
+        <div style="font-size:13px;font-weight:700" data-t="loc_title">Share your location?</div>
+        <div id="loc-sdr-status" style="font-size:11px;color:var(--text3)" data-t="loc_sub">For golden hour, map & wildlife chances near you</div>
+      </div>
+    </button>
+  </div>
+  <!-- Install -->
+  <div class="sdr-section" id="sdr-install-section">
+    <div class="sdr-section-title" data-t="sdr_install">Install app</div>
+    <button class="loc-sdr-btn" onclick="showInstallUI();closeSettings()">
+      <span style="font-size:22px">📲</span>
+      <div>
+        <div style="font-size:13px;font-weight:700" data-t="sdr_install_lbl">Install Wildify</div>
+        <div style="font-size:11px;color:var(--text3)" data-t="sdr_install_sub">Add to home screen</div>
+      </div>
+    </button>
+  </div>
+  <div style="padding:16px;font-size:11px;color:var(--text3);margin-top:auto">Wildify.eu · v2.0</div>
 </div>
 <div id="nav">
   <div class="ni">
@@ -393,9 +478,23 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
 <div class="sec" id="s-revier">
   <div class="sh"><span style="color:var(--g3)">🗺</span><span data-t="n_rv">Map</span></div>
   <div class="card" style="margin-bottom:14px">
-    <div style="font-size:13px;color:var(--text3);margin-bottom:12px" data-t="rv_info">Click on the map to add a pin. All pins are saved offline.</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:10px" data-t="rv_info">Click on the map to add a pin. All pins are saved offline.</div>
+    <!-- Location enable strip (hidden when location already granted) -->
+    <div id="rv-loc-strip" style="display:flex;align-items:center;gap:10px;background:var(--g6);border:1px solid var(--brd);border-radius:8px;padding:10px 12px;margin-bottom:12px">
+      <span style="font-size:22px">📍</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--g1)" data-t="rv_loc_title">Enable location for better map experience</div>
+        <div style="font-size:11px;color:var(--text3)" data-t="rv_loc_sub">Shows your position on the map</div>
+      </div>
+      <button onclick="mapGoToMyLoc()" style="padding:7px 14px;background:var(--g1);color:#fff;border-radius:20px;font-size:12px;font-weight:700;border:none;cursor:pointer;flex-shrink:0" data-t="loc_yes">Allow</button>
+    </div>
     <div class="rv-types" id="rv-types"></div>
-    <div id="revier-map"></div>
+    <div id="revier-map-wrap">
+      <div id="revier-map"></div>
+      <button class="map-loc-btn" onclick="mapGoToMyLoc()" id="map-loc-btn">
+        📍 <span data-t="map_myloc">My location</span>
+      </button>
+    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:6px">
       <div style="font-size:13px;font-weight:700" data-t="rv_saved">Saved pins</div>
       <button class="tbtn sec" style="font-size:12px;padding:5px 12px" onclick="rvClearAll()">🗑 <span data-t="rv_clear">Clear all</span></button>
@@ -472,11 +571,19 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
     <div style="font-size:15px;font-weight:700;margin-bottom:4px" data-t="ec_title">📷 Exposure Calculator</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:14px" data-t="ec_sub">Zadej podmínky → kalkulátor ti doporučí správný čas závěrky a clonu pro wildlife fotografii.</div>
     <div class="gr">
-      <span class="gl" data-t="ec_lbl_light">Light conditions</span>
-      <select class="gs" id="ec-ev" onchange="calcExp()"></select>
+      <span class="gl">Light conditions</span>
+      <select class="gs" id="ec-ev" onchange="calcExp()">
+        <option value="15">☀️ Bright midday sun</option>
+        <option value="14">🌤 Hazy sun / light overcast</option>
+        <option value="13" selected>☁️ Overcast (most common)</option>
+        <option value="11">🌲 Open forest shade</option>
+        <option value="9">🌅 Dawn / dusk (golden hour)</option>
+        <option value="7">🌆 Deep dusk / before sunrise</option>
+        <option value="5">🌙 Civil twilight (owls)</option>
+      </select>
     </div>
     <div class="gr">
-      <span class="gl" data-t="ec_lbl_iso">ISO</span>
+      <span class="gl">ISO</span>
       <select class="gs" id="ec-iso" onchange="calcExp()">
         <option value="100">ISO 100</option>
         <option value="200">ISO 200</option>
@@ -490,7 +597,7 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
       </select>
     </div>
     <div class="gr">
-      <span class="gl" data-t="ec_lbl_ap">Aperture (f/)</span>
+      <span class="gl">Aperture (f/)</span>
       <select class="gs" id="ec-ap" onchange="calcExp()">
         <option value="1.4">f/1.4</option>
         <option value="1.8">f/1.8</option>
@@ -503,19 +610,26 @@ button{cursor:pointer;font-family:var(--font);border:none;background:none}
       </select>
     </div>
     <div class="gr">
-      <span class="gl" data-t="ec_lbl_sub">Subject / scene</span>
-      <select class="gs" id="ec-sub" onchange="calcExp()"></select>
+      <span class="gl">Subject / scene</span>
+      <select class="gs" id="ec-sub" onchange="calcExp()">
+        <option value="0">🦌 Deer/mammal — resting</option>
+        <option value="1" selected>🦌 Deer/mammal — moving slowly</option>
+        <option value="2">🐦 Bird on branch (still)</option>
+        <option value="3">🦅 Bird landing / taking off</option>
+        <option value="4">🦅 Bird in fast flight</option>
+        <option value="5">🐗 Running animal / action</option>
+      </select>
     </div>
     <!-- Result -->
     <div id="ec-out" class="gres">
       <div class="exp-grid">
         <div class="exp-box">
-          <div class="exp-lbl" data-t="ec_lbl_ss">⏱ Shutter speed</div>
+          <div class="exp-lbl">⏱ Shutter speed</div>
           <div class="exp-val" id="ec-ss">—</div>
           <div class="exp-note" id="ec-ss-note"></div>
         </div>
         <div class="exp-box">
-          <div class="exp-lbl" data-t="ec_lbl_ev">💡 EV (scene brightness)</div>
+          <div class="exp-lbl">💡 EV (scene brightness)</div>
           <div class="exp-val" id="ec-ev-out">—</div>
           <div class="exp-note" id="ec-ev-note"></div>
         </div>
@@ -607,7 +721,7 @@ window.addEventListener('beforeinstallprompt', e => {
 const TT={
 en:{n_home:'Home',n_cat:'Catalog',n_rv:'Map',n_pl:'Planner',n_tl:'Tools',n_amb:'Ambassadors',n_et:'Ethics',rv_info:'Click on the map to add a pin. All pins are saved offline.',rv_saved:'Saved pins',rv_clear:'Clear all',
 hero_t:'Wildlife Photography Field Guide',hero_s:"Europe's most practical guide for wildlife photographers.",
-qh1:'Species Catalog',qh1d:'75+ species · seasonal bars · senses',qh2:'Revier Map',qh2d:'Den · Water · Sighting · Hide',
+qh1:'Species Catalog',qh1d:'75+ species · seasonal bars · senses',qh2:'Revier Map',qh2d:'Nora · Napajedlo · Výskyt · Posed',
 qh3:'Monthly Planner',qh3d:'Rut · nesting · migration',qh4:'Field Tools',qh4d:'Golden hour · card creator · checklist',
 now_t:'Right now in the field',c_all:'All',c_ung:'Ungulates',c_pred:'Predators',c_sm:'Small mammals',
 c_rap:'Raptors',c_song:'Songbirds',c_owl:'Owls',c_oth:'Other',
@@ -616,21 +730,14 @@ sl:['Off-season','Low activity','Active','Peak / most photogenic','Coat change',
 mo:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
 ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Fog','Frost','Rain','Snow','Overcast','Bright sun','Backlight','Golden hour'],
-sn:'Nose',se:'Ears',sy:'Eyes',sd:'Critical',sh:'High',sm:'Medium',sl2:'Low',loc_title:'Share your location?',loc_sub:'For golden hour, map & wildlife chances near you',loc_yes:'Allow',loc_no:'Later',wx_temp:'Temp',wx_wind:'Wind',wx_rain:'Rain',
+sn:'Nose',se:'Ears',sy:'Eyes',sd:'Critical',sh:'High',sm:'Medium',sl2:'Low',
+loc_title:'Share your location?',loc_sub:'For golden hour, map & wildlife chances near you',loc_yes:'Allow',loc_no:'Later',loc_me:'My location',loc_granted:'Location active',loc_denied:'Location access denied',wx_temp:'Temp',wx_wind:'Wind',wx_rain:'Rain',
+map_myloc:'My location',map_note_ph:'Add a note...',map_note_save:'Save',map_note_edit:'Note',map_no_pins:'No pins yet — click the map to add one.',rv_del:'Delete',rv_loc_title:'Enable location for better map experience',rv_loc_sub:'Shows your position on the map',
+sdr_title:'Settings',sdr_lang:'Language',sdr_theme:'Appearance',sdr_light:'Light',sdr_dark:'Dark',sdr_loc:'Location',sdr_install:'Install app',sdr_install_lbl:'Install Wildify',sdr_install_sub:'Add to home screen',
 gh_calc:'Golden Hour Calculator',gh_calc_btn:'Calculate',gh_myloc:'📍 My Location',gh_sunrise:'🌄 Sunrise',gh_sunset:'🌇 Sunset',gh_daylen:'⏱ Day length',gh_mgold:'🌅 Morning gold',gh_egold:'🌆 Evening gold',gh_civ:'🌒 Civil twilight',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Upload a photo — it will be blurred and overlaid with your exposure settings.',wc_drop_lbl:'Click or drop photo here',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Download Card',wc_new:'✕ New photo',wc_ss_lbl:'Shutter Speed',wc_ap_lbl:'Aperture',
 ec_title:'📷 Exposure Calculator',ec_sub:'Enter conditions → get recommended shutter speed and aperture for wildlife.',
-ec_lbl_light:'Light conditions',ec_lbl_iso:'ISO',ec_lbl_ap:'Aperture (f/)',ec_lbl_sub:'Subject / scene',
-ec_lbl_ss:'⏱ Shutter speed',ec_lbl_ev:'💡 EV (scene brightness)',
-ec_lights:['☀️ Bright midday sun','🌤 Hazy sun / light overcast','☁️ Overcast (most common)','🌲 Open forest shade','🌅 Dawn / dusk (golden hour)','🌆 Deep dusk / before sunrise','🌙 Civil twilight (owls)'],
-ec_subs:['🦌 Deer/mammal — resting','🦌 Deer/mammal — moving slowly','🐦 Bird on branch (still)','🦅 Bird landing / taking off','🦅 Bird in fast flight','🐗 Running animal / action'],
-ec_stips:['Resting deer: 1/125s sufficient. Focus on eyes, use f/5.6 for background separation.','Slowly moving deer: 1/250s minimum. Track gently, pre-focus on expected path.','Bird on branch: 1/500s recommended — even "still" birds twitch. Use continuous AF.','Bird landing/taking off: 1/1000s minimum. Burst mode essential.','Fast bird in flight: 1/2000s+ recommended. Use tracking AF and high frame rate.','Running mammal: 1/3000s+ for sharp freeze. Open aperture and push ISO.'],
-ec_elvls:{15:'Bright midday',14:'Hazy sun',13:'Overcast',11:'Forest shade',9:'Golden hour',7:'Deep dusk',5:'Civil twilight'},
-ec_warn:'⚠️ To freeze this subject in these conditions, you need at least ISO {iso} at f/{ap}. Current ISO {cur} gives {ss} — may result in motion blur.',
-ec_ok:'✅ ISO {iso} + f/{ap} gives {ss} — {pct}% faster than minimum needed. Good exposure for this subject.',
-ec_ok_min:'✅ ISO {iso} + f/{ap} gives {ss} — right at the minimum. Good exposure for this subject.',
-fl_title:'🔭 Focal Length & Crop Factor',fl_lens_lbl:'Lens focal length',fl_sensor_lbl:'Sensor',fl_mm:'mm equivalent',
-fl_notes:{100:'Wide — environmental portraits only',150:'Moderate — bold species at close range',200:'Entry level — works for habituated subjects',300:'Good — most garden/park wildlife',400:'Recommended minimum for shy species',500:'Excellent all-rounder for European wildlife',600:'Professional reach — shy mammals & birds',750:'Super-telephoto — very shy species',800:'Maximum practical reach',960:'Extreme telephoto',1200:'Maximum with teleconverter'},
+fl_title:'🔭 Focal Length & Crop Factor',fl_lens_lbl:'Lens focal length',fl_sensor_lbl:'Sensor',
 cl_title:'✅ Pre-Session Checklist',cl_reset:'Reset',
 wt_title:'🌤 Weather & Shooting Tips'},
 cs:{n_home:'Domů',n_cat:'Katalog',n_rv:'Mapa',n_pl:'Plán',n_tl:'Nástroje',n_amb:'Ambasadoři',n_et:'Etika',rv_info:'Klikni na mapu pro přidání špendlíku. Vše je uloženo offline.',rv_saved:'Uložené body',rv_clear:'Smazat vše',
@@ -644,21 +751,14 @@ sl:['Mimo sezónu','Nízká aktivita','Aktivní','Vrchol / nejfotogeničtější
 mo:['Led','Úno','Bře','Dub','Kvě','Čvn','Čvc','Srp','Zář','Říj','Lis','Pro'],
 ms:['L','Ú','B','D','K','Č','Č','S','Z','Ř','L','P'],
 wc:['Mlha','Mráz','Déšť','Sníh','Oblačno','Jasno','Protisvětlo','Zlatá hodina'],
-sn:'Čich',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Střední',sl2:'Nízké',loc_title:'Sdílet polohu?',loc_sub:'Pro zlatou hodinu, mapu a šance na zvěř poblíž',loc_yes:'Povolit',loc_no:'Později',wx_temp:'Teplota',wx_wind:'Vítr',wx_rain:'Déšť',
+sn:'Čich',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Střední',sl2:'Nízké',
+loc_title:'Sdílet polohu?',loc_sub:'Pro zlatou hodinu, mapu a šance na zvěř poblíž',loc_yes:'Povolit',loc_no:'Později',loc_me:'Moje poloha',loc_granted:'Poloha aktivní',loc_denied:'Přístup k poloze zamítnut',wx_temp:'Teplota',wx_wind:'Vítr',wx_rain:'Déšť',
+map_myloc:'Moje poloha',map_note_ph:'Přidat poznámku...',map_note_save:'Uložit',map_note_edit:'Poznámka',map_no_pins:'Zatím žádné body — klikni na mapu.',rv_del:'Smazat',rv_loc_title:'Povolit polohu pro lepší zážitek z mapy',rv_loc_sub:'Zobrazí tvoji pozici na mapě',
+sdr_title:'Nastavení',sdr_lang:'Jazyk',sdr_theme:'Vzhled',sdr_light:'Světlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Instalace',sdr_install_lbl:'Instalovat Wildify',sdr_install_sub:'Přidat na plochu',
 gh_calc:'Kalkulačka zlaté hodiny',gh_calc_btn:'Vypočítat',gh_myloc:'📍 Moje poloha',gh_sunrise:'🌄 Východ',gh_sunset:'🌇 Západ',gh_daylen:'⏱ Délka dne',gh_mgold:'🌅 Ranní zlatá',gh_egold:'🌆 Večerní zlatá',gh_civ:'🌒 Civilní soumrak',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Nahraj fotku — bude rozostřená s překrytím tvojích nastavení.',wc_drop_lbl:'Klikni nebo přetáhni fotku',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Stáhnout kartu',wc_new:'✕ Nová fotka',wc_ss_lbl:'Čas závěrky',wc_ap_lbl:'Clona',
 ec_title:'📷 Kalkulačka expozice',ec_sub:'Zadej podmínky → dostaneš doporučený čas závěrky a clonu.',
-ec_lbl_light:'Světelné podmínky',ec_lbl_iso:'ISO',ec_lbl_ap:'Clona (f/)',ec_lbl_sub:'Subjekt / scéna',
-ec_lbl_ss:'⏱ Čas závěrky',ec_lbl_ev:'💡 EV (jas scény)',
-ec_lights:['☀️ Jasné polední slunce','🌤 Zahalené / lehce zataženo','☁️ Oblačno (nejčastější)','🌲 Stín v otevřeném lese','🌅 Svítání / soumrak (zlatá hodina)','🌆 Hluboký soumrak / před východem','🌙 Civilní soumrak (sovy)'],
-ec_subs:['🦌 Jelen/savec — v klidu','🦌 Jelen/savec — pomalu se pohybuje','🐦 Pták na větvi (klidný)','🦅 Pták při přistání / vzlétnutí','🦅 Pták v rychlém letu','🐗 Běžící zvíře / akce'],
-ec_stips:['Jelen v klidu: 1/125s stačí. Zaostřete na oči, f/5.6 pro oddělení pozadí.','Pomalu se pohybující jelen: min. 1/250s. Měkké sledování, předem zaostřete na dráhu.','Pták na větvi: doporučeno 1/500s — i zdánlivě klidní ptáci se chvějí.','Pták při přistání/vzlétnutí: min. 1/1000s. Nezbytný sériový snímek.','Pták v rychlém letu: doporučeno 1/2000s+. Sledovací AF a vysoký FPS.','Běžící savec: 1/3000s+ pro zmrazení pohybu. Otevřete clonu a zvyšte ISO.'],
-ec_elvls:{15:'Jasné poledne',14:'Zahalené slunce',13:'Oblačno',11:'Stín v lese',9:'Zlatá hodina',7:'Hluboký soumrak',5:'Civilní soumrak'},
-ec_warn:'⚠️ Pro zmrazení tohoto subjektu potřebuješ min. ISO {iso} při f/{ap}. Aktuální ISO {cur} dává {ss} — může dojít k rozmazání pohybem.',
-ec_ok:'✅ ISO {iso} + f/{ap} dává {ss} — o {pct}% rychlejší než minimum. Dobrá expozice pro tento subjekt.',
-ec_ok_min:'✅ ISO {iso} + f/{ap} dává {ss} — přesně na minimu. Dobrá expozice.',
-fl_title:'🔭 Ohnisková vzdálenost & crop faktor',fl_lens_lbl:'Ohnisková vzdálenost objektivu',fl_sensor_lbl:'Snímač',fl_mm:'mm ekvivalent',
-fl_notes:{100:'Široký úhel — pouze environmentální portréty',150:'Střední — tučné druhy na blízko',200:'Základní — funguje pro přivyklé subjekty',300:'Dobrý — většina zahradní/parkové zvěře',400:'Doporučené minimum pro plachá zvířata',500:'Výborný pro evropskou faunu',600:'Profesionální dosah — plachí savci & ptáci',750:'Super-teleobjektiv — velmi plachá zvířata',800:'Maximální praktický dosah',960:'Extrémní teleobjektiv',1200:'Maximum s telekonvertorem'},
+fl_title:'🔭 Ohnisková vzdálenost & crop faktor',fl_lens_lbl:'Ohnisková vzdálenost objektivu',fl_sensor_lbl:'Snímač',
 cl_title:'✅ Předsezónní checklist',cl_reset:'Reset',
 wt_title:'🌤 Počasí & tipy pro fotografování'},
 sk:{n_home:'Domov',n_cat:'Katalóg',n_rv:'Mapa',n_pl:'Plán',n_tl:'Nástroje',n_amb:'Ambasádori',n_et:'Etika',rv_info:'Klikni na mapu pre pridanie špendlíka. Všetko je uložené offline.',rv_saved:'Uložené body',rv_clear:'Zmazať všetko',
@@ -672,21 +772,14 @@ sl:['Mimo sezónu','Nízka aktivita','Aktívny','Vrchol / najfotogenickejší','
 mo:['Jan','Feb','Mar','Apr','Máj','Jún','Júl','Aug','Sep','Okt','Nov','Dec'],
 ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Hmla','Mráz','Dážď','Sneh','Zamračeno','Jasno','Protisvietlo','Zlatá hodina'],
-sn:'Čuch',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Stredné',sl2:'Nízke',loc_title:'Zdieľať polohu?',loc_sub:'Pre zlatú hodinu, mapu a šance na zvieratá poblíž',loc_yes:'Povoliť',loc_no:'Neskôr',wx_temp:'Teplota',wx_wind:'Vietor',wx_rain:'Dážď',
+sn:'Čuch',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Stredné',sl2:'Nízke',
+loc_title:'Zdieľať polohu?',loc_sub:'Pre zlatú hodinu, mapu a šance na zvieratá poblíž',loc_yes:'Povoliť',loc_no:'Neskôr',loc_me:'Moja poloha',loc_granted:'Poloha aktívna',loc_denied:'Prístup k polohe zamietnutý',wx_temp:'Teplota',wx_wind:'Vietor',wx_rain:'Dážď',
+map_myloc:'Moja poloha',map_note_ph:'Pridať poznámku...',map_note_save:'Uložiť',map_note_edit:'Poznámka',map_no_pins:'Zatiaľ žiadne body — klikni na mapu.',rv_del:'Zmazať',rv_loc_title:'Povoliť polohu pre lepší zážitok z mapy',rv_loc_sub:'Zobrazí tvoju pozíciu na mape',
+sdr_title:'Nastavenia',sdr_lang:'Jazyk',sdr_theme:'Vzhľad',sdr_light:'Svetlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Inštalácia',sdr_install_lbl:'Inštalovať Wildify',sdr_install_sub:'Pridať na plochu',
 gh_calc:'Kalkulačka zlatej hodiny',gh_calc_btn:'Vypočítať',gh_myloc:'📍 Moja poloha',gh_sunrise:'🌄 Východ',gh_sunset:'🌇 Západ',gh_daylen:'⏱ Dĺžka dňa',gh_mgold:'🌅 Ranná zlatá',gh_egold:'🌆 Večerná zlatá',gh_civ:'🌒 Civilný súmrak',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Nahraj fotku — bude rozostretá s prekrytím tvojich nastavení.',wc_drop_lbl:'Klikni alebo presuň fotku',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Stiahnuť kartu',wc_new:'✕ Nová fotka',wc_ss_lbl:'Čas uzávierky',wc_ap_lbl:'Clona',
 ec_title:'📷 Kalkulačka expozície',ec_sub:'Zadaj podmienky → dostaneš odporúčaný čas uzávierky a clonu.',
-ec_lbl_light:'Svetelné podmienky',ec_lbl_iso:'ISO',ec_lbl_ap:'Clona (f/)',ec_lbl_sub:'Subjekt / scéna',
-ec_lbl_ss:'⏱ Čas uzávierky',ec_lbl_ev:'💡 EV (jas scény)',
-ec_lights:['☀️ Jasné poludňajšie slnko','🌤 Zahalené / ľahko zamračené','☁️ Zamračené (najčastejšie)','🌲 Tieň v otvorenom lese','🌅 Svitanie / súmrak (zlatá hodina)','🌆 Hlboký súmrak / pred východom','🌙 Civilný súmrak (sovy)'],
-ec_subs:['🦌 Jeleň/cicavec — v kľude','🦌 Jeleň/cicavec — pomaly sa pohybuje','🐦 Vták na vetve (pokojný)','🦅 Vták pri pristávaní / vzlete','🦅 Vták v rýchlom lete','🐗 Bežiace zviera / akcia'],
-ec_stips:['Jeleň v kľude: 1/125s stačí. Zaostrte na oči, f/5.6 pre oddelenie pozadia.','Pomaly sa pohybujúci jeleň: min. 1/250s.','Vták na vetve: odporúčané 1/500s.','Vták pri pristávaní/vzlete: min. 1/1000s.','Vták v rýchlom lete: odporúčané 1/2000s+.','Bežiaci cicavec: 1/3000s+. Otvorte clonu a zvýšte ISO.'],
-ec_elvls:{15:'Jasné poludnie',14:'Zahalené slnko',13:'Zamračené',11:'Tieň v lese',9:'Zlatá hodina',7:'Hlboký súmrak',5:'Civilný súmrak'},
-ec_warn:'⚠️ Pre zmrazenie tohto subjektu potrebuješ min. ISO {iso} pri f/{ap}. Aktuálne ISO {cur} dáva {ss} — môže dôjsť k rozmazaniu.',
-ec_ok:'✅ ISO {iso} + f/{ap} dáva {ss} — o {pct}% rýchlejšie ako minimum. Dobrá expozícia.',
-ec_ok_min:'✅ ISO {iso} + f/{ap} dáva {ss} — presne na minime. Dobrá expozícia.',
-fl_title:'🔭 Ohnisková vzdialenosť & crop faktor',fl_lens_lbl:'Ohnisková vzdialenosť objektívu',fl_sensor_lbl:'Snímač',fl_mm:'mm ekvivalent',
-fl_notes:{100:'Širokouhlý — len environmentálne portréty',150:'Stredný — tučné druhy zblízka',200:'Základný — funguje pre zvyknuté subjekty',300:'Dobrý — väčšina záhradnej/parkovej zveri',400:'Odporúčané minimum pre plaché zvieratá',500:'Výborný pre európsku faunu',600:'Profesionálny dosah — plaché cicavce & vtáky',750:'Super-teleobjektív — veľmi plaché zvieratá',800:'Maximálny praktický dosah',960:'Extrémny teleobjektív',1200:'Maximum s telekonvertorom'},
+fl_title:'🔭 Ohnisková vzdialenosť & crop faktor',fl_lens_lbl:'Ohnisková vzdialenosť objektívu',fl_sensor_lbl:'Snímač',
 cl_title:'✅ Predsezónný checklist',cl_reset:'Reset',
 wt_title:'🌤 Počasie & tipy pre fotografovanie'},
 de:{n_home:'Start',n_cat:'Katalog',n_rv:'Karte',n_pl:'Planer',n_tl:'Werkzeuge',n_amb:'Botschafter',n_et:'Ethik',rv_info:'Klicke auf die Karte um einen Pin hinzuzufügen. Alles wird offline gespeichert.',rv_saved:'Gespeicherte Punkte',rv_clear:'Alle löschen',
@@ -700,21 +793,14 @@ sl:['Außersaison','Geringe Aktivität','Aktiv','Höhepunkt / fotogenisch','Fell
 mo:['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
 ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Nebel','Frost','Regen','Schnee','Bewölkt','Sonnig','Gegenlicht','Goldene Stunde'],
-sn:'Nase',se:'Ohren',sy:'Augen',sd:'Kritisch',sh:'Hoch',sm:'Mittel',sl2:'Niedrig',loc_title:'Standort teilen?',loc_sub:'Für goldene Stunde, Karte & Tierwelt in der Nähe',loc_yes:'Erlauben',loc_no:'Später',wx_temp:'Temperatur',wx_wind:'Wind',wx_rain:'Regen',
+sn:'Nase',se:'Ohren',sy:'Augen',sd:'Kritisch',sh:'Hoch',sm:'Mittel',sl2:'Niedrig',
+loc_title:'Standort teilen?',loc_sub:'Für goldene Stunde, Karte & Tierwelt in der Nähe',loc_yes:'Erlauben',loc_no:'Später',loc_me:'Mein Standort',loc_granted:'Standort aktiv',loc_denied:'Standortzugriff verweigert',wx_temp:'Temperatur',wx_wind:'Wind',wx_rain:'Regen',
+map_myloc:'Mein Standort',map_note_ph:'Notiz hinzufügen...',map_note_save:'Speichern',map_note_edit:'Notiz',map_no_pins:'Noch keine Pins — klicke auf die Karte.',rv_del:'Löschen',rv_loc_title:'Standort für bessere Kartenerfahrung aktivieren',rv_loc_sub:'Zeigt deine Position auf der Karte',
+sdr_title:'Einstellungen',sdr_lang:'Sprache',sdr_theme:'Erscheinungsbild',sdr_light:'Hell',sdr_dark:'Dunkel',sdr_loc:'Standort',sdr_install:'App installieren',sdr_install_lbl:'Wildify installieren',sdr_install_sub:'Zum Startbildschirm',
 gh_calc:'Goldene Stunde Rechner',gh_calc_btn:'Berechnen',gh_myloc:'📍 Mein Standort',gh_sunrise:'🌄 Sonnenaufgang',gh_sunset:'🌇 Sonnenuntergang',gh_daylen:'⏱ Tageslänge',gh_mgold:'🌅 Morgengold',gh_egold:'🌆 Abendgold',gh_civ:'🌒 Bürgerl. Dämmerung',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Foto hochladen — unscharf mit deinen Belichtungsdaten überlagert.',wc_drop_lbl:'Klicke oder ziehe Foto hierher',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Karte herunterladen',wc_new:'✕ Neues Foto',wc_ss_lbl:'Verschlusszeit',wc_ap_lbl:'Blende',
 ec_title:'📷 Belichtungsrechner',ec_sub:'Bedingungen eingeben → empfohlene Verschlusszeit und Blende.',
-ec_lbl_light:'Lichtverhältnisse',ec_lbl_iso:'ISO',ec_lbl_ap:'Blende (f/)',ec_lbl_sub:'Motiv / Szene',
-ec_lbl_ss:'⏱ Verschlusszeit',ec_lbl_ev:'💡 EV (Szenenhelligkeit)',
-ec_lights:['☀️ Helle Mittagssonne','🌤 Dunstiger Schleier / leicht bewölkt','☁️ Bewölkt (häufigste)','🌲 Offener Waldschatten','🌅 Morgen- / Abenddämmerung (goldene Stunde)','🌆 Tiefe Dämmerung / vor Sonnenaufgang','🌙 Bürgerliche Dämmerung (Eulen)'],
-ec_subs:['🦌 Hirsch/Säuger — ruhend','🦌 Hirsch/Säuger — langsam gehend','🐦 Vogel auf Ast (still)','🦅 Vogel beim Landen / Abfliegen','🦅 Vogel im schnellen Flug','🐗 Laufendes Tier / Aktion'],
-ec_stips:['Ruhender Hirsch: 1/125s ausreichend. Auf Augen fokussieren, f/5.6 für Hintergrundtrennung.','Langsam gehender Hirsch: min. 1/250s. Sanft schwenken, vorher fokussieren.','Vogel auf Ast: 1/500s empfohlen — auch ruhige Vögel zucken.','Vogel beim Landen/Abfliegen: min. 1/1000s. Serienmodus essenziell.','Vogel im Schnellflug: 1/2000s+ empfohlen. Tracking-AF und hohe Bildrate.','Laufendes Tier: 1/3000s+ für scharfes Einfrieren. Blende öffnen und ISO erhöhen.'],
-ec_elvls:{15:'Helles Mittagslicht',14:'Dunstiger Schleier',13:'Bewölkt',11:'Waldschatten',9:'Goldene Stunde',7:'Tiefe Dämmerung',5:'Bürgerl. Dämmerung'},
-ec_warn:'⚠️ Um dieses Motiv einzufrieren, benötigst du min. ISO {iso} bei f/{ap}. Aktuelles ISO {cur} ergibt {ss} — Bewegungsunschärfe möglich.',
-ec_ok:'✅ ISO {iso} + f/{ap} ergibt {ss} — {pct}% schneller als Minimum. Gute Belichtung.',
-ec_ok_min:'✅ ISO {iso} + f/{ap} ergibt {ss} — genau am Minimum. Gute Belichtung.',
-fl_title:'🔭 Brennweite & Crop-Faktor',fl_lens_lbl:'Brennweite des Objektivs',fl_sensor_lbl:'Sensor',fl_mm:'mm Äquivalent',
-fl_notes:{100:'Weitwinkel — nur Umgebungsporträts',150:'Mittel — kräftige Arten aus nächster Nähe',200:'Einsteiger — für gewöhnte Motive',300:'Gut — meiste Garten-/Parkwildtiere',400:'Empfohlenes Minimum für scheue Arten',500:'Ausgezeichnet für europäische Tierwelt',600:'Profireachweite — scheue Säuger & Vögel',750:'Superteleobjektiv — sehr scheue Arten',800:'Maximale praktische Reichweite',960:'Extremes Teleobjektiv',1200:'Maximum mit Telekonverter'},
+fl_title:'🔭 Brennweite & Crop-Faktor',fl_lens_lbl:'Brennweite des Objektivs',fl_sensor_lbl:'Sensor',
 cl_title:'✅ Vor-Session Checkliste',cl_reset:'Zurücksetzen',
 wt_title:'🌤 Wetter & Aufnahme-Tipps'}
 }; // Konec objektu překladů TT
@@ -753,80 +839,158 @@ function setLang(l) {
 }
 
 // ═══════════════════════════════════════════
+// SETTINGS DRAWER
+// ═══════════════════════════════════════════
+function openSettings(){
+  document.getElementById('settings-drawer').classList.add('open');
+  document.getElementById('settings-overlay').classList.add('open');
+  renderLangBtns();
+  renderThemeBtns();
+  renderLocStatus();
+}
+function closeSettings(){
+  document.getElementById('settings-drawer').classList.remove('open');
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+function renderLangBtns(){
+  ['en','cs','sk','de'].forEach(l=>{
+    const b=document.getElementById('lbtn-'+l);
+    if(b) b.classList.toggle('on', l===lang);
+  });
+}
+function renderThemeBtns(){
+  const dark=document.body.classList.contains('dark');
+  document.getElementById('theme-light')?.classList.toggle('on',!dark);
+  document.getElementById('theme-dark')?.classList.toggle('on',dark);
+}
+function setTheme(mode){
+  document.body.classList.toggle('dark', mode==='dark');
+  localStorage.setItem('wildify_theme', mode);
+  renderThemeBtns();
+}
+function renderLocStatus(){
+  const btn=document.getElementById('loc-sdr-btn');
+  const status=document.getElementById('loc-sdr-status');
+  if(!btn||!status) return;
+  if(userLat&&userLng){
+    btn.classList.add('granted');
+    status.textContent=`${t('loc_granted')} · ${userLat.toFixed(3)}°, ${userLng.toFixed(3)}°`;
+  } else {
+    btn.classList.remove('granted');
+    status.setAttribute('data-t','loc_sub');
+    status.textContent=t('loc_sub');
+  }
+}
+function requestLocationFromSettings(){
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat=p.coords.latitude; userLng=p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+    onLocationReady();
+    renderLocStatus();
+    showToast('📍 '+t('loc_granted'));
+  },()=>{ showToast('Location denied'); });
+}
+
+// ═══════════════════════════════════════════
 // USER LOCATION SYSTEM
 // ═══════════════════════════════════════════
 let userLat = null, userLng = null;
 
-function askUserLocation(){
-  // Load stored location
+function initUserLocation(){
+  // Only restore if already granted before - never auto-ask
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
-    if(saved&&saved.lat&&saved.lng){ userLat=saved.lat; userLng=saved.lng; onLocationReady(); return; }
+    if(saved&&saved.lat&&saved.lng){
+      userLat=saved.lat; userLng=saved.lng;
+      // Hide the map location invite strip immediately
+      const strip = document.getElementById('rv-loc-strip');
+      if(strip) strip.style.display = 'none';
+      onLocationReady();
+    }
   }catch{}
-  // Only ask if we haven't asked before
-  if(localStorage.getItem('wildify_loc_asked')) return;
-  localStorage.setItem('wildify_loc_asked','1');
-  if(!navigator.geolocation) return;
-  // Show location request banner
-  const banner = document.getElementById('loc-banner');
-  if(banner) banner.classList.add('show');
 }
 
-function requestLocation(){
-  document.getElementById('loc-banner')?.classList.remove('show');
+function mapGoToMyLoc(){
+  if(userLat && userLng){
+    if(rvMap) rvMap.setView([userLat, userLng], 13);
+    applyLocationToMap();
+    return;
+  }
+  // No location yet — ask
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
+  const btn = document.getElementById('map-loc-btn');
+  if(btn) btn.textContent = '⏳ ...';
   navigator.geolocation.getCurrentPosition(p=>{
     userLat = p.coords.latitude;
     userLng = p.coords.longitude;
     localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
     onLocationReady();
-    showToast('📍 Location saved!');
+    renderLocStatus();
+    showToast('📍 '+t('loc_granted'));
+    if(btn){ btn.innerHTML = `📍 <span data-t="map_myloc">${t('map_myloc')}</span>`; }
   }, ()=>{
-    showToast('Location denied');
-  });
+    showToast(t('loc_denied')||'Location access denied');
+    if(btn){ btn.innerHTML = `📍 <span data-t="map_myloc">${t('map_myloc')}</span>`; }
+  }, {enableHighAccuracy:true, timeout:10000});
 }
 
+function requestLocation(){
+  document.getElementById('loc-banner')?.classList.remove('show');
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat = p.coords.latitude; userLng = p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
+    onLocationReady(); showToast('📍 Location saved!');
+  }, ()=>{ showToast('Location denied'); });
+}
 function dismissLocation(){
   document.getElementById('loc-banner')?.classList.remove('show');
 }
 
-function onLocationReady(){
-  // Pre-fill golden hour with user location
-  if(userLat && userLng){
-    const sel = document.getElementById('gh-region');
-    if(sel){
-      let opt = [...sel.options].find(o=>o.textContent.includes('My Location'));
-      if(!opt){ opt = document.createElement('option'); sel.appendChild(opt); }
-      opt.value = `${userLat.toFixed(4)},${userLng.toFixed(4)}`;
-      opt.textContent = `📍 My Location (${userLat.toFixed(2)}°, ${userLng.toFixed(2)}°)`;
-      sel.value = opt.value;
-    }
-    // Center map on user location if no saved map view and map is ready
-    applyLocationToMap();
-    // Fetch weather for home screen
-    fetchHomeWeather();
-  }
-}
-
 function applyLocationToMap(){
-  if(!userLat||!userLng||!rvMap) return;
-  // Only fly to user location if there's no previously saved map position
+  if(!userLat||!userLng) return;
+  if(!rvMap) return;
+  // Hide location invite strip
+  const strip = document.getElementById('rv-loc-strip');
+  if(strip) strip.style.display = 'none';
+  // Fly to user location only if no previously saved map view
   if(!localStorage.getItem('wildify_map_view')){
-    rvMap.setView([userLat, userLng], 11);
+    rvMap.setView([userLat, userLng], 12);
   }
-  // Add/update user location marker (blue dot)
-  if(window._userLocMarker){window._userLocMarker.remove();}
-  const icon=L.divIcon({
-    html:`<div style="width:16px;height:16px;background:#1565c0;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>`,
-    className:'',iconSize:[16,16],iconAnchor:[8,8]
+  // Remove old user marker if exists
+  if(window._userLocMarker){ try{ window._userLocMarker.remove(); }catch{} }
+  const icon = L.divIcon({
+    html:`<div style="width:14px;height:14px;background:#1565c0;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.45)"></div>`,
+    className:'', iconSize:[14,14], iconAnchor:[7,7]
   });
-  window._userLocMarker=L.marker([userLat,userLng],{icon,zIndexOffset:1000}).addTo(rvMap);
-  window._userLocMarker.bindPopup(`<b>📍 ${t('loc_me')||'My location'}</b>`);
+  window._userLocMarker = L.marker([userLat, userLng], {icon, zIndexOffset:1000}).addTo(rvMap);
+  window._userLocMarker.bindPopup(`<b>📍 ${t('loc_me')||'My location'}</b><br><small>${userLat.toFixed(5)}, ${userLng.toFixed(5)}</small>`);
 }
 
-// 3. Spouštěč při startu (zajistí, že se hned po načtení použije 'en' nebo uložený jazyk)
+function onLocationReady(){
+  if(!userLat || !userLng) return;
+  // Pre-fill golden hour select with user location
+  const sel = document.getElementById('gh-region');
+  if(sel){
+    let opt = [...sel.options].find(o=>o.value.startsWith(userLat.toFixed(2).substring(0,4)));
+    if(!opt){ opt = document.createElement('option'); sel.appendChild(opt); }
+    opt.value = `${userLat.toFixed(4)},${userLng.toFixed(4)}`;
+    opt.textContent = `📍 ${t('map_myloc')} (${userLat.toFixed(2)}°, ${userLng.toFixed(2)}°)`;
+    sel.value = opt.value;
+  }
+  // Apply to map if already init
+  applyLocationToMap();
+  // Fetch weather
+  fetchHomeWeather();
+}
+
+// 3. Spouštěč při startu
 window.addEventListener('DOMContentLoaded', () => {
+  // Apply saved theme
+  const savedTheme = localStorage.getItem('wildify_theme') || 'light';
+  if(savedTheme === 'dark') document.body.classList.add('dark');
   setLang(lang);
-  askUserLocation();
+  initUserLocation();
 });
 
 // ═══════════════════════════════════════════
@@ -839,7 +1003,12 @@ function go(id){
   document.getElementById('nb-'+id).classList.add('on');
   window.scrollTo(0,0);
   if(id==='revier'){
-    setTimeout(()=>{if(rvMap){rvMap.invalidateSize();}else{initRevierMap();}},100);
+    setTimeout(()=>{
+      if(!rvMap){ initRevierMap(); }
+      else { rvMap.invalidateSize(); }
+      // Apply location marker after map is ready
+      setTimeout(()=>{ applyLocationToMap(); }, 150);
+    }, 100);
   }
 }
 
@@ -1270,56 +1439,60 @@ function getMyLoc(){
 
 // ═══════════════════════════════════════════
 // ✅ OPRAVENÝ EXPOSURE CALCULATOR
+// Používá správnou fotografickou EV rovnici:
+// EV = log2(N² / t * S/100)
+// => t = N² * 100 / (S * 2^EV_scene)
+// Pak se aplikuje multiplier podle pohybu subjektu
 // ═══════════════════════════════════════════
-const EC_EV_VALS=[15,14,13,11,9,7,5];
-
-function renderECSelects(){
-  const lights=t('ec_lights'), subs=t('ec_subs');
-  const evSel=document.getElementById('ec-ev');
-  if(!evSel)return;
-  const curEv=evSel.value||'13';
-  evSel.innerHTML=EC_EV_VALS.map((v,i)=>`<option value="${v}"${v==curEv?' selected':''}>${lights[i]}</option>`).join('');
-  const subSel=document.getElementById('ec-sub');
-  if(!subSel)return;
-  const curSub=subSel.value||'1';
-  subSel.innerHTML=subs.map((s,i)=>`<option value="${i}"${i==curSub?' selected':''}>${s}</option>`).join('');
-}
-
 function calcExp(){
-  renderECSelects();
-  const evScene = parseInt(document.getElementById('ec-ev').value)||13;
-  const iso     = parseInt(document.getElementById('ec-iso').value)||1600;
-  const ap      = parseFloat(document.getElementById('ec-ap').value)||4;
-  const subIdx  = parseInt(document.getElementById('ec-sub').value)||1;
+  const evScene = parseInt(document.getElementById('ec-ev').value);
+  const iso     = parseInt(document.getElementById('ec-iso').value);
+  const ap      = parseFloat(document.getElementById('ec-ap').value);
+  const subIdx  = parseInt(document.getElementById('ec-sub').value);
 
+  // Minimální čas závěrky potřebný k zachycení subjektu (bez pohybu rozmazání)
+  // wildlife-specifické doporučené minimální časy:
   const minSS = [1/125, 1/250, 1/500, 1/1000, 1/2000, 1/3000][subIdx];
+
+  // Výpočet teoreticky správného času závěrky pro daný EV, ISO, clonu
+  // EV(scene) = EV(100) + log2(ISO/100)
+  // t = N² / (2^EV_scene * ISO/100)
   const evAt100 = evScene - Math.log2(iso / 100);
   const tCalc = (ap * ap) / Math.pow(2, evAt100);
-  const tFinal = Math.min(tCalc, minSS);
+
+  // Výsledný čas = maximum z vypočteného a minimálního pro pohyb
+  const tFinal = Math.min(tCalc, minSS); // kratší = bezpečnější (freeze motion)
+  // Poznámka: pokud je vypočtený čas delší než minimum, použij minimum a ukaž varování
 
   const ssText = tFinal >= 1 ? `${tFinal.toFixed(1)}s` : `1/${Math.round(1/tFinal)}s`;
   document.getElementById('ec-ss').textContent = ssText;
   document.getElementById('ec-ev-out').textContent = `EV ${evScene}`;
 
-  const elvls=t('ec_elvls');
-  document.getElementById('ec-ev-note').textContent = elvls[evScene] || '';
+  // EV scene label
+  const evLabels = {15:'Bright midday',14:'Hazy sun',13:'Overcast',11:'Forest shade',9:'Golden hour',7:'Deep dusk',5:'Civil twilight'};
+  document.getElementById('ec-ev-note').textContent = evLabels[evScene] || '';
 
+  // Advice
   const needsHighISO = tCalc > minSS;
   let advice = '';
   if(needsHighISO){
     const neededISO = Math.min(25600, Math.round(iso * (tCalc/minSS)));
-    advice = t('ec_warn').replace('{iso}',neededISO).replace('{ap}',ap).replace('{cur}',iso).replace('{ss}',ssText);
+    advice = `⚠️ To freeze this subject in these conditions, you need at least <strong>ISO ${neededISO}</strong> at f/${ap}. Current ISO ${iso} gives ${ssText} — may result in motion blur.`;
   } else {
     const safetyMargin = Math.round((minSS/tCalc)*100);
-    if(safetyMargin>100){
-      advice = t('ec_ok').replace('{iso}',iso).replace('{ap}',ap).replace('{ss}',ssText).replace('{pct}',safetyMargin);
-    } else {
-      advice = t('ec_ok_min').replace('{iso}',iso).replace('{ap}',ap).replace('{ss}',ssText);
-    }
+    advice = `✅ ISO ${iso} + f/${ap} gives <strong>${ssText}</strong> — ${safetyMargin > 100 ? `${safetyMargin}% faster than minimum needed` : 'right at the minimum'}. Good exposure for this subject.`;
   }
 
-  const subTips = t('ec_stips');
-  document.getElementById('ec-advice').innerHTML = advice + `<br><br>💡 <em>${subTips[subIdx]||''}</em>`;
+  // Additional tip per subject
+  const subTips = [
+    'Resting deer: 1/125s sufficient. Focus on eyes, use f/5.6 for background separation.',
+    'Slowly moving deer: 1/250s minimum. Track gently, pre-focus on expected path.',
+    'Bird on branch: 1/500s recommended — even "still" birds twitch. Use continuous AF.',
+    'Bird landing/taking off: 1/1000s minimum. Burst mode essential.',
+    'Fast bird in flight: 1/2000s+ recommended. Use tracking AF and high frame rate.',
+    'Running mammal: 1/3000s+ for sharp freeze. Open aperture and push ISO.'
+  ];
+  document.getElementById('ec-advice').innerHTML = advice + `<br><br>💡 <em>${subTips[subIdx]}</em>`;
 }
 
 // ═══════════════════════════════════════════
@@ -1329,10 +1502,22 @@ function calcFL(){
   const fl=+document.getElementById('fl-len').value;
   const crop=+document.getElementById('fl-sens').value;
   const eq=Math.round(fl*crop);
-  document.getElementById('fl-eq').textContent=eq+(t('fl_mm')||'mm equivalent');
-  const notes=t('fl_notes');
+  document.getElementById('fl-eq').textContent=eq+'mm equivalent';
+  const notes={
+    100:'Wide — environmental portraits only',
+    150:'Moderate — bold species at close range',
+    200:'Entry level — works for habituated subjects',
+    300:'Good — most garden/park wildlife',
+    400:'Recommended minimum for shy species',
+    500:'Excellent all-rounder for European wildlife',
+    600:'Professional reach — shy mammals & birds',
+    750:'Super-telephoto — very shy species',
+    800:'Maximum practical reach',
+    960:'Extreme telephoto',
+    1200:'Maximum with teleconverter'
+  };
   const cl2=Object.keys(notes).map(Number).reduce((a,b)=>Math.abs(b-eq)<Math.abs(a-eq)?b:a);
-  document.getElementById('fl-note').textContent=notes[cl2]||eq+'mm';
+  document.getElementById('fl-note').textContent=notes[cl2]||eq+'mm full-frame equivalent';
 }
 
 // ═══════════════════════════════════════════
@@ -1524,7 +1709,7 @@ function wcRender(){
         className:'',iconSize:[28,28],iconAnchor:[14,14]
       });
       const marker=L.marker([pin.lat,pin.lng],{icon}).addTo(rvMap);
-      marker.bindPopup(`<b>${rvTypeEmoji(pin.type)} ${rvTypeLbl(pin.type)}</b><br><small>${pin.lat.toFixed(5)}, ${pin.lng.toFixed(5)}</small><br><button onclick="rvDeletePin(${pin.id})" style="margin-top:6px;padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">🗑 Delete</button>`);
+      marker.bindPopup(rvPopupHTML(pin));
       rvMarkers.push({id:pin.id,marker});
     }
 
@@ -1538,18 +1723,58 @@ function wcRender(){
       const el=document.getElementById('rv-pins');
       if(!el)return;
       if(rvPins.length===0){
-        el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:10px 0">No pins yet — click the map to add one.</div>';
+        el.innerHTML=`<div style="font-size:12px;color:var(--text3);padding:10px 0">${t('map_no_pins')}</div>`;
         return;
       }
       el.innerHTML=rvPins.map(p=>`
-        <div class="rv-pin">
-          <span style="font-size:20px">${rvTypeEmoji(p.type)}</span>
-          <div>
-            <div style="font-size:13px;font-weight:700">${rvTypeLbl(p.type)}</div>
-            <div style="font-size:11px;color:var(--text3)">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div>
+        <div class="rv-pin" id="rp-${p.id}">
+          <div class="rv-pin-top">
+            <span style="font-size:20px">${rvTypeEmoji(p.type)}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700">${rvTypeLbl(p.type)}</div>
+              <div style="font-size:11px;color:var(--text3)">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div>
+            </div>
+            <button class="rv-pin-btn" onclick="rvFlyTo(${p.lat},${p.lng})">🎯</button>
           </div>
-          <button class="rv-pin-del" onclick="rvDeletePin(${p.id})">🗑</button>
+          ${p.note ? `<div class="rv-pin-note">${p.note.replace(/</g,'&lt;')}</div>` : ''}
+          <div class="rv-pin-actions">
+            <button class="rv-pin-btn" onclick="rvEditNote(${p.id})">✏️ <span data-t="map_note_edit">Note</span></button>
+            <button class="rv-pin-btn del" onclick="rvDeletePin(${p.id})">🗑 <span data-t="rv_del">Delete</span></button>
+          </div>
+          <div id="rn-${p.id}" style="display:none;margin-top:6px">
+            <textarea class="rv-pin-note-input" id="rni-${p.id}" rows="3" placeholder="${t('map_note_ph')}">${p.note||''}</textarea>
+            <div style="display:flex;gap:6px;margin-top:4px">
+              <button class="rv-pin-btn" style="background:var(--g6);color:var(--g1);border-color:var(--g3)" onclick="rvSaveNote(${p.id})">${t('map_note_save')}</button>
+              <button class="rv-pin-btn" onclick="document.getElementById('rn-${p.id}').style.display='none'">✕</button>
+            </div>
+          </div>
         </div>`).join('');
+    }
+
+    function rvEditNote(id){
+      const el=document.getElementById('rn-'+id);
+      if(!el)return;
+      el.style.display=el.style.display==='none'?'block':'none';
+      if(el.style.display==='block') document.getElementById('rni-'+id)?.focus();
+    }
+
+    function rvSaveNote(id){
+      const pin=rvPins.find(p=>p.id===id);
+      if(!pin)return;
+      pin.note=(document.getElementById('rni-'+id)?.value||'').trim();
+      saveRVPins();
+      // update popup if open
+      const m=rvMarkers.find(x=>x.id===id);
+      if(m) m.marker.setPopupContent(rvPopupHTML(pin));
+      renderRVPins();
+    }
+
+    function rvFlyTo(lat,lng){
+      if(rvMap) rvMap.setView([lat,lng],15);
+    }
+
+    function rvPopupHTML(pin){
+      return `<b>${rvTypeEmoji(pin.type)} ${rvTypeLbl(pin.type)}</b><br><small>${pin.lat.toFixed(5)}, ${pin.lng.toFixed(5)}</small>${pin.note?`<br><em style="font-size:11px;color:#555">${pin.note.replace(/</g,'&lt;')}</em>`:''}<br><button onclick="rvDeletePin(${pin.id})" style="margin-top:6px;padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">🗑 Delete</button>`;
     }
 
     function rvDeletePin(id){
@@ -1594,15 +1819,15 @@ function wcRender(){
 // ═══════════════════════════════════════════════════════════════════
 const AMBASSADORS = [
       {
-        name: 'Jakub Photography',
+        name: 'Jan Novák',
         role: {en:'Wildlife Photographer', cs:'Wildlife fotograf', sk:'Wildlife fotograf', de:'Naturfotograf'},
         photo: '🦅',                         // ← sem dej URL fotky, nebo nechej emoji
         photoFallback: '🦅',
         bio: {
-          en: '--- has been documenting European wildlife for over 15 years. Specializes in raptors and large mammals in the Carpathian mountains.',
-          cs: '--- dokumentuje evropskou faunu přes 15 let. Specializuje se na dravce a velké savce v Karpatech.',
-          sk: '--- dokumentuje európsku faunu viac ako 15 rokov. Špecializuje sa na dravcov a veľké cicavce.',
-          de: '--- dokumentiert europäische Tierwelt seit 15 Jahren. Spezialisiert auf Greifvögel und Großsäuger.'
+          en: 'Jan has been documenting European wildlife for over 15 years. Specializes in raptors and large mammals in the Carpathian mountains.',
+          cs: 'Jan dokumentuje evropskou faunu přes 15 let. Specializuje se na dravce a velké savce v Karpatech.',
+          sk: 'Jan dokumentuje európsku faunu viac ako 15 rokov. Špecializuje sa na dravcov a veľké cicavce.',
+          de: 'Jan dokumentiert europäische Tierwelt seit 15 Jahren. Spezialisiert auf Greifvögel und Großsäuger.'
         },
         social: [
           {platform:'Instagram', url:'https://instagram.com/'},   // ← doplň správné URL
@@ -1615,15 +1840,15 @@ const AMBASSADORS = [
         ]
       },
       {
-        name: '---',
+        name: 'Petra Dvořák',
         role: {en:'Nature Photographer', cs:'Fotografka přírody', sk:'Fotografka prírody', de:'Naturfotografin'},
         photo: '🦋',
         photoFallback: '🦋',
         bio: {
-          en: '--- focuses on macro and bird photography in Central European wetlands. Winner of Czech Wildlife Photo 2023.',
-          cs: '--- se zaměřuje na makro a ptáky na mokřadech střední Evropy. Vítězka Czech Wildlife Photo 2023.',
-          sk: '--- sa zameriava na makro a vtáky na mokradiach strednej Európy.',
-          de: '--- fokussiert Makro und Vögel in mitteleuropäischen Feuchtgebieten.'
+          en: 'Petra focuses on macro and bird photography in Central European wetlands. Winner of Czech Wildlife Photo 2023.',
+          cs: 'Petra se zaměřuje na makro a ptáky na mokřadech střední Evropy. Vítězka Czech Wildlife Photo 2023.',
+          sk: 'Petra sa zameriava na makro a vtáky na mokradiach strednej Európy.',
+          de: 'Petra fokussiert Makro und Vögel in mitteleuropäischen Feuchtgebieten.'
         },
         social: [
           {platform:'Instagram', url:'https://instagram.com/'},
@@ -1636,15 +1861,15 @@ const AMBASSADORS = [
         ]
       },
       {
-        name: '---',
+        name: 'Martin Kováč',
         role: {en:'Conservation Photographer', cs:'Konzervační fotograf', sk:'Konzervačný fotograf', de:'Naturschutzfotograf'},
         photo: '🐻',
         photoFallback: '🐻',
         bio: {
-          en: '--- works with WWF documenting large carnivores across Slovakia and Romania. His images have appeared in National Geographic.',
-          cs: '--- pracuje s WWF a dokumentuje velké šelmy na Slovensku a v Rumunsku. Jeho snímky vyšly v National Geographic.',
-          sk: '--- pracuje s WWF a dokumentuje veľké šelmy na Slovensku a v Rumunsku.',
-          de: '--- arbeitet mit WWF, dokumentiert Großraubtiere in der Slowakei und Rumänien.'
+          en: 'Martin works with WWF documenting large carnivores across Slovakia and Romania. His images have appeared in National Geographic.',
+          cs: 'Martin pracuje s WWF a dokumentuje velké šelmy na Slovensku a v Rumunsku. Jeho snímky vyšly v National Geographic.',
+          sk: 'Martin pracuje s WWF a dokumentuje veľké šelmy na Slovensku a v Rumunsku.',
+          de: 'Martin arbeitet mit WWF, dokumentiert Großraubtiere in der Slowakei und Rumänien.'
         },
         social: [
           {platform:'Instagram', url:'https://instagram.com/'},
@@ -1751,8 +1976,6 @@ const AMBASSADORS = [
       renderRVTypes();
       renderRVPins();
       renderAMB();
-      renderECSelects();
-      calcFL();
     }
 
     // ═══════════════════════════════════════════
@@ -1853,12 +2076,14 @@ const AMBASSADORS = [
 
     // Inicializace aplikace po načtení
     window.onload = () => {
+      const savedTheme = localStorage.getItem('wildify_theme') || 'light';
+      if(savedTheme === 'dark') document.body.classList.add('dark');
       setLang(lang);
+      renderAll();
       calcExp();
       calcFL();
       initRevierMap();
-      // If location already stored, apply it
-      onLocationReady();
+      initUserLocation();
     };
 </script>
 <script>
