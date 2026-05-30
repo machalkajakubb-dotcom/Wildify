@@ -91,6 +91,16 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 .ar-status{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5}
 .ar-pct{font-size:16px;font-weight:900;flex-shrink:0;position:relative}
 #revier-map-wrap{position:relative}
+/* Smart Spot Finder */
+#map-smart-btn{background:var(--g1);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;transition:.2s;white-space:nowrap}
+#map-smart-btn:hover{background:var(--g2);transform:translateY(-1px)}
+#map-smart-btn.loading{opacity:.7;pointer-events:none}
+#spot-result{display:none;margin-top:12px;background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:14px;font-size:13px;line-height:1.7}
+#spot-result .spot-headline{font-size:14px;font-weight:800;color:var(--g1);margin-bottom:6px}
+#spot-result .spot-reason{color:var(--text2)}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:1}100%{transform:scale(2.8);opacity:0}}
+.pulse-marker{width:22px;height:22px;background:#ff6f00;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.4);position:relative}
+.pulse-marker::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:3px solid #ff6f00;animation:pulse-ring 1.4s ease-out infinite}
 /* Pin note styles */
 .rv-pin{background:var(--bg);border:1px solid var(--brd2);border-radius:8px;padding:10px 12px;margin-bottom:8px}
 .rv-pin-top{display:flex;align-items:center;gap:10px}
@@ -137,7 +147,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 .pill{font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600}
 .ps{background:#fff3e0;color:#b36200}
 .pl{background:var(--g6);color:var(--g1)}
-.sbar{display:flex;gap:2px;margin-top:8px}
+.sbar{display:flex;gap:2px;margin-top:8px;max-width:100%;overflow:hidden}
 .sm{flex:1;height:16px;border-radius:2px;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;cursor:default}
 .sm:hover .stt{opacity:1}
 .stt{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:.15s;z-index:10}
@@ -156,13 +166,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 .sl{background:var(--g6);color:var(--g1);border:1px solid var(--brd)}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:12px}
 .ov.h{display:none}
-.modal{background:var(--bg3);border-radius:var(--r);max-width:620px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.modal{background:var(--bg3);border-radius:var(--r);max-width:620px;width:100%;max-height:92vh;overflow-y:auto;overflow-x:hidden;box-shadow:0 8px 32px rgba(0,0,0,.25)}
 .mh{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 18px 12px;border-bottom:1px solid var(--brd2);gap:12px}
 .mt{font-size:19px;font-weight:700}
 .ml{font-size:12px;color:var(--text3);font-style:italic;margin-top:3px}
 .mx{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);font-size:16px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mx:hover{background:var(--brd)}
-.mb2{padding:18px}
+.mb2{padding:18px;overflow-x:hidden}
 .ms{margin-bottom:16px}
 .mst{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:7px}
 .mtxt{font-size:13px;color:var(--text2);line-height:1.7}
@@ -174,7 +184,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 .shybar{flex:1;height:8px;background:var(--brd);border-radius:4px;overflow:hidden}
 .shyfill{height:100%;border-radius:4px}
 .shyn{font-weight:800;font-size:17px;min-width:28px}
-.msbar{display:flex;gap:2px;margin-top:6px}
+.msbar{display:flex;gap:2px;margin-top:6px;max-width:100%;overflow:hidden}
 .msm{flex:1;height:22px;border-radius:3px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;cursor:default}
 .msm:hover .stt{opacity:1}
 .sleg{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -520,6 +530,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
           🔄 <span data-t="map_refresh">Update location</span>
         </button>
       </div>
+      <!-- Smart Spot Finder button - bottom left -->
+      <div style="position:absolute;bottom:14px;left:10px;z-index:400">
+        <button id="map-smart-btn" onclick="findSmartSpot()">
+          🎯 <span data-t="map_smart_btn">Find ideal spot</span>
+        </button>
+      </div>
+    </div>
+    <!-- Smart Spot Result -->
+    <div id="spot-result">
+      <div class="spot-headline" id="spot-headline"></div>
+      <div class="spot-reason" id="spot-reason"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button id="spot-next-btn" onclick="showNextSpot()" style="display:none;padding:8px 14px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">
+          🔄 <span data-t="spot_next">Find another spot</span>
+        </button>
+      </div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:6px">
       <div style="font-size:13px;font-weight:700" data-t="rv_saved">Saved pins</div>
@@ -761,7 +787,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Fog','Frost','Rain','Snow','Overcast','Bright sun','Backlight','Golden hour'],
 sn:'Nose',se:'Ears',sy:'Eyes',sd:'Critical',sh:'High',sm:'Medium',sl2:'Low',
 loc_title:'Share your location?',loc_sub:'For golden hour, map & wildlife chances near you',loc_yes:'Allow',loc_no:'Later',loc_me:'My location',loc_granted:'Location active',loc_denied:'Location access denied',wx_temp:'Temp',wx_wind:'Wind',wx_rain:'Rain',
-map_myloc:'My location',map_refresh:'Update location',map_note_ph:'Add a note...',map_note_save:'Save',map_note_edit:'Note',map_no_pins:'No pins yet — click the map to add one.',rv_del:'Delete',rv_loc_title:'Enable location for better map experience',rv_loc_sub:'Shows your position on the map',loc_updated:'Location updated',
+map_myloc:'My location',map_refresh:'Update location',map_smart_btn:'Find ideal spot',spot_next:'Find another spot',map_note_ph:'Add a note...',map_note_save:'Save',map_note_edit:'Note',map_no_pins:'No pins yet — click the map to add one.',rv_del:'Delete',rv_loc_title:'Enable location for better map experience',rv_loc_sub:'Shows your position on the map',loc_updated:'Location updated',
 sdr_title:'Settings',sdr_lang:'Language',sdr_theme:'Appearance',sdr_light:'Light',sdr_dark:'Dark',sdr_loc:'Location',sdr_install:'Install app',sdr_install_lbl:'Install Wildify',sdr_install_sub:'Add to home screen',
 gh_calc:'Golden Hour Calculator',gh_calc_btn:'Calculate',gh_myloc:'📍 My Location',gh_sunrise:'🌄 Sunrise',gh_sunset:'🌇 Sunset',gh_daylen:'⏱ Day length',gh_mgold:'🌅 Morning gold',gh_egold:'🌆 Evening gold',gh_civ:'🌒 Civil twilight',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Upload a photo — it will be blurred and overlaid with your exposure settings.',wc_drop_lbl:'Click or drop photo here',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Download Card',wc_new:'✕ New photo',wc_ss_lbl:'Shutter Speed',wc_ap_lbl:'Aperture',
@@ -789,7 +815,7 @@ ms:['L','Ú','B','D','K','Č','Č','S','Z','Ř','L','P'],
 wc:['Mlha','Mráz','Déšť','Sníh','Oblačno','Jasno','Protisvětlo','Zlatá hodina'],
 sn:'Čich',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Střední',sl2:'Nízké',
 loc_title:'Sdílet polohu?',loc_sub:'Pro zlatou hodinu, mapu a šance na zvěř poblíž',loc_yes:'Povolit',loc_no:'Později',loc_me:'Moje poloha',loc_granted:'Poloha aktivní',loc_denied:'Přístup k poloze zamítnut',wx_temp:'Teplota',wx_wind:'Vítr',wx_rain:'Déšť',
-map_myloc:'Moje poloha',map_refresh:'Aktualizovat polohu',map_note_ph:'Přidat poznámku...',map_note_save:'Uložit',map_note_edit:'Poznámka',map_no_pins:'Zatím žádné body — klikni na mapu.',rv_del:'Smazat',rv_loc_title:'Povolit polohu pro lepší zážitek z mapy',rv_loc_sub:'Zobrazí tvoji pozici na mapě',loc_updated:'Poloha aktualizována',
+map_myloc:'Moje poloha',map_refresh:'Aktualizovat polohu',map_smart_btn:'Najít ideální místo',spot_next:'Najít jiné místo',map_note_ph:'Přidat poznámku...',map_note_save:'Uložit',map_note_edit:'Poznámka',map_no_pins:'Zatím žádné body — klikni na mapu.',rv_del:'Smazat',rv_loc_title:'Povolit polohu pro lepší zážitek z mapy',rv_loc_sub:'Zobrazí tvoji pozici na mapě',loc_updated:'Poloha aktualizována',
 sdr_title:'Nastavení',sdr_lang:'Jazyk',sdr_theme:'Vzhled',sdr_light:'Světlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Instalace',sdr_install_lbl:'Instalovat Wildify',sdr_install_sub:'Přidat na plochu',
 gh_calc:'Kalkulačka zlaté hodiny',gh_calc_btn:'Vypočítat',gh_myloc:'📍 Moje poloha',gh_sunrise:'🌄 Východ',gh_sunset:'🌇 Západ',gh_daylen:'⏱ Délka dne',gh_mgold:'🌅 Ranní zlatá',gh_egold:'🌆 Večerní zlatá',gh_civ:'🌒 Civilní soumrak',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Nahraj fotku — bude rozostřená s překrytím tvojích nastavení.',wc_drop_lbl:'Klikni nebo přetáhni fotku',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Stáhnout kartu',wc_new:'✕ Nová fotka',wc_ss_lbl:'Čas závěrky',wc_ap_lbl:'Clona',
@@ -817,7 +843,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Hmla','Mráz','Dážď','Sneh','Zamračeno','Jasno','Protisvietlo','Zlatá hodina'],
 sn:'Čuch',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Stredné',sl2:'Nízke',
 loc_title:'Zdieľať polohu?',loc_sub:'Pre zlatú hodinu, mapu a šance na zvieratá poblíž',loc_yes:'Povoliť',loc_no:'Neskôr',loc_me:'Moja poloha',loc_granted:'Poloha aktívna',loc_denied:'Prístup k polohe zamietnutý',wx_temp:'Teplota',wx_wind:'Vietor',wx_rain:'Dážď',
-map_myloc:'Moja poloha',map_refresh:'Aktualizovať polohu',map_note_ph:'Pridať poznámku...',map_note_save:'Uložiť',map_note_edit:'Poznámka',map_no_pins:'Zatiaľ žiadne body — klikni na mapu.',rv_del:'Zmazať',rv_loc_title:'Povoliť polohu pre lepší zážitok z mapy',rv_loc_sub:'Zobrazí tvoju pozíciu na mape',loc_updated:'Poloha aktualizovaná',
+map_myloc:'Moja poloha',map_refresh:'Aktualizovať polohu',map_smart_btn:'Nájsť ideálne miesto',spot_next:'Nájsť iné miesto',map_note_ph:'Pridať poznámku...',map_note_save:'Uložiť',map_note_edit:'Poznámka',map_no_pins:'Zatiaľ žiadne body — klikni na mapu.',rv_del:'Zmazať',rv_loc_title:'Povoliť polohu pre lepší zážitok z mapy',rv_loc_sub:'Zobrazí tvoju pozíciu na mape',loc_updated:'Poloha aktualizovaná',
 sdr_title:'Nastavenia',sdr_lang:'Jazyk',sdr_theme:'Vzhľad',sdr_light:'Svetlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Inštalácia',sdr_install_lbl:'Inštalovať Wildify',sdr_install_sub:'Pridať na plochu',
 ss_title:'🎯 Stealth Score',ss_sub:'Nakonfiguruj svoje terénne nastavenie — získaj skóre neviditeľnosti.',ss_cloth:'Oblečenie',ss_civil:'Civilné',ss_camo:'Maskáč',ss_ghillie:'Ghillie',ss_wind:'Smer vetra',ss_w_back:'Po vetre',ss_w_side:'Bočný vietor',ss_w_face:'Proti vetru',ss_cover:'Krytie',ss_c_open:'Voľné priestranstvo',ss_c_tree:'Pri strome',ss_c_hide:'Stan/kryt',ss_shadow:'Svetlo',ss_s_sun:'Priame slnko',ss_s_shade:'Hlboký tieň',
 ar_title:'⏳ Activity Radar',ar_sub:'Aktuálne šance aktivity podľa dennej doby a svetla.',ar_note:'Aktualizuje každých 30s. Podľa terénneho výskumu v Európe.',
@@ -841,7 +867,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Nebel','Frost','Regen','Schnee','Bewölkt','Sonnig','Gegenlicht','Goldene Stunde'],
 sn:'Nase',se:'Ohren',sy:'Augen',sd:'Kritisch',sh:'Hoch',sm:'Mittel',sl2:'Niedrig',
 loc_title:'Standort teilen?',loc_sub:'Für goldene Stunde, Karte & Tierwelt in der Nähe',loc_yes:'Erlauben',loc_no:'Später',loc_me:'Mein Standort',loc_granted:'Standort aktiv',loc_denied:'Standortzugriff verweigert',wx_temp:'Temperatur',wx_wind:'Wind',wx_rain:'Regen',
-map_myloc:'Mein Standort',map_refresh:'Standort aktualisieren',map_note_ph:'Notiz hinzufügen...',map_note_save:'Speichern',map_note_edit:'Notiz',map_no_pins:'Noch keine Pins — klicke auf die Karte.',rv_del:'Löschen',rv_loc_title:'Standort für bessere Kartenerfahrung aktivieren',rv_loc_sub:'Zeigt deine Position auf der Karte',loc_updated:'Standort aktualisiert',
+map_myloc:'Mein Standort',map_refresh:'Standort aktualisieren',map_smart_btn:'Idealspot finden',spot_next:'Anderen Spot finden',map_note_ph:'Notiz hinzufügen...',map_note_save:'Speichern',map_note_edit:'Notiz',map_no_pins:'Noch keine Pins — klicke auf die Karte.',rv_del:'Löschen',rv_loc_title:'Standort für bessere Kartenerfahrung aktivieren',rv_loc_sub:'Zeigt deine Position auf der Karte',loc_updated:'Standort aktualisiert',
 sdr_title:'Einstellungen',sdr_lang:'Sprache',sdr_theme:'Erscheinungsbild',sdr_light:'Hell',sdr_dark:'Dunkel',sdr_loc:'Standort',sdr_install:'App installieren',sdr_install_lbl:'Wildify installieren',sdr_install_sub:'Zum Startbildschirm',
 ss_title:'🎯 Stealth Score',ss_sub:'Konfiguriere dein Setup — erhalte deinen Unsichtbarkeitswert.',ss_cloth:'Kleidung',ss_civil:'Zivilkleidung',ss_camo:'Tarnkleidung',ss_ghillie:'Ghillie-Anzug',ss_wind:'Windrichtung',ss_w_back:'Rückenwind',ss_w_side:'Seitenwind',ss_w_face:'Gegenwind',ss_cover:'Deckung',ss_c_open:'Freies Feld',ss_c_tree:'Am Baum',ss_c_hide:'Tarnung/Zelt',ss_shadow:'Licht',ss_s_sun:'Direktes Sonnenlicht',ss_s_shade:'Tiefer Schatten',
 ar_title:'⏳ Activity Radar',ar_sub:'Live-Aktivitätschancen basierend auf aktueller Tageszeit.',ar_note:'Aktualisiert alle 30s. Basierend auf europäischer Feldforschung.',
@@ -1678,20 +1704,42 @@ function wcRender(){
     }
 
     function initRevierMap(){
-      if(rvMap)return; // already init
+      if(rvMap)return;
       loadRVPins();
-      // Restore last map position
       let initLat=49.8, initLng=15.4, initZoom=8;
       try{
         const saved=JSON.parse(localStorage.getItem('wildify_map_view')||'null');
         if(saved&&saved.lat&&saved.lng&&saved.zoom){initLat=saved.lat;initLng=saved.lng;initZoom=saved.zoom;}
       }catch{}
       rvMap=L.map('revier-map').setView([initLat,initLng],initZoom);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        attribution:'© OpenStreetMap contributors',
+
+      // Klasická OSM vrstva
+      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',
         maxZoom:19
-      }).addTo(rvMap);
-      // Save map position on move/zoom
+      });
+      // Satelitní vrstva (Esri — zdarma)
+      const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+        attribution:'© Esri, Maxar, Earthstar Geographics',
+        maxZoom:19
+      });
+      // Výchozí vrstva
+      osmLayer.addTo(rvMap);
+
+      // Přepínač vrstev — lokalizovaný label
+      const tl = typeof lang!=='undefined'?lang:'en';
+      const lblClassic = {en:'🗺 Classic',cs:'🗺 Klasická',sk:'🗺 Klasická',de:'🗺 Klassisch'}[tl]||'🗺 Classic';
+      const lblSat     = {en:'🛰 Satellite',cs:'🛰 Satelit',sk:'🛰 Satelit',de:'🛰 Satellit'}[tl]||'🛰 Satellite';
+      window._rvLayers = {base:{[lblClassic]:osmLayer,[lblSat]:esriSat}};
+      window._rvLayerCtrl = L.control.layers(window._rvLayers.base,{},{position:'bottomright',collapsed:false}).addTo(rvMap);
+      // Uložit aktivní vrstvu
+      rvMap.on('baselayerchange', e=>{
+        localStorage.setItem('wildify_map_layer', e.name.includes('Sat')||e.name.includes('Satel')||e.name.includes('Satelit')?'sat':'osm');
+      });
+      // Obnovit vrstvu
+      const savedLayer = localStorage.getItem('wildify_map_layer');
+      if(savedLayer==='sat'){ rvMap.removeLayer(osmLayer); esriSat.addTo(rvMap); }
+
       function saveMapView(){
         const c=rvMap.getCenter();
         localStorage.setItem('wildify_map_view',JSON.stringify({lat:c.lat,lng:c.lng,zoom:rvMap.getZoom()}));
@@ -2105,7 +2153,7 @@ function openGear(id){
       const sec = document.getElementById('wlc-section');
       if(sec) sec.style.display='block';
       try{
-        const url=`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=auto&forecast_days=1`;
+        const url=`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLng}&current=temperature_2m,weathercode,windspeed_10m,winddirection_10m,precipitation&timezone=auto&forecast_days=1`;
         const res = await fetch(url);
         const d = await res.json();
         const cur = d.current;
@@ -2113,6 +2161,9 @@ function openGear(id){
         const temp = Math.round(cur.temperature_2m);
         const wind = Math.round(cur.windspeed_10m);
         const rain = cur.precipitation;
+        // Uložit pro Smart Spot Finder
+        window._lastWindKph = wind;
+        window._lastWindDeg = cur.winddirection_10m||0;
 
         // Weather description
         const wxDesc = getWxDesc(wc);
@@ -2164,34 +2215,284 @@ function openGear(id){
     }
 
     function pickWildlifeChance(wc, hour, month, wind, rain){
-      // Dawn/dusk windows
       const isDawn = hour>=4&&hour<=8;
       const isDusk = hour>=18&&hour<=21;
       const isGolden = isDawn||isDusk;
+      const isNight = hour<4||hour>21;
       const isFog = wc>=40&&wc<=48;
       const isClear = wc<=3;
       const isRain = wc>=50&&wc<=82;
       const isSnow = wc>=71&&wc<=77;
       const highWind = wind>30;
 
-      // Seasonal animals
-      const rutMonths=[8,9]; // Sep/Oct = Red Deer rut
-      const foxCubMonths=[3,4]; // Apr/May = Fox cubs
-      const owlMonths=[11,0,1]; // Dec/Jan/Feb = owls
-      const boarMonths=[5,6,7]; // Jun/Jul/Aug = boar piglets
-      const migrationMonths=[7,8,9]; // Aug/Sep/Oct = migration
+      // Sezónní okna
+      const rutMonths     = [8,9];    // Sep/Oct — říje jelena
+      const foxCubMonths  = [3,4];    // Apr/May — liščata
+      const owlMonths     = [11,0,1]; // Dec–Feb — sovy
+      const boarPiglets   = [4,5];    // May/Jun — selátka
+      const boarSummer    = [6,7];    // Jul/Aug — divočáci v kukuřici
+      const eagleTherm    = [4,5,6,7,8]; // May–Sep — orli
+      const kingfisher    = [2,3,4,5,6,7,8]; // Mar–Sep — ledňáček
+      const beaverSpring  = [2,3,4];  // Mar–May — bobři staví
+      const doeCalving    = [4,5];    // May/Jun — srnci
+      const badgerCubs    = [4,5,6];  // May–Jul — jezevčata
+      const migrationAut  = [7,8,9];  // Aug–Oct — tah ptáků
+      const winterFox     = [11,0,1,2]; // Dec–Mar — lišky v zimě
+      const woodpeckerSpr = [1,2,3];  // Feb–Apr — datli bubnují
+      const haresBoxing   = [1,2,3];  // Feb–Apr — zajíci
+      const otterWinter   = [10,11,0,1]; // Nov–Feb — vydry viditelné
 
-      if(isSnow){return{animal:'🦊',title:{en:'Fox in snow — magical light!',cs:'Liška ve sněhu — magické světlo!',sk:'Líška v snehu — magické svetlo!',de:'Fuchs im Schnee — magisches Licht!'},where:{en:'Open fields & forest edges',cs:'Otevřená pole a okraje lesů',sk:'Otvorené polia a okraje lesov',de:'Offene Felder & Waldränder'},tip:{en:'Snow creates white background — arrive at first light for steam breath shots.',cs:'Sníh tvoří bílé pozadí — přijďte za prvního světla pro záběry s pářením dechu.',sk:'Sneh tvorí biele pozadie — príďte za prvého svetla.',de:'Schnee schafft weißen Hintergrund — bei erstem Licht für Atemwolken.'}};}
-      if(isFog&&isGolden){return{animal:'🦌',title:{en:'Deer in fog — iconic shot!',cs:'Jeleni v mlze — ikonický záběr!',sk:'Jelene v hmle — ikonický záber!',de:'Hirsche im Nebel — ikonisch!'},where:{en:'Meadows & forest clearings',cs:'Louky a lesní mýtiny',sk:'Lúky a lesné mýtiny',de:'Wiesen & Waldlichtungen'},tip:{en:'Fog clears 6–9 AM — position yourself uphill for silhouettes emerging from the mist.',cs:'Mlha se rozptyluje 6–9 ráno — nastavte se na kopci pro siluety.',sk:'Hmla sa rozptyľuje 6–9 ráno — nastavte sa na kopci.',de:'Nebel lichtet sich 6–9 Uhr — Erhöhung für Silhouetten.'}};}
-      if(rutMonths.includes(month)&&isGolden){return{animal:'🦌',title:{en:'Red Deer rut — peak season!',cs:'Říje jelena — vrchol sezóny!',sk:'Ruja jelena — vrchol sezóny!',de:'Rothirsch-Brunft — Hochsaison!'},where:{en:'Wallows & forest clearings at dawn',cs:'Kaliště a mýtiny za svítání',sk:'Kaliská a mýtiny za svitania',de:'Schlammbäder & Lichtungen bei Morgengrauen'},tip:{en:'Be at the wallow before 5:30 AM. Listen for roaring — follow the sound.',cs:'U kaliště před 5:30. Poslouchejte řev — jděte za zvukem.',sk:'Pri kalisku pred 5:30. Počúvajte rev.',de:'Vor 5:30 am Schlammbad. Röhren folgen.'}};}
-      if(foxCubMonths.includes(month)){return{animal:'🦊',title:{en:'Fox cubs at the den!',cs:'Liščata u nory!',sk:'Líščatá pri nore!',de:'Fuchsjunge am Bau!'},where:{en:'Hedgerows, woodland edges',cs:'Remízky, okraje lesů',sk:'Remízky, okraje lesov',de:'Hecken & Waldränder'},tip:{en:'Magic hour from 25m hide at dusk — wait quietly and let cubs come to you.',cs:'Magická hodina ze 25m úkrytu za soumraku — čekejte tiše.',sk:'Magická hodina z 25m krytu za súmraku.',de:'Magische Stunde aus 25m-Versteck bei Dämmerung.'}};}
-      if(owlMonths.includes(month)){return{animal:'🦉',title:{en:'Long-eared Owls roosting',cs:'Kalousové v zimním nocovišti',sk:'Myšiarky v zimnom nočnom úkryte',de:'Waldohreulen im Winterroost'},where:{en:'Dense ivy & spruce stands',cs:'Hustý břečťan a smrkové porosty',sk:'Hustý brečtan a smrekové porasty',de:'Dichter Efeu & Fichtenstände'},tip:{en:'Visit roosts at dusk for spectacular departure. Arrive 20 min before dark.',cs:'Navštivte nocoviste za soumraku pro spektakulární odlet.',sk:'Navštívte nocovisko za súmraku.',de:'Dämmerung für spektakulären Abflug. 20 Min vor Dunkel.'}};}
-      if(boarMonths.includes(month)){return{animal:'🐗',title:{en:'Wild Boar family — piglets!',cs:'Prase divoké — selátka!',sk:'Diviak — seliatka!',de:'Wildschwein-Familie — Frischlinge!'},where:{en:'Forest clearings & mud wallows',cs:'Lesní mýtiny a kaliště',sk:'Lesné mýtiny a kaliská',de:'Waldlichtungen & Schlammbäder'},tip:{en:'Dawn and dusk. Find fresh rooting soil — piglets follow 30 min after sow appears.',cs:'Svítání a soumrak. Čerstvě rozrytá půda — selátka přicházejí 30 min po bachyni.',sk:'Svitanie a súmrak. Čerstvý výkop — seliatka prichádzajú 30 min po bachni.',de:'Dämmerung. Frischer Wühlboden — Frischlinge kommen 30 Min nach Bache.'}};}
-      if(isRain&&!highWind){return{animal:'🦆',title:{en:'Rain = active birds & mammals',cs:'Déšť = aktivní ptáci a savci',sk:'Dážď = aktívne vtáky a cicavce',de:'Regen = aktive Vögel & Säuger'},where:{en:'River banks, open paths',cs:'Říční břehy, otevřené cesty',sk:'Riečne brehy, otvorené cesty',de:'Flussufer, offene Wege'},tip:{en:'Blackbirds hunt worms on paths. Otter and beaver more active in rain. Protect your lens.',cs:'Kosové loví žížaly. Vydra a bobr jsou aktivnější. Chraňte objektiv.',sk:'Kosové lovujú dážďovky. Vydra a bobor sú aktívnejší.',de:'Amseln jagen Regenwürmer. Otter & Biber aktiver im Regen.'}};}
-      if(isClear&&isDawn){return{animal:'🦡',title:{en:'Badger morning session',cs:'Ranní session jezevce',sk:'Ranná sezóna jazveca',de:'Dachs Morgen-Session'},where:{en:'Sett entrances in woodland',cs:'Vchody nor v lese',sk:'Vchody nôr v lese',de:'Baueingänge im Wald'},tip:{en:'Clear still mornings — arrive 90 min before sunrise. No movement once in position.',cs:'Jasná klidná rána — přijďte 90 min před východem. Žádný pohyb na místě.',sk:'Jasné tiché rána — príďte 90 min pred východom.',de:'Klare Morgen — 90 Min vor Sonnenaufgang. Keine Bewegung.'}};}
+      // ─── Prioritní situace ───
+      if(isSnow) return{animal:'🦊',title:{en:'Fox in snow — magical light!',cs:'Liška ve sněhu — magické světlo!',sk:'Líška v snehu — magické svetlo!',de:'Fuchs im Schnee — magisches Licht!'},where:{en:'Open fields & forest edges',cs:'Otevřená pole a okraje lesů',sk:'Otvorené polia a okraje lesov',de:'Offene Felder & Waldränder'},tip:{en:'Snow = white background. First light for steaming breath shots.',cs:'Sníh = bílé pozadí. Za prvního světla záběry s pářením dechu.',sk:'Sneh = biele pozadie. Za prvého svetla záber s dychom.',de:'Schnee = weißer Hintergrund. Erstes Licht für Atemwolken-Shots.'}};
+      if(isFog&&isGolden) return{animal:'🦌',title:{en:'Deer in fog — iconic shot!',cs:'Jeleni v mlze — ikonický záběr!',sk:'Jelene v hmle — ikonický záber!',de:'Hirsche im Nebel — ikonisch!'},where:{en:'Meadows & forest clearings',cs:'Louky a lesní mýtiny',sk:'Lúky a lesné mýtiny',de:'Wiesen & Waldlichtungen'},tip:{en:'Fog clears 6–9 AM — position uphill for silhouettes.',cs:'Mlha se rozptyluje 6–9 ráno — nastavte se na kopci.',sk:'Hmla 6–9 ráno — nastavte sa na kopci.',de:'Nebel lichtet 6–9 Uhr — erhöhte Position für Silhouetten.'}};
+      if(rutMonths.includes(month)&&isGolden) return{animal:'🦌',title:{en:'Red Deer rut — peak season!',cs:'Říje jelena — vrchol sezóny!',sk:'Ruja jelena — vrchol sezóny!',de:'Rothirsch-Brunft — Hochsaison!'},where:{en:'Wallows & forest clearings at dawn',cs:'Kaliště a mýtiny za svítání',sk:'Kaliská a mýtiny za svitania',de:'Schlammbäder & Lichtungen'},tip:{en:'At the wallow before 5:30 AM. Follow the roaring.',cs:'U kaliště před 5:30. Jdi za řevem.',sk:'Pri kalisku pred 5:30. Choď za revom.',de:'Vor 5:30 am Schlammbad. Röhren folgen.'}};
+      if(foxCubMonths.includes(month)) return{animal:'🦊',title:{en:'Fox cubs at the den!',cs:'Liščata u nory!',sk:'Líščatá pri nore!',de:'Fuchsjunge am Bau!'},where:{en:'Hedgerows, woodland edges',cs:'Remízky, okraje lesů',sk:'Remízky, okraje lesov',de:'Hecken & Waldränder'},tip:{en:'25m hide at dusk — wait quietly, let cubs come to you.',cs:'25m úkryt za soumraku — čekej tiše, liščata přijdou za tebou.',sk:'25m kryt za súmraku — čakaj ticho.',de:'25m Versteck bei Dämmerung — ruhig warten.'}};
+      if(owlMonths.includes(month)) return{animal:'🦉',title:{en:'Long-eared Owls roosting',cs:'Kalousové v zimním nocovišti',sk:'Myšiarky v zimnom úkryte',de:'Waldohreulen im Winterroost'},where:{en:'Dense ivy & spruce stands',cs:'Hustý břečťan a smrkové porosty',sk:'Hustý brečtan a smrečiny',de:'Dichter Efeu & Fichtenstände'},tip:{en:'Visit at dusk — spectacular departure. Arrive 20 min before dark.',cs:'Navštiv za soumraku — spektakulární odlet. Přijď 20 min před tmou.',sk:'Navštív za súmraku. Príď 20 min pred tmou.',de:'Bei Dämmerung — spektakulärer Abflug. 20 Min vor Dunkel.'}};
+      if(boarPiglets.includes(month)) return{animal:'🐗',title:{en:'Wild Boar — tiny piglets!',cs:'Divočák — maličká selátka!',sk:'Diviak — maličké seliatka!',de:'Wildschwein — winzige Frischlinge!'},where:{en:'Forest edges & mud wallows',cs:'Okraje lesů a kaliště',sk:'Okraje lesov a kaliská',de:'Waldränder & Schlammbäder'},tip:{en:'Dawn and dusk. Find fresh rooting. Piglets appear 30 min after sow.',cs:'Svítání a soumrak. Čerstvě rozrytá půda. Selátka přijdou 30 min po bachyni.',sk:'Svitanie a súmrak. Seliatka 30 min po bachni.',de:'Dämmerung. Frischer Wühlboden. Frischlinge 30 Min nach Bache.'}};
+      if(boarSummer.includes(month)&&isNight) return{animal:'🐗',title:{en:'Boar in maize fields at night',cs:'Divočáci v kukuřici — noční akce',sk:'Diviaky v kukurici — nočná akcia',de:'Wildschweine im Mais bei Nacht'},where:{en:'Maize field edges after sunset',cs:'Okraje kukuřičných polí po západu',sk:'Okraje kukuričných polí po západe',de:'Maisfelderänder nach Sonnenuntergang'},tip:{en:'Wait at field edge 30 min after dark. Use NV or IR setup.',cs:'Čekej na okraji pole 30 min po setmění. Použij NV nebo IR.',sk:'Čakaj na okraji poľa 30 min po zotmení.',de:'Feldrand 30 Min nach Dunkel. NV oder IR Setup.'}};
+      if(doeCalving.includes(month)&&isGolden) return{animal:'🦌',title:{en:'Roe Deer fawns — first weeks!',cs:'Srnčata — první týdny!',sk:'Srny — prvé týždne!',de:'Rehkitze — erste Wochen!'},where:{en:'Tall grass & forest edges',cs:'Vysoká tráva a okraje lesů',sk:'Vysoká tráva a okraje lesov',de:'Hohes Gras & Waldränder'},tip:{en:'Stay 50m+ from fawns. Mother is nearby watching.',cs:'Zůstaň 50m+ od srnčat. Matka je nablízku a sleduje.',sk:'Zostaň 50m+ od srny. Matka je blízko.',de:'50m+ Abstand. Ricke ist in der Nähe.'}};
+      if(badgerCubs.includes(month)&&isDusk) return{animal:'🦡',title:{en:'Badger cubs above ground!',cs:'Jezevčata nad zemí!',sk:'Jazvečatá nad zemou!',de:'Dachsjunge über Boden!'},where:{en:'Woodland sett entrances at dusk',cs:'Vchody nor v lese za soumraku',sk:'Vchody nôr v lese za súmraku',de:'Baueingänge im Wald bei Dämmerung'},tip:{en:'Arrive 90 min before sunset. No movement once in position.',cs:'Přijď 90 min před západem. Na místě žádný pohyb.',sk:'Príď 90 min pred západom. Žiadny pohyb.',de:'90 Min vor Sonnenuntergang. Keine Bewegung.'}};
+      if(migrationAut.includes(month)) return{animal:'🦅',title:{en:'Autumn migration — raptors moving!',cs:'Podzimní tah — dravci v pohybu!',sk:'Jesenný ťah — dravce v pohybe!',de:'Herbstzug — Raubvögel ziehen!'},where:{en:'Ridges, valleys, coastlines',cs:'Hřebeny, údolí, pobřeží',sk:'Hrebene, doliny, pobrežie',de:'Kämme, Täler, Küstenlinien'},tip:{en:'North/NW winds = best migration days. Arrive at dawn on ridges.',cs:'Severní/SZ vítr = nejlepší dny tahu. Přijď za svítání na hřebeny.',sk:'Severný/SZ vietor = najlepšie dni ťahu.',de:'N/NW Wind = beste Zugtage. Bei Morgengrauen auf Kämme.'}};
+      if(haresBoxing.includes(month)&&isGolden) return{animal:'🐇',title:{en:'Hares boxing in the fields!',cs:'Zajíci se boxují na polích!',sk:'Zajace sa boxujú na poliach!',de:'Hasen boxen auf den Feldern!'},where:{en:'Open fields & meadow edges',cs:'Otevřená pole a okraje luk',sk:'Otvorené polia a okraje lúk',de:'Offene Felder & Wiesenränder'},tip:{en:'February–March: males chase females, spectacular boxing matches.',cs:'Únor–březen: samci pronásledují samice, spektakulární boje.',sk:'Február–marec: samce naháňajú samice.',de:'Feb–Mär: Männchen jagen Weibchen, spektakuläre Boxkämpfe.'}};
+      if(woodpeckerSpr.includes(month)&&(isDawn||hour>=8&&hour<=11)) return{animal:'🐦',title:{en:'Woodpeckers drumming at dawn',cs:'Datli bubnují při svítání',sk:'Ďatle bubnujú pri svitaní',de:'Spechte trommeln bei Morgengrauen'},where:{en:'Old beech & oak forest',cs:'Starý bučinový a dubový les',sk:'Starý bukový a dubový les',de:'Alter Buchen- und Eichenwald'},tip:{en:'Feb–Apr: each species drums a unique rhythm. Follow the sound.',cs:'Únor–duben: každý druh bubnuje unikátním rytmem. Jdi za zvukem.',sk:'Feb–apr: každý druh bubnuje inak. Choď za zvukom.',de:'Feb–Apr: jede Art trommelt einzigartig. Dem Klang folgen.'}};
+      if(eagleTherm.includes(month)&&hour>=9&&hour<=15) return{animal:'🦅',title:{en:'Eagles on thermals — fly shots!',cs:'Orli na termice — záběry letu!',sk:'Orly na termike — záber letu!',de:'Adler auf Thermik — Flugaufnahmen!'},where:{en:'Valley slopes & lake shores',cs:'Svahy údolí a břehy jezer',sk:'Svahy dolín a brehy jazier',de:'Talflanken & Seeufer'},tip:{en:'9 AM–3 PM thermals peak. Position yourself with sun behind you.',cs:'9–15h termika vrcholí. Postav se se sluncem za zády.',sk:'9–15h termika vrcholí. Postav sa so slnkom za chrbtom.',de:'9–15 Uhr Thermik-Peak. Sonne im Rücken.'}};
+      if(kingfisher.includes(month)&&(isDawn||isDusk)) return{animal:'💙',title:{en:'Kingfisher at the river!',cs:'Ledňáček na řece!',sk:'Rybárik na rieke!',de:'Eisvogel am Fluss!'},where:{en:'Clear rivers & stream banks',cs:'Čisté řeky a potoky',sk:'Čisté rieky a potoky',de:'Klare Flüsse & Bäche'},tip:{en:'Find a perch 30–80cm above water. Arrive early, wait quietly.',cs:'Najdi bidýlko 30–80cm nad vodou. Přijď brzy, čekej tiše.',sk:'Nájdi bidielko 30–80cm nad vodou. Príď skoro, čakaj ticho.',de:'Sitzwarte 30–80cm über Wasser. Früh ankommen, still warten.'}};
+      if(otterWinter.includes(month)&&isGolden) return{animal:'🦦',title:{en:'Otter — winter visibility peak!',cs:'Vydra — zimní vrchol viditelnosti!',sk:'Vydra — zimný vrchol viditeľnosti!',de:'Otter — Sichtigkeitspeak im Winter!'},where:{en:'Ice-free streams & weirs',cs:'Nezamrzlé potoky a jezy',sk:'Nezamrznuté potoky a hate',de:'Eisfreie Bäche & Wehre'},tip:{en:'Low vegetation = best visibility. Dawn sessions at weirs.',cs:'Nízká vegetace = nejlepší viditelnost. Ranní sezení u jezů.',sk:'Nízka vegetácia = najlepšia viditeľnosť. Ranné sedenie pri hatích.',de:'Wenig Vegetation = beste Sicht. Morgensitzungen an Wehren.'}};
+      if(isRain&&!highWind) return{animal:'🦆',title:{en:'Rain = active birds & mammals',cs:'Déšť = aktivní ptáci a savci',sk:'Dážď = aktívne vtáky a cicavce',de:'Regen = aktive Vögel & Säuger'},where:{en:'River banks & open paths',cs:'Říční břehy a otevřené cesty',sk:'Riečne brehy a otvorené cesty',de:'Flussufer & offene Wege'},tip:{en:'Blackbirds hunt worms on paths. Otter & beaver more active in rain.',cs:'Kosové loví žížaly. Vydra a bobr jsou aktivnější za deště.',sk:'Kosové lovujú dážďovky. Vydra a bobor sú aktívnejší.',de:'Amseln jagen Regenwürmer. Otter & Biber aktiver im Regen.'}};
+      if(isClear&&isDawn) return{animal:'🦡',title:{en:'Badger morning session',cs:'Ranní session jezevce',sk:'Ranná sezóna jazveca',de:'Dachs Morgen-Session'},where:{en:'Sett entrances in woodland',cs:'Vchody nor v lese',sk:'Vchody nôr v lese',de:'Baueingänge im Wald'},tip:{en:'Clear still mornings — arrive 90 min before sunrise.',cs:'Jasná klidná rána — přijď 90 min před východem.',sk:'Jasné tiché rána — príď 90 min pred východom.',de:'Klare Morgen — 90 Min vor Sonnenaufgang.'}};
       // Default
-      return{animal:'🐦',title:{en:'Golden hour — perfect for birding',cs:'Zlatá hodina — perfektní pro ptáky',sk:'Zlatá hodina — perfektné pre vtáky',de:'Goldene Stunde — perfekt für Vögel'},where:{en:'Forest edges, hedgerows, water',cs:'Okraje lesů, remízky, voda',sk:'Okraje lesov, remízky, voda',de:'Waldränder, Hecken, Gewässer'},tip:{en:'Be positioned 20 min before sunrise. Still air, low light — ideal for any species.',cs:'Buďte na místě 20 min před východem. Klidný vzduch, nízké světlo.',sk:'Buďte na mieste 20 min pred východom.',de:'20 Min vor Sonnenaufgang positionieren. Stille Luft, flaches Licht.'}}; 
+      return{animal:'🐦',title:{en:'Golden hour — perfect for wildlife',cs:'Zlatá hodina — ideální pro zvěř',sk:'Zlatá hodina — ideálne pre zver',de:'Goldene Stunde — ideal für Wildtiere'},where:{en:'Forest edges, hedgerows, water',cs:'Okraje lesů, remízky, voda',sk:'Okraje lesov, remízky, voda',de:'Waldränder, Hecken, Gewässer'},tip:{en:'Position 20 min before sunrise. Still air, low light — any species.',cs:'Na místě 20 min před východem. Klidný vzduch, nízké světlo.',sk:'Na mieste 20 min pred východom.',de:'20 Min vor Sonnenaufgang. Stille Luft, flaches Licht.'}};
     }
+
+    // ═══════════════════════════════════════════
+    // 🎯 SMART SPOT FINDER
+    // ═══════════════════════════════════════════
+    let smartMarker = null;
+    let smartCandidates = []; // všichni kandidáti seřazení
+    let smartIdx = 0;         // aktuálně zobrazený index
+
+    async function findSmartSpot(){ smartIdx = 0; await _runSmartSpot(); }
+    function showNextSpot(){ smartIdx++; _showCandidate(); }
+
+    async function _runSmartSpot(){
+      const btn = document.getElementById('map-smart-btn');
+      const result = document.getElementById('spot-result');
+      const tl = typeof lang!=='undefined'?lang:'en';
+
+      if(!userLat||!userLng){
+        showToast({en:'📍 Enable location first',cs:'📍 Nejdřív povolte polohu',sk:'📍 Najprv povoľte polohu',de:'📍 Standort zuerst aktivieren'}[tl]);
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.querySelector('span').textContent = {en:'Searching…',cs:'Hledám…',sk:'Hľadám…',de:'Suche…'}[tl]||'Searching…';
+      result.style.display = 'none';
+      document.getElementById('spot-next-btn').style.display = 'none';
+
+      const hour = new Date().getHours();
+      const isGolden = (hour>=4&&hour<=8)||(hour>=18&&hour<=21);
+      const isMidday  = hour>=10&&hour<=15;
+      const isNight   = hour<4||hour>21;
+      const windKph = window._lastWindKph||0;
+      const windDeg = window._lastWindDeg||0;
+
+      // Helper functions defined first so score() can use them
+      function dist(lat1,lng1,lat2,lng2){
+        const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
+        return Math.sqrt(dL*dL+dN*dN)*6371000;
+      }
+      function bearing(lat1,lng1,lat2,lng2){
+        const dL=(lng2-lng1)*Math.PI/180;
+        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
+        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)
+               -Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
+        return (Math.atan2(y,x)*180/Math.PI+360)%360;
+      }
+      function windOk(sLat,sLng){
+        const toSpot = bearing(userLat,userLng,sLat,sLng);
+        const windTo = (windDeg+180)%360;
+        const diff = Math.abs(toSpot-windTo);
+        return Math.min(diff,360-diff) > 45;
+      }
+
+      // Postupně rozšiřuj okruh dokud nenajdeme výsledky
+      let data = null;
+      for(const r of [4000, 10000, 20000, 40000]){
+        try{
+          const query = `[out:json][timeout:20];
+(
+  way["landuse"~"meadow|farmland|orchard"](around:${r},${userLat},${userLng});
+  way["natural"~"grassland|scrub|heath"](around:${r},${userLat},${userLng});
+  way["natural"~"wood|forest"](around:${r},${userLat},${userLng});
+  way["landuse"~"forest"](around:${r},${userLat},${userLng});
+  way["natural"="water"]["water"!="swimming_pool"](around:${r},${userLat},${userLng});
+  way["landuse"="reservoir"](around:${r},${userLat},${userLng});
+);
+out center 80;`;
+          const resp = await fetch('https://overpass-api.de/api/interpreter',{
+            method:'POST', body:'data='+encodeURIComponent(query)
+          });
+          const d = await resp.json();
+          if(d.elements && d.elements.filter(e=>e.center).length >= 3){
+            data = d; break;
+          }
+        }catch(e){ console.warn('Overpass attempt failed',e); }
+      }
+
+      btn.classList.remove('loading');
+      btn.querySelector('span').textContent = {en:'Find ideal spot',cs:'Najít ideální místo',sk:'Nájsť ideálne miesto',de:'Idealspot finden'}[tl]||'Find ideal spot';
+
+      if(!data || !data.elements){
+        _showNoSpot(tl); return;
+      }
+
+      const forests = data.elements.filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
+
+      function nearForest(lat,lng){
+        return forests.some(f=>f.center && dist(lat,lng,f.center.lat,f.center.lon)<600);
+      }
+
+      // SCORING — každý prvek dostane skóre wildlife vhodnosti
+      const WILDLIFE_SCORE = {
+        meadow:10, grassland:10, scrub:8, heath:7,
+        farmland:4, orchard:5,
+        wood:7, forest:7,
+        water:9, reservoir:7,
+      };
+
+      function score(el){
+        if(!el.center) return -999;
+        const lat=el.center.lat, lng=el.center.lon;
+        const d = dist(userLat,userLng,lat,lng);
+        if(d < 30) return -999;
+        const type = el.tags?.landuse||el.tags?.natural||'';
+        let s = (WILDLIFE_SCORE[type]||3) * 10;
+        // Denní doba
+        if(isGolden && ['meadow','grassland','scrub'].includes(type)) s += 40;
+        if(isGolden && nearForest(lat,lng)) s += 30;
+        if(isMidday && ['wood','forest'].includes(type)) s += 35;
+        if(isMidday && ['meadow','grassland'].includes(type)) s -= 15;
+        if(isNight  && ['meadow','grassland','farmland'].includes(type)) s += 20;
+        // Voda = vždy bonus
+        if(['water','reservoir'].includes(type)) s += 25;
+        // Okraj lesa = bonus
+        if(nearForest(lat,lng) && !['wood','forest'].includes(type)) s += 20;
+        // Vítr
+        if(windOk(lat,lng)) s += 20;
+        // Vzdálenostní penalta — preferuj bližší ale ne příliš malá penalty za daleká
+        s -= Math.sqrt(d) * 0.8;
+        return s;
+      }
+
+      smartCandidates = data.elements
+        .filter(e=>e.center)
+        .map(e=>({e, s:score(e), dist:dist(userLat,userLng,e.center.lat,e.center.lon)}))
+        .sort((a,b)=>b.s-a.s)
+        .slice(0, 15); // top 15 kandidátů
+
+      if(!smartCandidates.length){ _showNoSpot(tl); return; }
+      smartIdx = 0;
+      _showCandidate();
+    }
+
+    function _showCandidate(){
+      const tl = typeof lang!=='undefined'?lang:'en';
+      if(smartIdx >= smartCandidates.length){ smartIdx = 0; }
+      const {e: best, dist: bDistRaw} = smartCandidates[smartIdx];
+      const bLat=best.center.lat, bLng=best.center.lon;
+      const bDist=Math.round(bDistRaw);
+      const bType=best.tags?.landuse||best.tags?.natural||'area';
+
+      const hour = new Date().getHours();
+      const isGolden=(hour>=4&&hour<=8)||(hour>=18&&hour<=21);
+      const isMidday=hour>=10&&hour<=15;
+      const isNight=hour<4||hour>21;
+      const windKph=window._lastWindKph||0;
+      const windDeg=window._lastWindDeg||0;
+
+      function dist2(lat1,lng1,lat2,lng2){
+        const dL=(lat1-lat2)*Math.PI/180,dN=(lng1-lng2)*Math.PI/180;
+        return Math.sqrt(dL*dL+dN*dN)*6371000;
+      }
+      function bearing2(lat1,lng1,lat2,lng2){
+        const dL=(lng2-lng1)*Math.PI/180;
+        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
+        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
+        return (Math.atan2(y,x)*180/Math.PI+360)%360;
+      }
+      function windOk2(sLat,sLng){
+        const toSpot=bearing2(userLat,userLng,sLat,sLng);
+        const windTo=(windDeg+180)%360;
+        const diff=Math.abs(toSpot-windTo);
+        return Math.min(diff,360-diff)>45;
+      }
+      const forests2=smartCandidates.map(c=>c.e).filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
+      const nF=forests2.some(f=>f.center&&dist2(bLat,bLng,f.center.lat,f.center.lon)<600);
+      const wOk=windOk2(bLat,bLng);
+
+      const bBear=bearing2(userLat,userLng,bLat,bLng);
+      const directions={en:['N','NE','E','SE','S','SW','W','NW'],cs:['S','SV','V','JV','J','JZ','Z','SZ'],sk:['S','SV','V','JV','J','JZ','Z','SZ'],de:['N','NO','O','SO','S','SW','W','NW']};
+      const dirLabel=directions[tl][Math.round(bBear/45)%8];
+
+      const typeLabel={
+        meadow:{en:'meadow',cs:'louka',sk:'lúka',de:'Wiese'},
+        grassland:{en:'grassland',cs:'pastvina',sk:'pastvina',de:'Weide'},
+        farmland:{en:'farmland',cs:'pole',sk:'pole',de:'Feld'},
+        scrub:{en:'scrubland',cs:'křoviny',sk:'kroviny',de:'Gebüsch'},
+        heath:{en:'heath',cs:'vřesoviště',sk:'vresoviská',de:'Heide'},
+        wood:{en:'woodland',cs:'les',sk:'les',de:'Wald'},
+        forest:{en:'forest',cs:'les',sk:'les',de:'Wald'},
+        water:{en:'water body',cs:'vodní plocha',sk:'vodná plocha',de:'Gewässer'},
+        reservoir:{en:'reservoir',cs:'nádrž',sk:'nádrž',de:'Stausee'},
+        orchard:{en:'orchard',cs:'sad',sk:'sad',de:'Obstgarten'},
+      }[bType]||{en:bType||'area',cs:bType||'místo',sk:bType||'miesto',de:bType||'Gebiet'};
+
+      // Headline
+      const num = smartIdx>0 ? ` #${smartIdx+1}` : '';
+      const headlines={
+        en:`🎯 SPOT${num}: ${typeLabel.en} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
+        cs:`🎯 MÍSTO${num}: ${typeLabel.cs} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
+        sk:`🎯 MIESTO${num}: ${typeLabel.sk} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
+        de:`🎯 SPOT${num}: ${typeLabel.de} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
+      };
+
+      // Odůvodnění
+      const reasons=[];
+      if(isGolden) reasons.push({en:'🌅 Golden hour — wildlife most active',cs:'🌅 Zlatá hodina — zvěř nejaktivnější',sk:'🌅 Zlatá hodina — zver najaktívnejšia',de:'🌅 Goldene Stunde — Wildtiere am aktivsten'}[tl]);
+      if(isMidday) reasons.push({en:'☀️ Midday — animals in shade & cover',cs:'☀️ Poledne — zvěř ve stínu a krytu',sk:'☀️ Poludnie — zver v tieni a kryte',de:'☀️ Mittag — Tiere im Schatten & Deckung'}[tl]);
+      if(isNight)  reasons.push({en:'🌙 Night — fox, boar & badger active',cs:'🌙 Noc — liška, divočák & jezevec aktivní',sk:'🌙 Noc — líška, diviak & jazvec aktívni',de:'🌙 Nacht — Fuchs, Wildschwein & Dachs aktiv'}[tl]);
+      if(nF) reasons.push({en:'🌲 Near forest edge — animals emerge at dusk/dawn',cs:'🌲 U okraje lesa — zvěř vychází za soumraku',sk:'🌲 Pri okraji lesa — zver vychádza za súmraku',de:'🌲 Am Waldrand — Tiere kommen bei Dämmerung'}[tl]);
+      if(['water','reservoir'].includes(bType)) reasons.push({en:'💧 Water source — attracts deer, otter, heron',cs:'💧 Voda — přitahuje jeleny, vydry, volavky',sk:'💧 Voda — priťahuje jelene, vydry, volavky',de:'💧 Wasser — zieht Hirsche, Otter, Reiher an'}[tl]);
+      if(wOk&&windKph>2) reasons.push({en:`💨 Wind ${windKph}km/h — blows away from spot, scent safe`,cs:`💨 Vítr ${windKph}km/h — fouká od místa, pach bezpečný`,sk:`💨 Vietor ${windKph}km/h — fúka od miesta`,de:`💨 Wind ${windKph}km/h — weht vom Spot weg`}[tl]);
+      else if(!wOk&&windKph>2) reasons.push({en:`⚠️ Wind ${windKph}km/h — approach from downwind side`,cs:`⚠️ Vítr ${windKph}km/h — přibliž se z návětrné strany`,sk:`⚠️ Vietor ${windKph}km/h — priblíž sa z náveternej strany`,de:`⚠️ Wind ${windKph}km/h — von der Windseite annähern`}[tl]);
+      if(!reasons.length) reasons.push({en:'Good natural habitat for wildlife photography',cs:'Dobrý přírodní biotop pro fotografování zvěře',sk:'Dobrý prírodný biotop pre fotografovanie zveri',de:'Guter Naturlebensraum für Wildtierfotografie'}[tl]);
+
+      document.getElementById('spot-headline').textContent=headlines[tl]||headlines.en;
+      document.getElementById('spot-reason').innerHTML=reasons.map(r=>`<div style="margin-bottom:3px">• ${r}</div>`).join('');
+      document.getElementById('spot-result').style.display='block';
+
+      // Zobraz "Najít jiné" jen pokud existují další kandidáti
+      const nextBtn=document.getElementById('spot-next-btn');
+      nextBtn.style.display = smartCandidates.length>1 ? 'inline-flex' : 'none';
+
+      // Pulzující marker
+      if(smartMarker){ smartMarker.remove(); smartMarker=null; }
+      const pulseIcon=L.divIcon({html:`<div class="pulse-marker"></div>`,className:'',iconSize:[22,22],iconAnchor:[11,11]});
+      smartMarker=L.marker([bLat,bLng],{icon:pulseIcon,zIndexOffset:2000}).addTo(rvMap);
+      smartMarker.bindPopup((headlines[tl]||headlines.en)+'<br>'+reasons.map(r=>`• ${r}`).join('<br>')).openPopup();
+      rvMap.flyTo([bLat,bLng],14);
+    }
+
+    function _showNoSpot(tl){
+      const result=document.getElementById('spot-result');
+      document.getElementById('spot-headline').textContent={en:'No suitable spots found',cs:'Žádné vhodné místo nenalezeno',sk:'Žiadne vhodné miesto nenájdené',de:'Keine geeigneten Spots gefunden'}[tl]||'No suitable spots found';
+      document.getElementById('spot-reason').textContent={en:'Try enabling location or move to a less urban area.',cs:'Zkus povolit polohu nebo se přesuň do méně zastavěné oblasti.',sk:'Skús povoliť polohu alebo sa presuň do menej zastavaneho územia.',de:'Standort aktivieren oder in ländlichere Gegend wechseln.'}[tl]||'';
+      result.style.display='block';
+      document.getElementById('spot-next-btn').style.display='none';
+    }
+
+    // Zachovat zpětnou kompatibilitu
+    function showNoSpot(tl){ _showNoSpot(tl); }
 
     // Inicializace aplikace po načtení
     window.onload = () => {
@@ -2272,32 +2573,153 @@ function calcSS(){
 // ═══════════════════════════════════════════
 // ⏳ ACTIVITY RADAR
 // ═══════════════════════════════════════════
-const AR_ANIMALS = [
-  {emoji:'🦊',name:{en:'Red Fox',cs:'Liška obecná',sk:'Líška hrdzavá',de:'Rotfuchs'},
-   peak:[19,20,21,22,23,0,1,2,3,4,5],good:[6,7,18],
-   tip:{en:'Best at dusk at den sites · Jan–Feb vixen calling season',cs:'Nejlepší za soumraku u nor · hárání leden–únor',sk:'Najlepšia za súmraku pri norách · háranie jan–feb',de:'Beste Chancen bei Dämmerung · Jan–Feb Ranzzeit'}},
-  {emoji:'🦌',name:{en:'Red Deer',cs:'Jelen evropský',sk:'Jeleň lesný',de:'Rothirsch'},
-   peak:[4,5,6,7,18,19,20,21],good:[8,17],
-   tip:{en:'Sept–Oct rut is spectacular · dawn wallow visits year-round',cs:'Říje září–říjen je spektakulární · ranní kaliště celoročně',sk:'Ruja sep–okt je spektakulárna · ranné kaliská celoročne',de:'Sep–Okt Brunft spektakulär · Suhlenbesuche ganzjährig'}},
-  {emoji:'🐗',name:{en:'Wild Boar',cs:'Prase divoké',sk:'Diviak lesný',de:'Wildschwein'},
-   peak:[20,21,22,23,0,1,2,3],good:[4,5,6,19],
-   tip:{en:'Mostly nocturnal · find fresh rooting soil for scouting',cs:'Převážně noční · hledej čerstvě rozrytou půdu',sk:'Prevažne nočný · hľadaj čerstvý výkop',de:'Hauptsächlich nachtaktiv · frischen Wühlboden suchen'}},
-  {emoji:'🦡',name:{en:'Badger',cs:'Jezevec lesní',sk:'Jazvec lesný',de:'Dachs'},
-   peak:[21,22,23,0,1,2,3],good:[20,4,5],
-   tip:{en:'Emerges 30–60 min after dark · cubs above ground May–Jul',cs:'Vychází 30–60 min po setmění · mláďata nad zemí květ–červ',sk:'Vychádza 30–60 min po tme · mláďatá nad zemou máj–júl',de:'Kommt 30–60 min nach Dunkel · Junge Mai–Jul über Boden'}},
-  {emoji:'🦉',name:{en:'Tawny Owl',cs:'Puštík obecný',sk:'Sova lesná',de:'Waldkauz'},
-   peak:[21,22,23,0,1,2,3,4],good:[20,5],
-   tip:{en:'Oct–Feb calling season · roosts in dense ivy at dusk',cs:'Říjen–únor: volání · odpočívá v hustém břečťanu',sk:'Okt–feb: volanie · odpočíva v hustom brečtane',de:'Okt–Feb Rufsaison · Tageseinstand in dichtem Efeu'}},
-  {emoji:'🦅',name:{en:'White-tailed Eagle',cs:'Orel mořský',sk:'Orol morský',de:'Seeadler'},
-   peak:[8,9,10,14,15,16],good:[7,11,12,13],
-   tip:{en:'Thermal soaring 9 AM–3 PM best for flight shots',cs:'Termické kroužení 9–15h nejlepší pro záběry v letu',sk:'Termické krúženie 9–15h najlepšie pre záber v lete',de:'Thermiksegler 9–15 Uhr für Flugaufnahmen'}},
-  {emoji:'💙',name:{en:'Kingfisher',cs:'Ledňáček říční',sk:'Rybárik riečny',de:'Eisvogel'},
-   peak:[6,7,8,9,16,17,18],good:[10,15],
-   tip:{en:'Dawn fishing sessions most productive · Feb–Apr courtship pass',cs:'Ranní sezení nejproduktivnější · únor–duben námluvy',sk:'Ranné sedenie najproduktívnejšie · feb–apr námluvy',de:'Morgensitzungen am produktivsten · Feb–Apr Balz'}},
-  {emoji:'🦫',name:{en:'Beaver',cs:'Bobr evropský',sk:'Bobor európsky',de:'Biber'},
-   peak:[18,19,20,21,4,5,6],good:[7,17],
-   tip:{en:'Dusk & dawn on rivers · listen for splashing at dam',cs:'Soumrak a svítání na řekách · poslouchej cákání u hráze',sk:'Súmrak a svitanie na riekach · počúvaj cákanie pri hrádzi',de:'Dämmerung & Morgen an Flüssen · Plätschern am Damm'}},
-];
+// ═══════════════════════════════════════════
+// ACTIVITY RADAR — dynamicky z SP katalogu
+// ═══════════════════════════════════════════
+
+// Časové profily pro každý druh odvozeny z katalogu
+// Klíč: id druhu → {peak:[], good:[], tip:{en,cs,sk,de}, emoji, goldenBoost}
+const AR_PROFILES = {
+  // Ungulates
+  1: {emoji:'🦌', peak:[4,5,6,7,18,19,20,21], good:[8,17,22],
+    tip:{en:'Dawn wallow visits year-round · Sep–Oct rut spectacular',cs:'Ranní kaliště celoročně · říje září–říjen',sk:'Ranné kaliská celoročne · ruja sep–okt',de:'Morgenliche Suhle · Sep–Okt Brunft'}, golden:true},
+  2: {emoji:'🦌', peak:[4,5,6,7,19,20], good:[8,18,21],
+    tip:{en:'Dawn year-round · Jul–Aug rut: males circle trees',cs:'Svítání celoročně · červenec: samci v kruzích',sk:'Svitanie celoročne · júl: samce v kruhoch',de:'Morgengrauen · Jul–Aug Brunft: Böcke im Kreis'}, golden:true},
+  3: {emoji:'🦌', peak:[4,5,6,18,19,20], good:[7,17,21],
+    tip:{en:'Oct–Nov leks: males groan continuously',cs:'Říjnová tokaviště: samci groní',sk:'Októbrové tokaviská: samce grónia',de:'Okt–Nov Leks: Männchen gröhlen'}, golden:true},
+  4: {emoji:'🦌', peak:[4,5,6,18,19,20], good:[7,17],
+    tip:{en:'Rut Sep–Oct · dense forest clearings at dusk',cs:'Říje září–říjen · lesní mýtiny za soumraku',sk:'Ruja sep–okt · lesné mýtiny za súmraku',de:'Brunft Sep–Okt · Lichtungen bei Dämmerung'}, golden:true},
+  5: {emoji:'🫎', peak:[4,5,6,7,18,19,20], good:[8,17],
+    tip:{en:'Lake shores at dawn · rut Sep–Oct: males lose caution',cs:'Břehy jezer při svítání · říje: samci ztrácejí opatrnost',sk:'Brehy jazier pri svitaní',de:'Seeufer bei Morgengrauen · Brunft Sep–Okt'}, golden:true},
+  6: {emoji:'🐐', peak:[7,8,9,10,11,15,16], good:[6,12,13,14],
+    tip:{en:'Morning on rocky ridges · Nov rut: dramatic chasing',cs:'Dopoledne na hřebenech · říje: dramatické pronásledování',sk:'Dopoludnia na hrebeňoch',de:'Vormittags auf Graten · Nov Brunft'}, golden:false},
+  7: {emoji:'🐏', peak:[5,6,7,8,17,18,19], good:[9,10,16],
+    tip:{en:'Nov–Dec rut · dawn hillsides',cs:'Listopad-prosinec říje · svítání na svazích',sk:'Nov–dec ruja · svitanie na svahoch',de:'Nov–Dez Brunft · Morgendämmerung'}, golden:true},
+  // Predators
+  10: {emoji:'🦊', peak:[19,20,21,22,23,0,1,2,3,4,5], good:[6,7,18],
+    tip:{en:'Dusk/dawn · Jan–Feb vixen calling · April cubs',cs:'Soumrak/svítání · hárání leden–únor · liščata duben',sk:'Súmrak/svitanie · háranie jan–feb',de:'Dämmerung · Jan–Feb Ranzzeit · April Junge'}, golden:true},
+  11: {emoji:'🦡', peak:[21,22,23,0,1,2,3], good:[20,4,5],
+    tip:{en:'Emerges 30–60 min after dark · May cubs',cs:'Vychází 30–60 min po setmění · mláďata květen',sk:'Vychádza 30–60 min po tme',de:'Kommt 30–60 min nach Dunkel'}, golden:false},
+  12: {emoji:'🐺', peak:[4,5,6,7,18,19,20,21], good:[8,17],
+    tip:{en:'Dawn/dusk in large forest · Feb snow tracking',cs:'Svítání/soumrak v lese · únorové stopy',sk:'Svitanie/súmrak v lese',de:'Dämmerung in Großwäldern · Feb Schneefährten'}, golden:true},
+  13: {emoji:'🐱', peak:[18,19,20,4,5,6], good:[7,17,21],
+    tip:{en:'Crepuscular · Feb–Mar rut',cs:'Soumrakový · říje únor–březen',sk:'Súmrakový · ruja feb–mar',de:'Dämmerungsaktiv · Brunft Feb–Mär'}, golden:true},
+  14: {emoji:'🐻', peak:[17,18,19,20], good:[6,7,8,16],
+    tip:{en:'Aug–Sep berry season evenings · guided only',cs:'Srpen–září večer bobule · pouze s průvodcem',sk:'Aug–sep večer bobule · len s vodcom',de:'Aug–Sep Beerensaison Abend · nur mit Führer'}, golden:false},
+  15: {emoji:'🦝', peak:[20,21,22,23,0,1,4,5], good:[19,6],
+    tip:{en:'Night/dawn in wetlands · pairs travel together',cs:'Noc/svítání u mokřadů · páry cestují společně',sk:'Noc/svitanie pri mokradiach',de:'Nacht/Morgen in Feuchtgebieten'}, golden:false},
+  16: {emoji:'🐕', peak:[18,19,20,4,5,6], good:[7,17,21],
+    tip:{en:'Dusk/dawn · chorus howling at sunset',cs:'Soumrak/svítání · sborový houkot při soumraku',sk:'Súmrak/svitanie · zborový vyk',de:'Dämmerung · Chorgeheul bei Sonnenuntergang'}, golden:true},
+  // Small mammals
+  20: {emoji:'🐾', peak:[19,20,21,4,5,6], good:[18,7],
+    tip:{en:'Dusk/dawn near buildings · white bib visible',cs:'Soumrak/svítání u budov · bílý podbradník',sk:'Súmrak/svitanie pri budovách',de:'Dämmerung bei Gebäuden · weißes Kehlfleck'}, golden:false},
+  21: {emoji:'🌲', peak:[19,20,21,4,5,6], good:[18,7],
+    tip:{en:'Twilight in old forest · orange throat patch',cs:'Soumrak ve starém lese · oranžový flek',sk:'Súmrak v starom lese',de:'Dämmerung im Altwald · oranges Kehlfleck'}, golden:false},
+  22: {emoji:'🐿️', peak:[7,8,9,10,11], good:[6,12,13],
+    tip:{en:'Mornings year-round · near pine cone caches',cs:'Ráno celoročně · zásobnice šišek',sk:'Ráno celoročne',de:'Morgens ganzjährig · Kiefernzapfenvorräte'}, golden:false},
+  23: {emoji:'🦫', peak:[18,19,20,21,4,5,6], good:[7,17],
+    tip:{en:'Evening at water · dusk paddle after sunset',cs:'Večer u vody · plavba za soumraku',sk:'Večer pri vode',de:'Abend am Wasser · Dämmerungsfahrt'}, golden:true},
+  24: {emoji:'🐇', peak:[4,5,6,7,18,19,20], good:[8,17],
+    tip:{en:'Dawn/dusk · March boxing spectacular',cs:'Svítání/soumrak · březnový box',sk:'Svitanie/súmrak · marcový box',de:'Dämmerung · März-Boxkämpfe'}, golden:true},
+  25: {emoji:'🐇', peak:[4,5,6,19,20,21], good:[7,18],
+    tip:{en:'Dawn/dusk at warren · April young confiding',cs:'Svítání/soumrak u nory · dubnová mláďata',sk:'Svitanie/súmrak pri nore',de:'Dämmerung am Bau · April Junge'}, golden:false},
+  26: {emoji:'🌙', peak:[22,23,0,1,2,3], good:[21,4],
+    tip:{en:'Night summer/autumn · glowing red eyes in torch',cs:'Noc léto/podzim · červené oči při osvětlení',sk:'Noc leto/jeseň · červené oči',de:'Nacht Sommer/Herbst · rote Augen im Licht'}, golden:false},
+  27: {emoji:'🐿️', peak:[7,8,9,10,11], good:[6,12],
+    tip:{en:'Morning Apr–Oct · short grass steppe colonies',cs:'Ráno duben–říjen · kolonie',sk:'Ráno apríl–október · kolónie',de:'Morgens Apr–Okt · Kurzgras-Kolonien'}, golden:false},
+  // Raptors
+  30: {emoji:'🦅', peak:[8,9,10,14,15,16], good:[7,11,12,13],
+    tip:{en:'Thermal soaring 9–15h · fish plunge-diving at dawn',cs:'Termické kroužení 9–15h · rybolov při svítání',sk:'Termické krúženie 9–15h',de:'Thermik 9–15 Uhr · Fischjagd bei Morgengrauen'}, golden:false},
+  31: {emoji:'🦅', peak:[7,8,9,10,11,12,13,14,15,16], good:[6,17],
+    tip:{en:'Daytime year-round · fence posts and telephone poles',cs:'Přes den celoročně · plotové sloupky',sk:'Cez deň celoročne',de:'Tagsüber · Zaunpfosten und Masten'}, golden:false},
+  32: {emoji:'🦅', peak:[8,9,10,11,12,13,14,15,16], good:[7,17],
+    tip:{en:'Hovering over meadows · car hide works perfectly',cs:'Vznášení nad loukami · auto = úkryt',sk:'Vznášanie nad lúkami',de:'Rütteln über Wiesen · Auto als Versteck'}, golden:false},
+  33: {emoji:'🦅', peak:[4,5,6,7], good:[8,18,19],
+    tip:{en:'Feb–Mar display flights · dense forest at first light',cs:'Únor-březen námluvy · hustý les za prvního světla',sk:'Feb–mar námlety',de:'Feb–Mär Balzflüge · dichter Wald im ersten Licht'}, golden:true},
+  34: {emoji:'🦅', peak:[7,8,9,10,11,12], good:[6,13,14],
+    tip:{en:'Morning over reedbeds Apr–Sep',cs:'Ráno nad rákosím duben–září',sk:'Ráno nad trstinou apríl–sep',de:'Morgens über Schilf Apr–Sep'}, golden:false},
+  35: {emoji:'💙', peak:[6,7,8,9,16,17,18], good:[10,15],
+    tip:{en:'Dawn fishing most productive · Feb–Apr courtship pass',cs:'Ranní rybolov nejlepší · únor–duben námluvy',sk:'Ranné rybolov · feb–apr námluvy',de:'Morgens am produktivsten · Feb–Apr Balz'}, golden:true},
+  36: {emoji:'🕊️', peak:[6,7,8,9,10,11,12], good:[5,13,14],
+    tip:{en:'Morning at water · March heronries spectacular',cs:'Ráno u vody · březnové herójnice',sk:'Ráno pri vode · marcové kolónie',de:'Morgens am Wasser · März-Reiherkolonien'}, golden:false},
+  37: {emoji:'🦢', peak:[7,8,9,10,11,12], good:[6,13,14],
+    tip:{en:'Morning at forest streams · strictly protected',cs:'Ráno u lesních potoků · přísně chráněný',sk:'Ráno pri lesných potokoch',de:'Morgens an Waldflüssen · streng geschützt'}, golden:false},
+  // Songbirds
+  40: {emoji:'🦚', peak:[6,7,8,9,10], good:[5,11,12],
+    tip:{en:'Morning Apr–Sep · crest raised on landing',cs:'Ráno duben–září · zvednutá chocholka při přistání',sk:'Ráno apríl–sep · zdvihnutá chocholka',de:'Morgens Apr–Sep · Haube beim Landen'}, golden:false},
+  41: {emoji:'🌈', peak:[7,8,9,10,11,12,13], good:[6,14,15],
+    tip:{en:'Morning on wires May–Sep · sand cliff colonies',cs:'Ráno na drátech května–září',sk:'Ráno na drôtoch máj–sep',de:'Morgens auf Drähten Mai–Sep'}, golden:false},
+  42: {emoji:'🔵', peak:[7,8,9,10,11], good:[6,12,13],
+    tip:{en:'Morning on perches May–Aug · SE Europe',cs:'Ráno na sedadlech květen–srpen',sk:'Ráno na sedadlách máj–aug',de:'Morgens auf Sitzwarten Mai–Aug'}, golden:false},
+  43: {emoji:'💛', peak:[5,6,7,8], good:[9,10,18,19],
+    tip:{en:'May–Jul poplar groves at dawn · hear before you see',cs:'Květen–červenec topolové háje · uslyšíte dřív',sk:'Máj–júl topolové háje',de:'Mai–Jul Pappelwäldchen · Hören vor Sehen'}, golden:true},
+  44: {emoji:'🐦', peak:[5,6,7,8,9,10,11,12,13,14,15,16], good:[4,17],
+    tip:{en:'Year-round · most active at dawn',cs:'Celoročně · nejaktivnější při svítání',sk:'Celoročne · najaktívnejší pri svitaní',de:'Ganzjährig · aktivste bei Morgengrauen'}, golden:false},
+  45: {emoji:'🎵', peak:[5,6,7,8], good:[9,10,18,19],
+    tip:{en:'Spring dawn chorus · year-round',cs:'Jarní ranní chorus',sk:'Jarný ranný chorus',de:'Frühlingsdämmerungschor'}, golden:true},
+  46: {emoji:'⚫', peak:[5,6,7,8,9], good:[4,10,18,19,20],
+    tip:{en:'Dawn song · rain brings them onto open paths',cs:'Ranní zpěv · déšť na cesty',sk:'Ranný spev · dážď na chodníky',de:'Morgensong · Regen auf Wege'}, golden:true},
+  47: {emoji:'🐦', peak:[7,8,9,10,11,12,13,14], good:[6,15,16],
+    tip:{en:'Year-round · head-down trunk climbing',cs:'Celoročně · leze hlavou dolů',sk:'Celoročne · lezenie hlavou dole',de:'Ganzjährig · kopfunten klettern'}, golden:false},
+  48: {emoji:'🔴', peak:[4,5,6,7,8], good:[3,9,18,19,20],
+    tip:{en:'First voice of dawn chorus · approaches still observers',cs:'První hlas ranního chorusu · přiblíží se',sk:'Prvý hlas ranného chorusu',de:'Erste Stimme des Morgenchors'}, golden:true},
+  49: {emoji:'🐦', peak:[7,8,9,10,14,15,16,17], good:[6,11,12,13],
+    tip:{en:'Autumn acorn season · oak forest',cs:'Podzimní žaludová sezona',sk:'Jesenná žaľudová sezóna',de:'Herbst-Eichelsaison'}, golden:false},
+  50: {emoji:'🎶', peak:[5,6,7,8,19,20], good:[4,9,18,21],
+    tip:{en:'Spring dawn/dusk · repeating phrases',cs:'Jarní svítání/soumrak · opakuje fráze',sk:'Jarné svitanie/súmrak',de:'Frühlingsdämmerung · Phrasenwiederholung'}, golden:true},
+  51: {emoji:'🍃', peak:[8,9,10,11,12,13,14,15], good:[7,16],
+    tip:{en:'Autumn/winter in alders · hangs upside-down',cs:'Podzim/zima v olších · visí hlavou dolů',sk:'Jeseň/zima v jelšiach',de:'Herbst/Winter in Erlen · hängt kopfunten'}, golden:false},
+  52: {emoji:'🌟', peak:[7,8,9,10,11,12,13,14], good:[6,15,16],
+    tip:{en:'August thistle-feeding · spring dawn',cs:'Srpnové bodláky · jarní svítání',sk:'Augustové bodliaky',de:'August-Distelfressen · Frühlingsmorgen'}, golden:false},
+  // Owls
+  60: {emoji:'🦉', peak:[20,21,22,23,0,1,2], good:[19,3,4],
+    tip:{en:'Dusk · Feb–Mar territorial duet at rock faces',cs:'Soumrak · únor–březen duet u skalních stěn',sk:'Súmrak · feb–mar duet pri skalách',de:'Dämmerung · Feb–Mär Duett bei Felsen'}, golden:false},
+  61: {emoji:'🦉', peak:[21,22,23,0,1,2,3,4], good:[20,5],
+    tip:{en:'Dusk/night year-round · roost by day for evening departure',cs:'Soumrak/noc celoročně · nocovisko přes den',sk:'Súmrak/noc celoročne',de:'Dämmerung/Nacht · Tagesroost für Abendsitzung'}, golden:false},
+  62: {emoji:'🦉', peak:[20,21,22,23,0,1,2], good:[19,3,4],
+    tip:{en:'Winter roosts 10–20 birds · dusk departure',cs:'Zimní nocoviste 10–20 ptáků',sk:'Zimné nocovíská 10–20 vtákov',de:'Winterschlafplätze 10–20 Vögel'}, golden:false},
+  63: {emoji:'🦉', peak:[19,20,21,22,23,0], good:[18,1,2,3,4],
+    tip:{en:'Dusk year-round · old orchards and stone walls',cs:'Soumrak celoročně · staré sady a zdi',sk:'Súmrak celoročne · staré sady a múry',de:'Dämmerung · alte Obstgärten und Mauern'}, golden:false},
+  64: {emoji:'🦉', peak:[22,23,0,1,2,3], good:[21,4,5],
+    tip:{en:'Night · Feb–Apr territorial call in mountain forest',cs:'Noc · únor–duben horský les',sk:'Noc · feb–apr horský les',de:'Nacht · Feb–Apr Territorialruf'}, golden:false},
+  65: {emoji:'🦉', peak:[5,6,18,19,20,21], good:[7,17],
+    tip:{en:'Dusk/dawn · also active in daylight (sparrow-sized!)',cs:'Soumrak/svítání · aktivní i přes den',sk:'Súmrak/svitanie · aktívny aj cez deň',de:'Dämmerung/Morgen · auch tagsüber aktiv'}, golden:true},
+  66: {emoji:'🦉', peak:[8,9,10,11,12,13,14,15], good:[7,16],
+    tip:{en:'Winter visitor only · daytime active in irruption years',cs:'Pouze zimní host · aktivní přes den',sk:'Len zimný hosť · aktívny cez deň',de:'Nur Wintergast · tagsüber aktiv'}, golden:false},
+  // Other
+  70: {emoji:'🐗', peak:[20,21,22,23,0,1,2,3], good:[4,5,6,19],
+    tip:{en:'Mostly nocturnal · May piglets with sow',cs:'Převážně noční · selátka v květnu',sk:'Prevažne nočný · seliatka v máji',de:'Hauptsächlich nachtaktiv · Mai Frischlinge'}, golden:false},
+  71: {emoji:'🐓', peak:[4,5,6], good:[3],
+    tip:{en:'Lek Apr–May 4–7 AM ONLY · strictly controlled access',cs:'Tok duben–květen POUZE 4–7 ráno',sk:'Tok apríl–máj LEN 4–7 ráno',de:'Balz Apr–Mai NUR 4–7 Uhr'}, golden:false},
+  72: {emoji:'🐦', peak:[3,4,5,6], good:[2],
+    tip:{en:'Lek Mar–May dawn only · bubbling call at 3 AM',cs:'Tok březen–květen svítání · bublání ve 3:00',sk:'Tok mar–máj svitanie · bublanie o 3:00',de:'Balz Mär–Mai Morgengrauen · Blubbern um 3 Uhr'}, golden:false},
+  73: {emoji:'🐦', peak:[7,8,9,10,11,12,13,14,15], good:[6,16],
+    tip:{en:'Year-round · Feb–Apr drumming near sunrise',cs:'Celoročně · únor–duben bubnování',sk:'Celoročne · feb–apr bubnование',de:'Ganzjährig · Feb–Apr Trommeln'}, golden:false},
+  74: {emoji:'⚫', peak:[5,6,7,8,9,10], good:[4,11],
+    tip:{en:'Early morning old beech forest · loud call carries far',cs:'Brzy ráno starý buk · hlasité klee-klee',sk:'Skoro ráno starý buk',de:'Früh morgens Altbuche · lautes Klii-Klii'}, golden:true},
+  75: {emoji:'💚', peak:[7,8,9,10,11,12], good:[6,13,14],
+    tip:{en:'Morning · probes ant hills in meadows',cs:'Ráno · sonduje mraveniště',sk:'Ráno · sonduje mravenisko',de:'Morgens · Ameisenhügel sondieren'}, golden:false},
+};
+
+// Sestavit AR_ANIMALS dynamicky z SP + AR_PROFILES
+function buildARAnimals(){
+  const month = new Date().getMonth(); // 0=Jan
+  return SP
+    .filter(sp => AR_PROFILES[sp.id] && sp.season[month] > 0)
+    .map(sp => {
+      const p = AR_PROFILES[sp.id];
+      return {
+        id: sp.id,
+        emoji: p.emoji,
+        name: sp.n,
+        peak: p.peak,
+        good: p.good,
+        tip: p.tip,
+        golden: p.golden,
+        seasonScore: sp.season[month], // 0-5, váha pro aktuální měsíc
+      };
+    });
+}
 
 let arTimer = null;
 
@@ -2321,11 +2743,21 @@ function getScene(hour){
 }
 
 function getChance(animal, hour, scene){
-  let base = animal.peak.includes(hour)?90 : animal.good.includes(hour)?55 : 12;
-  if((scene==='golden_dawn'||scene==='golden_dusk') && ['🦌','🦊','🦡','💙','🦫'].includes(animal.emoji))
-    base = Math.min(97, base+18);
-  // subtle pulse so it feels live
-  base = Math.max(5, Math.min(97, base + Math.round(Math.sin(Date.now()/25000+animal.emoji.codePointAt(0))*4)));
+  let base = animal.peak.includes(hour) ? 88
+           : animal.good.includes(hour) ? 55 : 10;
+  // Zlatá hodina boost
+  if((scene==='golden_dawn'||scene==='golden_dusk') && animal.golden)
+    base = Math.min(97, base + 15);
+  // Sezónní váha — druhy mimo sezónu mají nižší maximum
+  const sMax = animal.seasonScore >= 4 ? 97
+             : animal.seasonScore === 3 ? 90
+             : animal.seasonScore === 2 ? 75
+             : animal.seasonScore === 1 ? 50 : 20;
+  base = Math.min(base, sMax);
+  // Živý pulz (+/- 4%)
+  base = Math.max(5, Math.min(97,
+    base + Math.round(Math.sin(Date.now()/25000 + animal.id*0.7)*4)
+  ));
   return base;
 }
 
@@ -2337,14 +2769,24 @@ function renderActivityRadar(){
 
   const clockEl = document.getElementById('ar-clock');
   if(clockEl){
-    const labels = {golden_dawn:{en:'🌅 Golden dawn',cs:'🌅 Zlaté svítání',sk:'🌅 Zlaté svitanie',de:'🌅 Morgendämmerung'},golden_dusk:{en:'🌆 Golden dusk',cs:'🌆 Zlatý soumrak',sk:'🌆 Zlatý súmrak',de:'🌆 Abenddämmerung'},day:{en:'☀️ Daytime',cs:'☀️ Den',sk:'☀️ Deň',de:'☀️ Tagsüber'},night:{en:'🌙 Night',cs:'🌙 Noc',sk:'🌙 Noc',de:'🌙 Nacht'}};
-    clockEl.textContent = now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+(labels[scene][tl]||labels[scene].en);
+    const labels = {
+      golden_dawn:{en:'🌅 Golden dawn',cs:'🌅 Zlaté svítání',sk:'🌅 Zlaté svitanie',de:'🌅 Morgendämmerung'},
+      golden_dusk:{en:'🌆 Golden dusk',cs:'🌆 Zlatý soumrak',sk:'🌆 Zlatý súmrak',de:'🌆 Abenddämmerung'},
+      day:{en:'☀️ Daytime',cs:'☀️ Den',sk:'☀️ Deň',de:'☀️ Tagsüber'},
+      night:{en:'🌙 Night',cs:'🌙 Noc',sk:'🌙 Noc',de:'🌙 Nacht'}
+    };
+    clockEl.textContent = now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+      +' · '+(labels[scene][tl]||labels[scene].en);
   }
 
   const list = document.getElementById('ar-list');
   if(!list) return;
 
-  const scored = AR_ANIMALS.map(a=>({a,pct:getChance(a,hour,scene)})).sort((x,y)=>y.pct-x.pct);
+  const allAnimals = buildARAnimals();
+  const scored = allAnimals
+    .map(a => ({a, pct: getChance(a, hour, scene)}))
+    .sort((x,y) => y.pct - x.pct)
+    .slice(0, 8); // vždy top 8 nejaktivnějších
 
   const STATUS = {
     active:{en:'ACTIVE',cs:'AKTIVNÍ',sk:'AKTÍVNY',de:'AKTIV'},
