@@ -2,11 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#2d6a2d">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1a3a1f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wildify">
+<script>
+// Block pinch-to-zoom everywhere EXCEPT Leaflet map container
+document.addEventListener('touchstart', function(e){
+  if(e.touches.length>1){
+    const t=e.target;
+    if(!t.closest('#revier-map')) e.preventDefault();
+  }
+},{passive:false});
+// Block double-tap zoom
+let _lastTap=0;
+document.addEventListener('touchend', function(e){
+  if(e.target.closest('#revier-map')) return;
+  const now=Date.now();
+  if(now-_lastTap<300) e.preventDefault();
+  _lastTap=now;
+},{passive:false});
+</script>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png">
@@ -57,9 +74,8 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 .theme-btn.on{border-color:var(--g3);background:var(--g6);color:var(--g1)}
 .loc-sdr-btn{width:100%;padding:12px 14px;border-radius:8px;border:2px solid var(--brd);background:var(--bg);color:var(--text);font-size:13px;font-weight:600;text-align:left;display:flex;align-items:center;gap:10px;transition:.15s}
 .loc-sdr-btn.granted{border-color:var(--g3);background:var(--g6);color:var(--g1)}
-/* Map location button */
-.map-loc-btn{background:#fff;border:2px solid var(--brd);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--g1);box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.map-loc-btn:hover{background:var(--g6)}
+/* Map location button (legacy - kept for compat) */
+.map-loc-btn{background:#fff;border:2px solid var(--brd);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--g1);box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
 /* Gear cards */
 .gear-card{background:var(--bg3);border:1px solid var(--brd2);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px;transition:.15s;cursor:pointer}
 .gear-card:hover{border-color:var(--g3);box-shadow:0 3px 12px rgba(45,106,45,.12);transform:translateY(-1px)}
@@ -92,12 +108,26 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 .ar-pct{font-size:16px;font-weight:900;flex-shrink:0;position:relative}
 #revier-map-wrap{position:relative}
 /* Smart Spot Finder */
-#map-smart-btn{background:var(--g1);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;transition:.2s;white-space:nowrap}
-#map-smart-btn:hover{background:var(--g2);transform:translateY(-1px)}
-#map-smart-btn.loading{opacity:.7;pointer-events:none}
-#spot-result{display:none;margin-top:12px;background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:14px;font-size:13px;line-height:1.7}
-#spot-result .spot-headline{font-size:14px;font-weight:800;color:var(--g1);margin-bottom:6px}
-#spot-result .spot-reason{color:var(--text2)}
+/* Map icon buttons */
+.map-icon-btn{width:34px;height:34px;background:#fff;border:1.5px solid var(--brd);border-radius:7px;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:.15s;padding:0;cursor:pointer;font-weight:700}
+.map-icon-btn:hover{background:var(--g6);border-color:var(--g3)}
+/* Map hamburger dropdown */
+.map-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;font-size:14px;font-weight:600;color:var(--text);background:none;border:none;cursor:pointer;text-align:left;transition:.12s}
+.map-menu-item:hover{background:var(--g6);color:var(--g1)}
+.map-menu-item.active{color:var(--g1);font-weight:800}
+/* Note modal */
+#note-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;align-items:center;justify-content:center;padding:20px}
+#note-modal-overlay.open{display:flex}
+#note-modal{background:var(--bg3);border-radius:14px;width:100%;max-width:460px;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;display:flex;flex-direction:column;max-height:90vh}
+.note-modal-hdr{padding:16px 18px 12px;border-bottom:1px solid var(--brd2);display:flex;align-items:center;gap:10px}
+.note-modal-title{font-size:15px;font-weight:800;flex:1;color:var(--text)}
+.note-modal-type{font-size:22px}
+.note-modal-body{padding:16px 18px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.note-saved-text{background:var(--bg);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;min-height:44px;border:1px solid var(--brd2)}
+.note-saved-empty{color:var(--text3);font-style:italic}
+#note-textarea{width:100%;padding:12px 14px;border:1.5px solid var(--brd);border-radius:8px;font-size:14px;font-family:var(--font);background:var(--bg3);color:var(--text);resize:none;line-height:1.6;min-height:100px}
+#note-textarea:focus{outline:none;border-color:var(--g3)}
+.note-modal-footer{padding:12px 18px;border-top:1px solid var(--brd2);display:flex;gap:8px}
 @keyframes pulse-ring{0%{transform:scale(1);opacity:1}100%{transform:scale(2.8);opacity:0}}
 .pulse-marker{width:22px;height:22px;background:#ff6f00;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.4);position:relative}
 .pulse-marker::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:3px solid #ff6f00;animation:pulse-ring 1.4s ease-out infinite}
@@ -114,9 +144,14 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 .rv-pin-btn.del:hover{background:#ffebee}
 button{cursor:pointer;font-family:var(--font);border:none;background:none}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
-#hdr{background:var(--g1);color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.hi{max-width:1080px;margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:10px;height:52px}
-.logo{font-weight:800;font-size:18px;color:#fff}
+#hdr{background:#1a3a1f;color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 rgba(255,255,255,.06),0 4px 20px rgba(0,0,0,.3)}
+body.dark #hdr{background:#0d1f0d}
+.hi{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:12px;height:50px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;user-select:none}
+.logo-mark{width:28px;height:28px;background:rgba(255,255,255,.12);border-radius:7px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-text{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.logo-text span{color:rgba(255,255,255,.45);font-weight:400;font-size:13px;letter-spacing:0}
+.hs{flex:1}
 .hs{flex:1}
 .lb{padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700;color:rgba(255,255,255,.6);background:transparent}
 .lb.on,.lb:hover{background:rgba(255,255,255,.25);color:#fff}
@@ -254,7 +289,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 @media(max-width:400px){.wcf{grid-template-columns:1fr!important}}
 
 /* REVIER MAP */
-#revier-map{height:420px;border-radius:var(--r);border:1px solid var(--brd);margin-bottom:14px}
+#revier-map{height:480px;border-radius:var(--r);border:1px solid var(--brd);margin-bottom:0}
 .rv-types{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .rv-type{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;border:2px solid var(--brd);background:var(--bg3);color:var(--text);cursor:pointer;transition:.15s}
 .rv-type.on{border-color:var(--g1);background:var(--g1);color:#fff}
@@ -289,7 +324,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 
 /* Mobile / touch improvements */
 @media(max-width:640px){
-  #revier-map{height:320px}
+  #revier-map{height:360px}
   .rv-types{gap:6px}
   .rv-type{padding:5px 10px;font-size:12px}
   .amb-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
@@ -392,10 +427,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 
 <div id="hdr">
   <div class="hi">
-    <div class="logo">🌿 Wildify<span style="opacity:.6;font-weight:400">.eu</span></div>
+    <div class="logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-text">Wildify<span>.app</span></div>
+    </div>
     <div class="hs"></div>
-    <button id="btn-install-hdr" onclick="showInstallUI()">📲 Instalovat</button>
-    <button id="btn-settings" onclick="openSettings()" title="Settings / Nastavení">⚙️</button>
+    <button id="btn-install-hdr" onclick="showInstallUI()" title="Install">📲</button>
+    <button id="btn-settings" onclick="openSettings()" title="Settings">⚙️</button>
   </div>
 </div>
 
@@ -522,27 +560,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
     <div class="rv-types" id="rv-types"></div>
     <div id="revier-map-wrap">
       <div id="revier-map"></div>
-      <div style="position:absolute;top:10px;right:10px;z-index:400;display:flex;flex-direction:column;gap:6px">
-        <button class="map-loc-btn" onclick="mapGoToMyLoc()" id="map-loc-btn">
-          📍 <span data-t="map_myloc">My location</span>
-        </button>
-        <button class="map-loc-btn" onclick="mapRefreshLoc()" id="map-refresh-btn">
-          🔄 <span data-t="map_refresh">Update location</span>
-        </button>
+      <!-- Zoom buttons top-left -->
+      <div style="position:absolute;top:10px;left:10px;z-index:400;display:flex;flex-direction:column;gap:4px">
+        <button class="map-icon-btn" onclick="rvMap&&rvMap.zoomIn()" title="+">＋</button>
+        <button class="map-icon-btn" onclick="rvMap&&rvMap.zoomOut()" title="−">－</button>
       </div>
-      <!-- Smart Spot Finder button - bottom left -->
-      <div style="position:absolute;bottom:14px;left:10px;z-index:400">
-        <button id="map-smart-btn" onclick="findSmartSpot()">
-          🎯 <span data-t="map_smart_btn">Find ideal spot</span>
-        </button>
+      <!-- Hamburger menu top-right -->
+      <div style="position:absolute;top:10px;right:10px;z-index:400">
+        <button class="map-icon-btn" id="map-menu-btn" onclick="toggleMapMenu()" title="Map menu">☰</button>
+        <div id="map-menu-dropdown" style="display:none;position:absolute;top:40px;right:0;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.18);min-width:200px;overflow:hidden;z-index:500">
+          <div style="padding:8px 6px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding-left:14px" data-t="map_menu_location">Location</div>
+          <button class="map-menu-item" onclick="mapGoToMyLoc();closeMapMenu()">📍 <span data-t="map_myloc">My location</span></button>
+          <button class="map-menu-item" onclick="mapRefreshLoc();closeMapMenu()">🔄 <span data-t="map_refresh">Update location</span></button>
+          <div style="height:1px;background:var(--brd2);margin:4px 0"></div>
+          <div style="padding:8px 6px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding-left:14px" data-t="map_menu_layer">Map style</div>
+          <button class="map-menu-item" id="menu-osm-btn" onclick="setMapLayer('osm');closeMapMenu()">🗺 <span data-t="map_classic">Classic</span></button>
+          <button class="map-menu-item" id="menu-sat-btn" onclick="setMapLayer('sat');closeMapMenu()">🛰 <span data-t="map_satellite">Satellite</span></button>
+        </div>
       </div>
     </div>
-    <!-- Smart Spot Result -->
-    <div id="spot-result">
+    <!-- Smart Spot + result panel — below the map, not overlapping -->
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button id="map-smart-btn" onclick="findSmartSpot()" style="flex:1;min-width:160px">
+        🎯 <span data-t="map_smart_btn">Find ideal spot</span>
+      </button>
+    </div>
+    <div id="spot-result" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:14px;font-size:13px;line-height:1.7">
       <div class="spot-headline" id="spot-headline"></div>
       <div class="spot-reason" id="spot-reason"></div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button id="spot-next-btn" onclick="showNextSpot()" style="display:none;padding:8px 14px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">
+      <div style="margin-top:10px">
+        <button id="spot-next-btn" onclick="showNextSpot()" style="display:none;padding:7px 14px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">
           🔄 <span data-t="spot_next">Find another spot</span>
         </button>
       </div>
@@ -787,7 +834,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Fog','Frost','Rain','Snow','Overcast','Bright sun','Backlight','Golden hour'],
 sn:'Nose',se:'Ears',sy:'Eyes',sd:'Critical',sh:'High',sm:'Medium',sl2:'Low',
 loc_title:'Share your location?',loc_sub:'For golden hour, map & wildlife chances near you',loc_yes:'Allow',loc_no:'Later',loc_me:'My location',loc_granted:'Location active',loc_denied:'Location access denied',wx_temp:'Temp',wx_wind:'Wind',wx_rain:'Rain',
-map_myloc:'My location',map_refresh:'Update location',map_smart_btn:'Find ideal spot',spot_next:'Find another spot',map_note_ph:'Add a note...',map_note_save:'Save',map_note_edit:'Note',map_no_pins:'No pins yet — click the map to add one.',rv_del:'Delete',rv_loc_title:'Enable location for better map experience',rv_loc_sub:'Shows your position on the map',loc_updated:'Location updated',
+map_myloc:'My location',map_refresh:'Update location',map_smart_btn:'Find ideal spot',spot_next:'Find another spot',map_menu_location:'Location',map_menu_layer:'Map style',map_classic:'Classic',map_satellite:'Satellite',note_saved:'Saved note',note_edit_lbl:'Edit note',note_cancel:'Cancel',map_note_ph:'Add a note...',map_note_save:'Save',map_note_edit:'Note',map_no_pins:'No pins yet — click the map to add one.',rv_del:'Delete',rv_loc_title:'Enable location for better map experience',rv_loc_sub:'Shows your position on the map',loc_updated:'Location updated',
 sdr_title:'Settings',sdr_lang:'Language',sdr_theme:'Appearance',sdr_light:'Light',sdr_dark:'Dark',sdr_loc:'Location',sdr_install:'Install app',sdr_install_lbl:'Install Wildify',sdr_install_sub:'Add to home screen',
 gh_calc:'Golden Hour Calculator',gh_calc_btn:'Calculate',gh_myloc:'📍 My Location',gh_sunrise:'🌄 Sunrise',gh_sunset:'🌇 Sunset',gh_daylen:'⏱ Day length',gh_mgold:'🌅 Morning gold',gh_egold:'🌆 Evening gold',gh_civ:'🌒 Civil twilight',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Upload a photo — it will be blurred and overlaid with your exposure settings.',wc_drop_lbl:'Click or drop photo here',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Download Card',wc_new:'✕ New photo',wc_ss_lbl:'Shutter Speed',wc_ap_lbl:'Aperture',
@@ -815,7 +862,7 @@ ms:['L','Ú','B','D','K','Č','Č','S','Z','Ř','L','P'],
 wc:['Mlha','Mráz','Déšť','Sníh','Oblačno','Jasno','Protisvětlo','Zlatá hodina'],
 sn:'Čich',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Střední',sl2:'Nízké',
 loc_title:'Sdílet polohu?',loc_sub:'Pro zlatou hodinu, mapu a šance na zvěř poblíž',loc_yes:'Povolit',loc_no:'Později',loc_me:'Moje poloha',loc_granted:'Poloha aktivní',loc_denied:'Přístup k poloze zamítnut',wx_temp:'Teplota',wx_wind:'Vítr',wx_rain:'Déšť',
-map_myloc:'Moje poloha',map_refresh:'Aktualizovat polohu',map_smart_btn:'Najít ideální místo',spot_next:'Najít jiné místo',map_note_ph:'Přidat poznámku...',map_note_save:'Uložit',map_note_edit:'Poznámka',map_no_pins:'Zatím žádné body — klikni na mapu.',rv_del:'Smazat',rv_loc_title:'Povolit polohu pro lepší zážitek z mapy',rv_loc_sub:'Zobrazí tvoji pozici na mapě',loc_updated:'Poloha aktualizována',
+map_myloc:'Moje poloha',map_refresh:'Aktualizovat polohu',map_smart_btn:'Najít ideální místo',spot_next:'Najít jiné místo',map_menu_location:'Poloha',map_menu_layer:'Styl mapy',map_classic:'Klasická',map_satellite:'Satelit',note_saved:'Uložená poznámka',note_edit_lbl:'Upravit poznámku',note_cancel:'Zrušit',map_note_ph:'Přidat poznámku...',map_note_save:'Uložit',map_note_edit:'Poznámka',map_no_pins:'Zatím žádné body — klikni na mapu.',rv_del:'Smazat',rv_loc_title:'Povolit polohu pro lepší zážitek z mapy',rv_loc_sub:'Zobrazí tvoji pozici na mapě',loc_updated:'Poloha aktualizována',
 sdr_title:'Nastavení',sdr_lang:'Jazyk',sdr_theme:'Vzhled',sdr_light:'Světlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Instalace',sdr_install_lbl:'Instalovat Wildify',sdr_install_sub:'Přidat na plochu',
 gh_calc:'Kalkulačka zlaté hodiny',gh_calc_btn:'Vypočítat',gh_myloc:'📍 Moje poloha',gh_sunrise:'🌄 Východ',gh_sunset:'🌇 Západ',gh_daylen:'⏱ Délka dne',gh_mgold:'🌅 Ranní zlatá',gh_egold:'🌆 Večerní zlatá',gh_civ:'🌒 Civilní soumrak',
 wc_title:'📸 Wildify Technical Card',wc_sub:'Nahraj fotku — bude rozostřená s překrytím tvojích nastavení.',wc_drop_lbl:'Klikni nebo přetáhni fotku',wc_drop_fmt:'JPG · PNG · WEBP',wc_dl:'⬇ Stáhnout kartu',wc_new:'✕ Nová fotka',wc_ss_lbl:'Čas závěrky',wc_ap_lbl:'Clona',
@@ -843,7 +890,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Hmla','Mráz','Dážď','Sneh','Zamračeno','Jasno','Protisvietlo','Zlatá hodina'],
 sn:'Čuch',se:'Sluch',sy:'Zrak',sd:'Kritické',sh:'Vysoké',sm:'Stredné',sl2:'Nízke',
 loc_title:'Zdieľať polohu?',loc_sub:'Pre zlatú hodinu, mapu a šance na zvieratá poblíž',loc_yes:'Povoliť',loc_no:'Neskôr',loc_me:'Moja poloha',loc_granted:'Poloha aktívna',loc_denied:'Prístup k polohe zamietnutý',wx_temp:'Teplota',wx_wind:'Vietor',wx_rain:'Dážď',
-map_myloc:'Moja poloha',map_refresh:'Aktualizovať polohu',map_smart_btn:'Nájsť ideálne miesto',spot_next:'Nájsť iné miesto',map_note_ph:'Pridať poznámku...',map_note_save:'Uložiť',map_note_edit:'Poznámka',map_no_pins:'Zatiaľ žiadne body — klikni na mapu.',rv_del:'Zmazať',rv_loc_title:'Povoliť polohu pre lepší zážitok z mapy',rv_loc_sub:'Zobrazí tvoju pozíciu na mape',loc_updated:'Poloha aktualizovaná',
+map_myloc:'Moja poloha',map_refresh:'Aktualizovať polohu',map_smart_btn:'Nájsť ideálne miesto',spot_next:'Nájsť iné miesto',map_menu_location:'Poloha',map_menu_layer:'Štýl mapy',map_classic:'Klasická',map_satellite:'Satelit',note_saved:'Uložená poznámka',note_edit_lbl:'Upraviť poznámku',note_cancel:'Zrušiť',map_note_ph:'Pridať poznámku...',map_note_save:'Uložiť',map_note_edit:'Poznámka',map_no_pins:'Zatiaľ žiadne body — klikni na mapu.',rv_del:'Zmazať',rv_loc_title:'Povoliť polohu pre lepší zážitok z mapy',rv_loc_sub:'Zobrazí tvoju pozíciu na mape',loc_updated:'Poloha aktualizovaná',
 sdr_title:'Nastavenia',sdr_lang:'Jazyk',sdr_theme:'Vzhľad',sdr_light:'Svetlý',sdr_dark:'Tmavý',sdr_loc:'Poloha',sdr_install:'Inštalácia',sdr_install_lbl:'Inštalovať Wildify',sdr_install_sub:'Pridať na plochu',
 ss_title:'🎯 Stealth Score',ss_sub:'Nakonfiguruj svoje terénne nastavenie — získaj skóre neviditeľnosti.',ss_cloth:'Oblečenie',ss_civil:'Civilné',ss_camo:'Maskáč',ss_ghillie:'Ghillie',ss_wind:'Smer vetra',ss_w_back:'Po vetre',ss_w_side:'Bočný vietor',ss_w_face:'Proti vetru',ss_cover:'Krytie',ss_c_open:'Voľné priestranstvo',ss_c_tree:'Pri strome',ss_c_hide:'Stan/kryt',ss_shadow:'Svetlo',ss_s_sun:'Priame slnko',ss_s_shade:'Hlboký tieň',
 ar_title:'⏳ Activity Radar',ar_sub:'Aktuálne šance aktivity podľa dennej doby a svetla.',ar_note:'Aktualizuje každých 30s. Podľa terénneho výskumu v Európe.',
@@ -867,7 +914,7 @@ ms:['J','F','M','A','M','J','J','A','S','O','N','D'],
 wc:['Nebel','Frost','Regen','Schnee','Bewölkt','Sonnig','Gegenlicht','Goldene Stunde'],
 sn:'Nase',se:'Ohren',sy:'Augen',sd:'Kritisch',sh:'Hoch',sm:'Mittel',sl2:'Niedrig',
 loc_title:'Standort teilen?',loc_sub:'Für goldene Stunde, Karte & Tierwelt in der Nähe',loc_yes:'Erlauben',loc_no:'Später',loc_me:'Mein Standort',loc_granted:'Standort aktiv',loc_denied:'Standortzugriff verweigert',wx_temp:'Temperatur',wx_wind:'Wind',wx_rain:'Regen',
-map_myloc:'Mein Standort',map_refresh:'Standort aktualisieren',map_smart_btn:'Idealspot finden',spot_next:'Anderen Spot finden',map_note_ph:'Notiz hinzufügen...',map_note_save:'Speichern',map_note_edit:'Notiz',map_no_pins:'Noch keine Pins — klicke auf die Karte.',rv_del:'Löschen',rv_loc_title:'Standort für bessere Kartenerfahrung aktivieren',rv_loc_sub:'Zeigt deine Position auf der Karte',loc_updated:'Standort aktualisiert',
+map_myloc:'Mein Standort',map_refresh:'Standort aktualisieren',map_smart_btn:'Idealspot finden',spot_next:'Anderen Spot finden',map_menu_location:'Standort',map_menu_layer:'Kartenstil',map_classic:'Klassisch',map_satellite:'Satellit',note_saved:'Gespeicherte Notiz',note_edit_lbl:'Notiz bearbeiten',note_cancel:'Abbrechen',map_note_ph:'Notiz hinzufügen...',map_note_save:'Speichern',map_note_edit:'Notiz',map_no_pins:'Noch keine Pins — klicke auf die Karte.',rv_del:'Löschen',rv_loc_title:'Standort für bessere Kartenerfahrung aktivieren',rv_loc_sub:'Zeigt deine Position auf der Karte',loc_updated:'Standort aktualisiert',
 sdr_title:'Einstellungen',sdr_lang:'Sprache',sdr_theme:'Erscheinungsbild',sdr_light:'Hell',sdr_dark:'Dunkel',sdr_loc:'Standort',sdr_install:'App installieren',sdr_install_lbl:'Wildify installieren',sdr_install_sub:'Zum Startbildschirm',
 ss_title:'🎯 Stealth Score',ss_sub:'Konfiguriere dein Setup — erhalte deinen Unsichtbarkeitswert.',ss_cloth:'Kleidung',ss_civil:'Zivilkleidung',ss_camo:'Tarnkleidung',ss_ghillie:'Ghillie-Anzug',ss_wind:'Windrichtung',ss_w_back:'Rückenwind',ss_w_side:'Seitenwind',ss_w_face:'Gegenwind',ss_cover:'Deckung',ss_c_open:'Freies Feld',ss_c_tree:'Am Baum',ss_c_hide:'Tarnung/Zelt',ss_shadow:'Licht',ss_s_sun:'Direktes Sonnenlicht',ss_s_shade:'Tiefer Schatten',
 ar_title:'⏳ Activity Radar',ar_sub:'Live-Aktivitätschancen basierend auf aktueller Tageszeit.',ar_note:'Aktualisiert alle 30s. Basierend auf europäischer Feldforschung.',
@@ -1711,34 +1758,21 @@ function wcRender(){
         const saved=JSON.parse(localStorage.getItem('wildify_map_view')||'null');
         if(saved&&saved.lat&&saved.lng&&saved.zoom){initLat=saved.lat;initLng=saved.lng;initZoom=saved.zoom;}
       }catch{}
-      rvMap=L.map('revier-map').setView([initLat,initLng],initZoom);
+      rvMap=L.map('revier-map',{zoomControl:false}).setView([initLat,initLng],initZoom);
 
-      // Klasická OSM vrstva
-      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',
-        maxZoom:19
+      // OSM vrstva
+      window._osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:19
       });
-      // Satelitní vrstva (Esri — zdarma)
-      const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
-        attribution:'© Esri, Maxar, Earthstar Geographics',
-        maxZoom:19
+      // Esri satelit
+      window._satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+        attribution:'© Esri, Maxar',maxZoom:19
       });
-      // Výchozí vrstva
-      osmLayer.addTo(rvMap);
 
-      // Přepínač vrstev — lokalizovaný label
-      const tl = typeof lang!=='undefined'?lang:'en';
-      const lblClassic = {en:'🗺 Classic',cs:'🗺 Klasická',sk:'🗺 Klasická',de:'🗺 Klassisch'}[tl]||'🗺 Classic';
-      const lblSat     = {en:'🛰 Satellite',cs:'🛰 Satelit',sk:'🛰 Satelit',de:'🛰 Satellit'}[tl]||'🛰 Satellite';
-      window._rvLayers = {base:{[lblClassic]:osmLayer,[lblSat]:esriSat}};
-      window._rvLayerCtrl = L.control.layers(window._rvLayers.base,{},{position:'bottomright',collapsed:false}).addTo(rvMap);
-      // Uložit aktivní vrstvu
-      rvMap.on('baselayerchange', e=>{
-        localStorage.setItem('wildify_map_layer', e.name.includes('Sat')||e.name.includes('Satel')||e.name.includes('Satelit')?'sat':'osm');
-      });
-      // Obnovit vrstvu
-      const savedLayer = localStorage.getItem('wildify_map_layer');
-      if(savedLayer==='sat'){ rvMap.removeLayer(osmLayer); esriSat.addTo(rvMap); }
+      // Načíst uloženou vrstvu
+      const savedLayer = localStorage.getItem('wildify_map_layer')||'osm';
+      (savedLayer==='sat' ? window._satLayer : window._osmLayer).addTo(rvMap);
+      updateMapMenuActive(savedLayer);
 
       function saveMapView(){
         const c=rvMap.getCenter();
@@ -1746,12 +1780,41 @@ function wcRender(){
       }
       rvMap.on('moveend',saveMapView);
       rvMap.on('zoomend',saveMapView);
-      rvMap.on('click',function(e){
-        rvAddPin(e.latlng.lat,e.latlng.lng,rvSelType);
-      });
+      rvMap.on('click',function(e){ rvAddPin(e.latlng.lat,e.latlng.lng,rvSelType); });
       rvRedrawMarkers();
       renderRVPins();
     }
+
+    function setMapLayer(type){
+      if(!rvMap) return;
+      if(type==='sat'){
+        if(rvMap.hasLayer(window._osmLayer)) rvMap.removeLayer(window._osmLayer);
+        if(!rvMap.hasLayer(window._satLayer)) window._satLayer.addTo(rvMap);
+      } else {
+        if(rvMap.hasLayer(window._satLayer)) rvMap.removeLayer(window._satLayer);
+        if(!rvMap.hasLayer(window._osmLayer)) window._osmLayer.addTo(rvMap);
+      }
+      localStorage.setItem('wildify_map_layer',type);
+      updateMapMenuActive(type);
+    }
+
+    function updateMapMenuActive(type){
+      document.getElementById('menu-osm-btn')?.classList.toggle('active', type==='osm');
+      document.getElementById('menu-sat-btn')?.classList.toggle('active', type==='sat');
+    }
+
+    function toggleMapMenu(){
+      const d = document.getElementById('map-menu-dropdown');
+      if(d) d.style.display = d.style.display==='none' ? 'block' : 'none';
+    }
+    function closeMapMenu(){
+      const d = document.getElementById('map-menu-dropdown');
+      if(d) d.style.display='none';
+    }
+    // Close menu when clicking outside
+    document.addEventListener('click', e=>{
+      if(!e.target.closest('#map-menu-btn')&&!e.target.closest('#map-menu-dropdown')) closeMapMenu();
+    });
 
     function rvAddPin(lat,lng,type){
       const pin={id:Date.now(),lat,lng,type,note:''};
@@ -1788,44 +1851,64 @@ function wcRender(){
       el.innerHTML=rvPins.map(p=>`
         <div class="rv-pin" id="rp-${p.id}">
           <div class="rv-pin-top">
-            <span style="font-size:20px">${rvTypeEmoji(p.type)}</span>
+            <span style="font-size:22px">${rvTypeEmoji(p.type)}</span>
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:700">${rvTypeLbl(p.type)}</div>
-              <div style="font-size:11px;color:var(--text3)">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</div>
+              <div style="font-size:11px;color:var(--text3)">${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
+              ${p.note?`<div style="font-size:12px;color:var(--text2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${p.note.replace(/</g,'&lt;').replace(/\n/g,' ')}</div>`:''}
             </div>
-            <button class="rv-pin-btn" onclick="rvFlyTo(${p.lat},${p.lng})">🎯</button>
-          </div>
-          ${p.note ? `<div class="rv-pin-note">${p.note.replace(/</g,'&lt;')}</div>` : ''}
-          <div class="rv-pin-actions">
-            <button class="rv-pin-btn" onclick="rvEditNote(${p.id})">✏️ <span data-t="map_note_edit">Note</span></button>
-            <button class="rv-pin-btn del" onclick="rvDeletePin(${p.id})">🗑 <span data-t="rv_del">Delete</span></button>
-          </div>
-          <div id="rn-${p.id}" style="display:none;margin-top:6px">
-            <textarea class="rv-pin-note-input" id="rni-${p.id}" rows="3" placeholder="${t('map_note_ph')}">${p.note||''}</textarea>
-            <div style="display:flex;gap:6px;margin-top:4px">
-              <button class="rv-pin-btn" style="background:var(--g6);color:var(--g1);border-color:var(--g3)" onclick="rvSaveNote(${p.id})">${t('map_note_save')}</button>
-              <button class="rv-pin-btn" onclick="document.getElementById('rn-${p.id}').style.display='none'">✕</button>
+            <div style="display:flex;gap:5px;flex-shrink:0">
+              <button class="rv-pin-btn" onclick="rvFlyTo(${p.lat},${p.lng})" title="Fly to">🎯</button>
+              <button class="rv-pin-btn" onclick="openNoteModal(${p.id})" title="Note">✏️</button>
+              <button class="rv-pin-btn del" onclick="rvDeletePin(${p.id})" title="Delete">🗑</button>
             </div>
           </div>
         </div>`).join('');
     }
 
-    function rvEditNote(id){
-      const el=document.getElementById('rn-'+id);
-      if(!el)return;
-      el.style.display=el.style.display==='none'?'block':'none';
-      if(el.style.display==='block') document.getElementById('rni-'+id)?.focus();
+    // ─── Note Modal ───────────────────────────────
+    let _notePinId = null;
+
+    function openNoteModal(id){
+      const pin = rvPins.find(p=>p.id===id);
+      if(!pin) return;
+      _notePinId = id;
+      document.getElementById('note-modal-icon').textContent = rvTypeEmoji(pin.type);
+      document.getElementById('note-modal-title').textContent = rvTypeLbl(pin.type);
+      document.getElementById('note-modal-coords').textContent = `${pin.lat.toFixed(5)}, ${pin.lng.toFixed(5)}`;
+      const saved = document.getElementById('note-saved-display');
+      const tl = typeof lang!=='undefined'?lang:'en';
+      if(pin.note){
+        saved.textContent = pin.note;
+        saved.classList.remove('note-saved-empty');
+      } else {
+        saved.textContent = {en:'No note yet.',cs:'Zatím žádná poznámka.',sk:'Zatiaľ žiadna poznámka.',de:'Noch keine Notiz.'}[tl]||'No note yet.';
+        saved.classList.add('note-saved-empty');
+      }
+      document.getElementById('note-textarea').value = pin.note||'';
+      document.getElementById('note-textarea').placeholder = t('map_note_ph')||'Add a note…';
+      document.getElementById('note-modal-overlay').classList.add('open');
+      setTimeout(()=>document.getElementById('note-textarea').focus(),150);
     }
 
-    function rvSaveNote(id){
-      const pin=rvPins.find(p=>p.id===id);
-      if(!pin)return;
-      pin.note=(document.getElementById('rni-'+id)?.value||'').trim();
+    function closeNoteModal(e){
+      if(e && e.target!==document.getElementById('note-modal-overlay')) return;
+      document.getElementById('note-modal-overlay').classList.remove('open');
+      _notePinId = null;
+    }
+
+    function saveNoteModal(){
+      if(_notePinId===null) return;
+      const pin = rvPins.find(p=>p.id===_notePinId);
+      if(!pin) return;
+      pin.note = document.getElementById('note-textarea').value.trim();
       saveRVPins();
-      // update popup if open
-      const m=rvMarkers.find(x=>x.id===id);
+      // Update map popup
+      const m = rvMarkers.find(x=>x.id===_notePinId);
       if(m) m.marker.setPopupContent(rvPopupHTML(pin));
       renderRVPins();
+      document.getElementById('note-modal-overlay').classList.remove('open');
+      _notePinId = null;
     }
 
     function rvFlyTo(lat,lng){
@@ -2317,18 +2400,23 @@ function openGear(id){
 
       // Postupně rozšiřuj okruh dokud nenajdeme výsledky
       let data = null;
-      for(const r of [4000, 10000, 20000, 40000]){
+      for(const r of [5000, 12000, 25000, 50000]){
         try{
-          const query = `[out:json][timeout:20];
+          const query = `[out:json][timeout:25];
 (
-  way["landuse"~"meadow|farmland|orchard"](around:${r},${userLat},${userLng});
-  way["natural"~"grassland|scrub|heath"](around:${r},${userLat},${userLng});
-  way["natural"~"wood|forest"](around:${r},${userLat},${userLng});
-  way["landuse"~"forest"](around:${r},${userLat},${userLng});
-  way["natural"="water"]["water"!="swimming_pool"](around:${r},${userLat},${userLng});
+  way["landuse"="meadow"](around:${r},${userLat},${userLng});
+  way["landuse"="farmland"](around:${r},${userLat},${userLng});
+  way["landuse"="orchard"](around:${r},${userLat},${userLng});
+  way["natural"="grassland"](around:${r},${userLat},${userLng});
+  way["natural"="scrub"](around:${r},${userLat},${userLng});
+  way["natural"="heath"](around:${r},${userLat},${userLng});
+  way["natural"="wood"](around:${r},${userLat},${userLng});
+  way["landuse"="forest"](around:${r},${userLat},${userLng});
+  way["natural"="water"](around:${r},${userLat},${userLng});
   way["landuse"="reservoir"](around:${r},${userLat},${userLng});
+  way["natural"="wetland"](around:${r},${userLat},${userLng});
 );
-out center 80;`;
+out center 60;`;
           const resp = await fetch('https://overpass-api.de/api/interpreter',{
             method:'POST', body:'data='+encodeURIComponent(query)
           });
@@ -2890,5 +2978,33 @@ function startActivityRadar(){
     });
   }
 </script>
+<!-- Note Modal -->
+<div id="note-modal-overlay" onclick="closeNoteModal(event)">
+  <div id="note-modal">
+    <div class="note-modal-hdr">
+      <div class="note-modal-type" id="note-modal-icon">📍</div>
+      <div>
+        <div class="note-modal-title" id="note-modal-title">Pin note</div>
+        <div style="font-size:11px;color:var(--text3)" id="note-modal-coords"></div>
+      </div>
+      <button onclick="closeNoteModal()" style="width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--brd);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">✕</button>
+    </div>
+    <div class="note-modal-body">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px" data-t="note_saved">Saved note</div>
+        <div id="note-saved-display" class="note-saved-text note-saved-empty"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px" data-t="note_edit_lbl">Edit note</div>
+        <textarea id="note-textarea" rows="4" placeholder=""></textarea>
+      </div>
+    </div>
+    <div class="note-modal-footer">
+      <button onclick="saveNoteModal()" style="flex:1;padding:11px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer" data-t="map_note_save">Save</button>
+      <button onclick="closeNoteModal()" style="padding:11px 18px;background:var(--bg);border:1px solid var(--brd);border-radius:8px;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer" data-t="note_cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
