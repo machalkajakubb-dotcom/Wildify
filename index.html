@@ -144,7 +144,7 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 .rv-pin-btn.del:hover{background:#ffebee}
 button{cursor:pointer;font-family:var(--font);border:none;background:none}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
-#hdr{background:#1a3a1f;color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 rgba(255,255,255,.06),0 4px 20px rgba(0,0,0,.3)}
+#hdr{background:#1a3a1f;color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 rgba(255,255,255,.06),0 4px 20px rgba(0,0,0,.3);padding-top:env(safe-area-inset-top,0px)}
 body.dark #hdr{background:#0d1f0d}
 .hi{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:12px;height:50px}
 .logo{display:flex;align-items:center;gap:8px;text-decoration:none;user-select:none}
@@ -1010,6 +1010,8 @@ function requestLocationFromSettings(){
     onLocationReady();
     renderLocStatus();
     showToast('📍 '+t('loc_granted'));
+    // Start continuous watcher
+    if(_locWatcher===null) initUserLocation();
   },()=>{ showToast('Location denied'); });
 }
 
@@ -1017,19 +1019,43 @@ function requestLocationFromSettings(){
 // USER LOCATION SYSTEM
 // ═══════════════════════════════════════════
 let userLat = null, userLng = null;
+let _locWatcher = null;
 
 function initUserLocation(){
-  // Only restore if already granted before - never auto-ask
+  // Načti uloženou polohu okamžitě
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
     if(saved&&saved.lat&&saved.lng){
       userLat=saved.lat; userLng=saved.lng;
-      // Hide the map location invite strip immediately
-      const strip = document.getElementById('rv-loc-strip');
-      if(strip) strip.style.display = 'none';
+      const strip=document.getElementById('rv-loc-strip');
+      if(strip) strip.style.display='none';
       onLocationReady();
     }
   }catch{}
+
+  // Spusť watchPosition pokud je povoleno
+  if(!navigator.geolocation) return;
+  if(_locWatcher!==null) return; // již běží
+  _locWatcher = navigator.geolocation.watchPosition(
+    p=>{
+      const newLat=p.coords.latitude, newLng=p.coords.longitude;
+      // Aktualizuj jen pokud se poloha změnila o víc než ~5m
+      const moved = userLat ? _geoDistM(userLat,userLng,newLat,newLng) : 999;
+      userLat=newLat; userLng=newLng;
+      localStorage.setItem('wildify_user_loc',JSON.stringify({lat:userLat,lng:userLng}));
+      const strip=document.getElementById('rv-loc-strip');
+      if(strip) strip.style.display='none';
+      if(moved>5){ onLocationReady(); renderLocStatus(); }
+      applyLocationToMap();
+    },
+    err=>{ console.log('watchPosition error:',err.code,err.message); },
+    {enableHighAccuracy:true, timeout:15000, maximumAge:20000}
+  );
+}
+
+function _geoDistM(lat1,lng1,lat2,lng2){
+  const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
+  return Math.sqrt(dL*dL+dN*dN)*6371000;
 }
 
 function mapRefreshLoc(){
@@ -2369,205 +2395,188 @@ function openGear(id){
 
       btn.classList.add('loading');
       btn.querySelector('span').textContent = {en:'Searching…',cs:'Hledám…',sk:'Hľadám…',de:'Suche…'}[tl]||'Searching…';
-      result.style.display = 'none';
-      document.getElementById('spot-next-btn').style.display = 'none';
+      result.style.display='none';
+      document.getElementById('spot-next-btn').style.display='none';
 
-      const hour = new Date().getHours();
-      const isGolden = (hour>=4&&hour<=8)||(hour>=18&&hour<=21);
-      const isMidday  = hour>=10&&hour<=15;
-      const isNight   = hour<4||hour>21;
-      const windKph = window._lastWindKph||0;
-      const windDeg = window._lastWindDeg||0;
-
-      // Helper functions defined first so score() can use them
-      function dist(lat1,lng1,lat2,lng2){
-        const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
-        return Math.sqrt(dL*dL+dN*dN)*6371000;
-      }
-      function bearing(lat1,lng1,lat2,lng2){
-        const dL=(lng2-lng1)*Math.PI/180;
-        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
-        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)
-               -Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
-        return (Math.atan2(y,x)*180/Math.PI+360)%360;
-      }
-      function windOk(sLat,sLng){
-        const toSpot = bearing(userLat,userLng,sLat,sLng);
-        const windTo = (windDeg+180)%360;
-        const diff = Math.abs(toSpot-windTo);
-        return Math.min(diff,360-diff) > 45;
-      }
-
-      // Postupně rozšiřuj okruh dokud nenajdeme výsledky
-      let data = null;
-      for(const r of [5000, 12000, 25000, 50000]){
-        try{
-          const query = `[out:json][timeout:25];
-(
-  way["landuse"="meadow"](around:${r},${userLat},${userLng});
-  way["landuse"="farmland"](around:${r},${userLat},${userLng});
-  way["landuse"="orchard"](around:${r},${userLat},${userLng});
-  way["natural"="grassland"](around:${r},${userLat},${userLng});
-  way["natural"="scrub"](around:${r},${userLat},${userLng});
-  way["natural"="heath"](around:${r},${userLat},${userLng});
-  way["natural"="wood"](around:${r},${userLat},${userLng});
-  way["landuse"="forest"](around:${r},${userLat},${userLng});
-  way["natural"="water"](around:${r},${userLat},${userLng});
-  way["landuse"="reservoir"](around:${r},${userLat},${userLng});
-  way["natural"="wetland"](around:${r},${userLat},${userLng});
-);
-out center 60;`;
-          const resp = await fetch('https://overpass-api.de/api/interpreter',{
-            method:'POST', body:'data='+encodeURIComponent(query)
-          });
-          const d = await resp.json();
-          if(d.elements && d.elements.filter(e=>e.center).length >= 3){
-            data = d; break;
-          }
-        }catch(e){ console.warn('Overpass attempt failed',e); }
-      }
-
-      btn.classList.remove('loading');
-      btn.querySelector('span').textContent = {en:'Find ideal spot',cs:'Najít ideální místo',sk:'Nájsť ideálne miesto',de:'Idealspot finden'}[tl]||'Find ideal spot';
-
-      if(!data || !data.elements){
-        _showNoSpot(tl); return;
-      }
-
-      const forests = data.elements.filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
-
-      function nearForest(lat,lng){
-        return forests.some(f=>f.center && dist(lat,lng,f.center.lat,f.center.lon)<600);
-      }
-
-      // SCORING — každý prvek dostane skóre wildlife vhodnosti
-      const WILDLIFE_SCORE = {
-        meadow:10, grassland:10, scrub:8, heath:7,
-        farmland:4, orchard:5,
-        wood:7, forest:7,
-        water:9, reservoir:7,
-      };
-
-      function score(el){
-        if(!el.center) return -999;
-        const lat=el.center.lat, lng=el.center.lon;
-        const d = dist(userLat,userLng,lat,lng);
-        if(d < 30) return -999;
-        const type = el.tags?.landuse||el.tags?.natural||'';
-        let s = (WILDLIFE_SCORE[type]||3) * 10;
-        // Denní doba
-        if(isGolden && ['meadow','grassland','scrub'].includes(type)) s += 40;
-        if(isGolden && nearForest(lat,lng)) s += 30;
-        if(isMidday && ['wood','forest'].includes(type)) s += 35;
-        if(isMidday && ['meadow','grassland'].includes(type)) s -= 15;
-        if(isNight  && ['meadow','grassland','farmland'].includes(type)) s += 20;
-        // Voda = vždy bonus
-        if(['water','reservoir'].includes(type)) s += 25;
-        // Okraj lesa = bonus
-        if(nearForest(lat,lng) && !['wood','forest'].includes(type)) s += 20;
-        // Vítr
-        if(windOk(lat,lng)) s += 20;
-        // Vzdálenostní penalta — preferuj bližší ale ne příliš malá penalty za daleká
-        s -= Math.sqrt(d) * 0.8;
-        return s;
-      }
-
-      smartCandidates = data.elements
-        .filter(e=>e.center)
-        .map(e=>({e, s:score(e), dist:dist(userLat,userLng,e.center.lat,e.center.lon)}))
-        .sort((a,b)=>b.s-a.s)
-        .slice(0, 15); // top 15 kandidátů
-
-      if(!smartCandidates.length){ _showNoSpot(tl); return; }
-      smartIdx = 0;
-      _showCandidate();
-    }
-
-    function _showCandidate(){
-      const tl = typeof lang!=='undefined'?lang:'en';
-      if(smartIdx >= smartCandidates.length){ smartIdx = 0; }
-      const {e: best, dist: bDistRaw} = smartCandidates[smartIdx];
-      const bLat=best.center.lat, bLng=best.center.lon;
-      const bDist=Math.round(bDistRaw);
-      const bType=best.tags?.landuse||best.tags?.natural||'area';
-
-      const hour = new Date().getHours();
+      const hour=new Date().getHours();
       const isGolden=(hour>=4&&hour<=8)||(hour>=18&&hour<=21);
       const isMidday=hour>=10&&hour<=15;
       const isNight=hour<4||hour>21;
       const windKph=window._lastWindKph||0;
       const windDeg=window._lastWindDeg||0;
 
-      function dist2(lat1,lng1,lat2,lng2){
-        const dL=(lat1-lat2)*Math.PI/180,dN=(lng1-lng2)*Math.PI/180;
+      // Distance helper
+      function distM(lat1,lng1,lat2,lng2){
+        const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
         return Math.sqrt(dL*dL+dN*dN)*6371000;
       }
-      function bearing2(lat1,lng1,lat2,lng2){
+      function bearingDeg(lat1,lng1,lat2,lng2){
         const dL=(lng2-lng1)*Math.PI/180;
         const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
         const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
-        return (Math.atan2(y,x)*180/Math.PI+360)%360;
+        return(Math.atan2(y,x)*180/Math.PI+360)%360;
       }
-      function windOk2(sLat,sLng){
-        const toSpot=bearing2(userLat,userLng,sLat,sLng);
-        const windTo=(windDeg+180)%360;
-        const diff=Math.abs(toSpot-windTo);
+      function windOk(sLat,sLng){
+        if(windKph<2) return true;
+        const diff=Math.abs(bearingDeg(userLat,userLng,sLat,sLng)-((windDeg+180)%360));
         return Math.min(diff,360-diff)>45;
       }
-      const forests2=smartCandidates.map(c=>c.e).filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
-      const nF=forests2.some(f=>f.center&&dist2(bLat,bLng,f.center.lat,f.center.lon)<600);
-      const wOk=windOk2(bLat,bLng);
 
-      const bBear=bearing2(userLat,userLng,bLat,bLng);
-      const directions={en:['N','NE','E','SE','S','SW','W','NW'],cs:['S','SV','V','JV','J','JZ','Z','SZ'],sk:['S','SV','V','JV','J','JZ','Z','SZ'],de:['N','NO','O','SO','S','SW','W','NW']};
-      const dirLabel=directions[tl][Math.round(bBear/45)%8];
+      // ── Overpass query — simple & proven ──
+      let elements=[];
+      const RADII=[8000,15000,30000];
+      for(const r of RADII){
+        try{
+          // Jednoduchý dotaz bez regexů — hledáme plochy s centroidem
+          const q=`[out:json][timeout:30];
+(
+  way["landuse"="meadow"](around:${r},${userLat},${userLng});
+  way["natural"="grassland"](around:${r},${userLat},${userLng});
+  way["natural"="wood"](around:${r},${userLat},${userLng});
+  way["landuse"="forest"](around:${r},${userLat},${userLng});
+  way["natural"="water"](around:${r},${userLat},${userLng});
+  way["landuse"="farmland"](around:${r},${userLat},${userLng});
+);
+out center 100;`;
+          console.log(`[SmartSpot] Trying radius ${r}m…`);
+          const resp=await fetch('https://overpass-api.de/api/interpreter',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            body:'data='+encodeURIComponent(q)
+          });
+          if(!resp.ok){ console.warn('[SmartSpot] HTTP',resp.status); continue; }
+          const d=await resp.json();
+          console.log(`[SmartSpot] r=${r}m → ${d.elements?.length||0} elements, with center: ${d.elements?.filter(e=>e.center).length||0}`);
+          const valid=d.elements?.filter(e=>e.center&&e.tags)||([]); 
+          if(valid.length>=2){ elements=valid; break; }
+        }catch(err){ console.warn('[SmartSpot] fetch error:',err); }
+      }
+
+      btn.classList.remove('loading');
+      btn.querySelector('span').textContent={en:'Find ideal spot',cs:'Najít ideální místo',sk:'Nájsť ideálne miesto',de:'Idealspot finden'}[tl]||'Find ideal spot';
+
+      if(!elements.length){
+        console.warn('[SmartSpot] No elements found at all');
+        _showNoSpot(tl); return;
+      }
+
+      // ── Scoring ──
+      const SCORE={meadow:10,grassland:10,scrub:8,farmland:4,wood:7,forest:7,water:9,wetland:8};
+      const forests=elements.filter(e=>['wood','forest'].includes(e.tags.landuse||e.tags.natural));
+      console.log(`[SmartSpot] Scoring ${elements.length} elements, ${forests.length} forests found`);
+
+      function nearForest(lat,lng){
+        return forests.some(f=>f.center&&distM(lat,lng,f.center.lat,f.center.lon)<800);
+      }
+
+      smartCandidates=elements.map(e=>{
+        if(!e.center) return null;
+        const lat=e.center.lat, lng=e.center.lon;
+        const d=distM(userLat,userLng,lat,lng);
+        if(d<20) return null;
+        const type=e.tags.landuse||e.tags.natural||'';
+        let s=(SCORE[type]||3)*10;
+        if(isGolden&&['meadow','grassland'].includes(type)) s+=40;
+        if(isGolden&&nearForest(lat,lng)) s+=30;
+        if(isMidday&&['wood','forest'].includes(type)) s+=35;
+        if(isNight&&['meadow','grassland','farmland'].includes(type)) s+=20;
+        if(['water','wetland'].includes(type)) s+=25;
+        if(nearForest(lat,lng)&&!['wood','forest'].includes(type)) s+=20;
+        if(windOk(lat,lng)) s+=20;
+        s-=Math.sqrt(d)*0.7;
+        return{e,s,dist:d};
+      }).filter(Boolean).sort((a,b)=>b.s-a.s).slice(0,15);
+
+      console.log(`[SmartSpot] Top candidate: score=${smartCandidates[0]?.s?.toFixed(1)}, dist=${smartCandidates[0]?.dist?.toFixed(0)}m, type=${smartCandidates[0]?.e?.tags?.landuse||smartCandidates[0]?.e?.tags?.natural}`);
+
+      if(!smartCandidates.length){ _showNoSpot(tl); return; }
+      smartIdx=0;
+      _showCandidate();
+    }
+
+    function _showCandidate(){
+      const tl=typeof lang!=='undefined'?lang:'en';
+      if(!smartCandidates.length){_showNoSpot(tl);return;}
+      if(smartIdx>=smartCandidates.length) smartIdx=0;
+      const {e:best,dist:bDistRaw}=smartCandidates[smartIdx];
+      const bLat=best.center.lat, bLng=best.center.lon;
+      const bDist=Math.round(bDistRaw);
+      const bType=best.tags?.landuse||best.tags?.natural||'area';
+
+      function bearingLocal(lat1,lng1,lat2,lng2){
+        const dL=(lng2-lng1)*Math.PI/180;
+        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
+        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
+        return(Math.atan2(y,x)*180/Math.PI+360)%360;
+      }
+      function distLocal(lat1,lng1,lat2,lng2){
+        const dL=(lat1-lat2)*Math.PI/180,dN=(lng1-lng2)*Math.PI/180;
+        return Math.sqrt(dL*dL+dN*dN)*6371000;
+      }
+      function nearForestLocal(){
+        const forests=smartCandidates.map(c=>c.e).filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
+        return forests.some(f=>f.center&&distLocal(bLat,bLng,f.center.lat,f.center.lon)<800);
+      }
+      function windOkLocal(){
+        const w=window._lastWindKph||0; if(w<2) return true;
+        const d=window._lastWindDeg||0;
+        const toSpot=bearingLocal(userLat,userLng,bLat,bLng);
+        const diff=Math.abs(toSpot-(d+180)%360);
+        return Math.min(diff,360-diff)>45;
+      }
+
+      const hour=new Date().getHours();
+      const isGolden=(hour>=4&&hour<=8)||(hour>=18&&hour<=21);
+      const isMidday=hour>=10&&hour<=15;
+      const isNight=hour<4||hour>21;
+      const windKph=window._lastWindKph||0;
+      const nF=nearForestLocal();
+      const wOk=windOkLocal();
+
+      const bBear=bearingLocal(userLat,userLng,bLat,bLng);
+      const dirs={en:['N','NE','E','SE','S','SW','W','NW'],cs:['S','SV','V','JV','J','JZ','Z','SZ'],sk:['S','SV','V','JV','J','JZ','Z','SZ'],de:['N','NO','O','SO','S','SW','W','NW']};
+      const dirLabel=dirs[tl][Math.round(bBear/45)%8];
+      const distLabel=bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m';
 
       const typeLabel={
         meadow:{en:'meadow',cs:'louka',sk:'lúka',de:'Wiese'},
         grassland:{en:'grassland',cs:'pastvina',sk:'pastvina',de:'Weide'},
         farmland:{en:'farmland',cs:'pole',sk:'pole',de:'Feld'},
         scrub:{en:'scrubland',cs:'křoviny',sk:'kroviny',de:'Gebüsch'},
-        heath:{en:'heath',cs:'vřesoviště',sk:'vresoviská',de:'Heide'},
         wood:{en:'woodland',cs:'les',sk:'les',de:'Wald'},
         forest:{en:'forest',cs:'les',sk:'les',de:'Wald'},
-        water:{en:'water body',cs:'vodní plocha',sk:'vodná plocha',de:'Gewässer'},
-        reservoir:{en:'reservoir',cs:'nádrž',sk:'nádrž',de:'Stausee'},
-        orchard:{en:'orchard',cs:'sad',sk:'sad',de:'Obstgarten'},
-      }[bType]||{en:bType||'area',cs:bType||'místo',sk:bType||'miesto',de:bType||'Gebiet'};
+        water:{en:'water',cs:'voda',sk:'voda',de:'Gewässer'},
+        wetland:{en:'wetland',cs:'mokřad',sk:'mokraď',de:'Feuchtgebiet'},
+      }[bType]||{en:bType,cs:bType,sk:bType,de:bType};
 
-      // Headline
-      const num = smartIdx>0 ? ` #${smartIdx+1}` : '';
+      const num=smartIdx>0?` #${smartIdx+1}`:'';
       const headlines={
-        en:`🎯 SPOT${num}: ${typeLabel.en} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
-        cs:`🎯 MÍSTO${num}: ${typeLabel.cs} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
-        sk:`🎯 MIESTO${num}: ${typeLabel.sk} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
-        de:`🎯 SPOT${num}: ${typeLabel.de} (${bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m'} ${dirLabel})`,
+        en:`🎯 SPOT${num}: ${typeLabel.en} (${distLabel} ${dirLabel})`,
+        cs:`🎯 MÍSTO${num}: ${typeLabel.cs} (${distLabel} ${dirLabel})`,
+        sk:`🎯 MIESTO${num}: ${typeLabel.sk} (${distLabel} ${dirLabel})`,
+        de:`🎯 SPOT${num}: ${typeLabel.de} (${distLabel} ${dirLabel})`,
       };
 
-      // Odůvodnění
       const reasons=[];
       if(isGolden) reasons.push({en:'🌅 Golden hour — wildlife most active',cs:'🌅 Zlatá hodina — zvěř nejaktivnější',sk:'🌅 Zlatá hodina — zver najaktívnejšia',de:'🌅 Goldene Stunde — Wildtiere am aktivsten'}[tl]);
-      if(isMidday) reasons.push({en:'☀️ Midday — animals in shade & cover',cs:'☀️ Poledne — zvěř ve stínu a krytu',sk:'☀️ Poludnie — zver v tieni a kryte',de:'☀️ Mittag — Tiere im Schatten & Deckung'}[tl]);
+      if(isMidday) reasons.push({en:'☀️ Midday — seek shaded woodland spots',cs:'☀️ Poledne — zvěř ve stínu a krytu',sk:'☀️ Poludnie — zver v tieni a kryte',de:'☀️ Mittag — Tiere in schattigen Waldgebieten'}[tl]);
       if(isNight)  reasons.push({en:'🌙 Night — fox, boar & badger active',cs:'🌙 Noc — liška, divočák & jezevec aktivní',sk:'🌙 Noc — líška, diviak & jazvec aktívni',de:'🌙 Nacht — Fuchs, Wildschwein & Dachs aktiv'}[tl]);
-      if(nF) reasons.push({en:'🌲 Near forest edge — animals emerge at dusk/dawn',cs:'🌲 U okraje lesa — zvěř vychází za soumraku',sk:'🌲 Pri okraji lesa — zver vychádza za súmraku',de:'🌲 Am Waldrand — Tiere kommen bei Dämmerung'}[tl]);
-      if(['water','reservoir'].includes(bType)) reasons.push({en:'💧 Water source — attracts deer, otter, heron',cs:'💧 Voda — přitahuje jeleny, vydry, volavky',sk:'💧 Voda — priťahuje jelene, vydry, volavky',de:'💧 Wasser — zieht Hirsche, Otter, Reiher an'}[tl]);
-      if(wOk&&windKph>2) reasons.push({en:`💨 Wind ${windKph}km/h — blows away from spot, scent safe`,cs:`💨 Vítr ${windKph}km/h — fouká od místa, pach bezpečný`,sk:`💨 Vietor ${windKph}km/h — fúka od miesta`,de:`💨 Wind ${windKph}km/h — weht vom Spot weg`}[tl]);
-      else if(!wOk&&windKph>2) reasons.push({en:`⚠️ Wind ${windKph}km/h — approach from downwind side`,cs:`⚠️ Vítr ${windKph}km/h — přibliž se z návětrné strany`,sk:`⚠️ Vietor ${windKph}km/h — priblíž sa z náveternej strany`,de:`⚠️ Wind ${windKph}km/h — von der Windseite annähern`}[tl]);
-      if(!reasons.length) reasons.push({en:'Good natural habitat for wildlife photography',cs:'Dobrý přírodní biotop pro fotografování zvěře',sk:'Dobrý prírodný biotop pre fotografovanie zveri',de:'Guter Naturlebensraum für Wildtierfotografie'}[tl]);
+      if(nF) reasons.push({en:'🌲 Near forest edge — animals emerge here at dusk/dawn',cs:'🌲 U okraje lesa — zvěř vychází za soumraku',sk:'🌲 Pri okraji lesa — zver vychádza za súmraku',de:'🌲 Am Waldrand — Tiere kommen bei Dämmerung'}[tl]);
+      if(['water','wetland'].includes(bType)) reasons.push({en:'💧 Water source — attracts deer, otter & heron',cs:'💧 Voda — přitahuje jeleny, vydry, volavky',sk:'💧 Voda — priťahuje jelene, vydry, volavky',de:'💧 Wasser — zieht Hirsche, Otter, Reiher an'}[tl]);
+      if(wOk&&windKph>2) reasons.push({en:`💨 Wind ${windKph}km/h — blowing away from spot`,cs:`💨 Vítr ${windKph}km/h — fouká od místa, pach bezpečný`,sk:`💨 Vietor ${windKph}km/h — fúka od miesta`,de:`💨 Wind ${windKph}km/h — weht vom Spot weg`}[tl]);
+      else if(!wOk&&windKph>2) reasons.push({en:`⚠️ Wind ${windKph}km/h — approach from downwind side`,cs:`⚠️ Vítr ${windKph}km/h — přibliž se z návětrné strany`,sk:`⚠️ Vietor ${windKph}km/h — priblíž sa z náveternej strany`,de:`⚠️ Wind ${windKph}km/h — aus dem Wind annähern`}[tl]);
+      if(!reasons.length) reasons.push({en:'Good natural habitat for wildlife photography',cs:'Vhodný přírodní biotop pro fotografování zvěře',sk:'Vhodný prírodný biotop pre fotografovanie zveri',de:'Guter Naturlebensraum für Wildtierfotografie'}[tl]);
 
       document.getElementById('spot-headline').textContent=headlines[tl]||headlines.en;
+      document.getElementById('spot-headline').style.cssText='font-size:14px;font-weight:800;color:var(--g1);margin-bottom:6px';
       document.getElementById('spot-reason').innerHTML=reasons.map(r=>`<div style="margin-bottom:3px">• ${r}</div>`).join('');
       document.getElementById('spot-result').style.display='block';
+      document.getElementById('spot-next-btn').style.display=smartCandidates.length>1?'inline-flex':'none';
 
-      // Zobraz "Najít jiné" jen pokud existují další kandidáti
-      const nextBtn=document.getElementById('spot-next-btn');
-      nextBtn.style.display = smartCandidates.length>1 ? 'inline-flex' : 'none';
-
-      // Pulzující marker
-      if(smartMarker){ smartMarker.remove(); smartMarker=null; }
+      if(smartMarker){smartMarker.remove();smartMarker=null;}
       const pulseIcon=L.divIcon({html:`<div class="pulse-marker"></div>`,className:'',iconSize:[22,22],iconAnchor:[11,11]});
       smartMarker=L.marker([bLat,bLng],{icon:pulseIcon,zIndexOffset:2000}).addTo(rvMap);
-      smartMarker.bindPopup((headlines[tl]||headlines.en)+'<br>'+reasons.map(r=>`• ${r}`).join('<br>')).openPopup();
+      smartMarker.bindPopup((headlines[tl]||headlines.en)+'<br>'+reasons.join('<br>')).openPopup();
       rvMap.flyTo([bLat,bLng],14);
     }
 
