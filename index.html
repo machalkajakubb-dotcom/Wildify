@@ -60,7 +60,7 @@ body.dark select,body.dark input{background:var(--bg3);color:var(--text);border-
 #settings-drawer.open{right:0}
 #settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:599}
 #settings-overlay.open{display:block}
-.sdr-hdr{background:var(--g1);color:#fff;padding:18px 16px 14px;display:flex;align-items:center;gap:10px}
+.sdr-hdr{background:var(--g1);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:10px}
 .sdr-hdr-title{font-size:16px;font-weight:800;flex:1}
 .sdr-close{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
 .sdr-section{padding:16px;border-bottom:1px solid var(--brd2)}
@@ -579,26 +579,13 @@ body.dark #hdr{background:#0d1f0d}
         </div>
       </div>
     </div>
-    <!-- Smart Spot + result panel — below the map, not overlapping -->
-    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button id="map-smart-btn" onclick="findSmartSpot()" style="flex:1;min-width:160px">
-        🎯 <span data-t="map_smart_btn">Find ideal spot</span>
-      </button>
-    </div>
-    <div id="spot-result" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:14px;font-size:13px;line-height:1.7">
-      <div class="spot-headline" id="spot-headline"></div>
-      <div class="spot-reason" id="spot-reason"></div>
-      <div style="margin-top:10px">
-        <button id="spot-next-btn" onclick="showNextSpot()" style="display:none;padding:7px 14px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">
-          🔄 <span data-t="spot_next">Find another spot</span>
-        </button>
-      </div>
-    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:6px">
       <div style="font-size:13px;font-weight:700" data-t="rv_saved">Saved pins</div>
       <button class="tbtn sec" style="font-size:12px;padding:5px 12px" onclick="rvClearAll()">🗑 <span data-t="rv_clear">Clear all</span></button>
     </div>
     <div class="rv-pins" id="rv-pins"></div>
+    <!-- Wildlife spot tips — rendered by renderMapTips() -->
+    <div id="map-tips-panel" style="margin-top:18px"></div>
   </div>
 </div>
 
@@ -1010,8 +997,7 @@ function requestLocationFromSettings(){
     onLocationReady();
     renderLocStatus();
     showToast('📍 '+t('loc_granted'));
-    // Start continuous watcher
-    if(_locWatcher===null) initUserLocation();
+    _startWatcher(); // od teď automaticky sleduj
   },()=>{ showToast('Location denied'); });
 }
 
@@ -1022,33 +1008,32 @@ let userLat = null, userLng = null;
 let _locWatcher = null;
 
 function initUserLocation(){
-  // Načti uloženou polohu okamžitě
+  // Jen tichě obnov uloženou polohu — NIKDY neptat se na povolení při startu
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
     if(saved&&saved.lat&&saved.lng){
       userLat=saved.lat; userLng=saved.lng;
-      const strip=document.getElementById('rv-loc-strip');
-      if(strip) strip.style.display='none';
+      document.getElementById('rv-loc-strip')?.style.setProperty('display','none');
       onLocationReady();
+      // Poloha byla dříve povolena — spusť watcher tiše (prohlížeč se nebude ptát znovu)
+      _startWatcher();
     }
   }catch{}
+}
 
-  // Spusť watchPosition pokud je povoleno
-  if(!navigator.geolocation) return;
-  if(_locWatcher!==null) return; // již běží
+function _startWatcher(){
+  if(_locWatcher!==null||!navigator.geolocation) return;
   _locWatcher = navigator.geolocation.watchPosition(
     p=>{
       const newLat=p.coords.latitude, newLng=p.coords.longitude;
-      // Aktualizuj jen pokud se poloha změnila o víc než ~5m
       const moved = userLat ? _geoDistM(userLat,userLng,newLat,newLng) : 999;
       userLat=newLat; userLng=newLng;
       localStorage.setItem('wildify_user_loc',JSON.stringify({lat:userLat,lng:userLng}));
-      const strip=document.getElementById('rv-loc-strip');
-      if(strip) strip.style.display='none';
+      document.getElementById('rv-loc-strip')?.style.setProperty('display','none');
       if(moved>5){ onLocationReady(); renderLocStatus(); }
       applyLocationToMap();
     },
-    err=>{ console.log('watchPosition error:',err.code,err.message); },
+    err=>console.log('watchPosition:',err.message),
     {enableHighAccuracy:true, timeout:15000, maximumAge:20000}
   );
 }
@@ -1071,6 +1056,7 @@ function mapRefreshLoc(){
     renderLocStatus();
     showToast('📍 '+t('loc_updated'));
     if(btn) btn.style.opacity = '1';
+    _startWatcher();
   }, ()=>{
     showToast(t('loc_denied')||'Location denied');
     if(btn) btn.style.opacity = '1';
@@ -1083,10 +1069,9 @@ function mapGoToMyLoc(){
     applyLocationToMap();
     return;
   }
-  // No location yet — ask
   if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
   const btn = document.getElementById('map-loc-btn');
-  if(btn) btn.textContent = '⏳ ...';
+  if(btn) btn.textContent = '⏳';
   navigator.geolocation.getCurrentPosition(p=>{
     userLat = p.coords.latitude;
     userLng = p.coords.longitude;
@@ -1094,10 +1079,11 @@ function mapGoToMyLoc(){
     onLocationReady();
     renderLocStatus();
     showToast('📍 '+t('loc_granted'));
-    if(btn){ btn.innerHTML = `📍 <span data-t="map_myloc">${t('map_myloc')}</span>`; }
+    if(btn) btn.textContent = '📍';
+    _startWatcher();
   }, ()=>{
     showToast(t('loc_denied')||'Location access denied');
-    if(btn){ btn.innerHTML = `📍 <span data-t="map_myloc">${t('map_myloc')}</span>`; }
+    if(btn) btn.textContent = '📍';
   }, {enableHighAccuracy:true, timeout:10000});
 }
 
@@ -2252,6 +2238,58 @@ function openGear(id){
       renderRVPins();
       renderAMB();
       renderGear();
+      renderMapTips();
+    }
+
+    // ─── Wildlife Spot Tips ───────────────────
+    const MAP_TIPS = {
+      en:[
+        {icon:'🌅',title:'Golden hour (dawn & dusk)',text:'The best 90 min of the day. Animals move from cover to feeding areas. Position at meadow edges facing forest 20 min before sunrise.'},
+        {icon:'🌲',title:'Forest edge rule',text:'Where forest meets open ground is spot #1. Animals use forest for safety, fields for feeding — they linger at the boundary.'},
+        {icon:'💨',title:'Wind direction matters',text:'Always approach with wind in your face. Wind carrying your scent toward the animal\'s position drops your chances to near zero.'},
+        {icon:'💧',title:'Water sources',text:'Streams, ponds and lake shores are magnets — especially in summer. Dawn sessions near water are among the most productive.'},
+        {icon:'🌫️',title:'Fog = magic light',text:'A foggy morning after a cold night creates silhouette opportunities unmatched by any other condition. Don\'t stay home.'},
+        {icon:'🤫',title:'Sit still, wait longer',text:'Most sightings happen to people who wait. Sit at least 45 min before moving. Wildlife relaxes when it hears no movement.'},
+      ],
+      cs:[
+        {icon:'🌅',title:'Zlatá hodina (svítání & soumrak)',text:'Nejlepších 90 minut dne. Zvěř se přesouvá z krytu na pastviny. 20 minut před východem si sedněte na okraj louky čelem k lesu.'},
+        {icon:'🌲',title:'Pravidlo okraje lesa',text:'Místo kde les přechází v otevřenou plochu je bod č. 1. Zvěř využívá les jako úkryt a pole ke krmení — zdržuje se na hranici.'},
+        {icon:'💨',title:'Směr větru rozhoduje',text:'Vždy se přibližujte s větrem v obličeji. Vítr nesoucí váš pach ke zvěři snižuje šance téměř na nulu.'},
+        {icon:'💧',title:'Vodní zdroje',text:'Potoky, rybníky a břehy jezer jsou magnety — zvláště v létě. Ranní sezení u vody patří k nejproduktivnějším.'},
+        {icon:'🌫️',title:'Mlha = magické světlo',text:'Mlhavé ráno po chladné noci nabízí příležitosti pro siluety, které žádné jiné podmínky nenabídnou. Nevynechejte to.'},
+        {icon:'🤫',title:'Seďte klidně, čekejte déle',text:'Většina pozorování připadá těm, kdo čekají. Seďte aspoň 45 minut bez pohybu. Zvěř se uklidní, když neslyší pohyb.'},
+      ],
+      sk:[
+        {icon:'🌅',title:'Zlatá hodina (svitanie & súmrak)',text:'Najlepších 90 minút dňa. Zver sa presúva z krytu na pastviny. 20 minút pred východom si sadnite na okraj lúky čelom k lesu.'},
+        {icon:'🌲',title:'Pravidlo okraja lesa',text:'Miesto kde les prechádza do otvorenej plochy je bod č. 1. Zver využíva les ako úkryt a polia na kŕmenie — zdržuje sa na hranici.'},
+        {icon:'💨',title:'Smer vetra rozhoduje',text:'Vždy sa približujte s vetrom v tvári. Vietor nesúci váš pach k zveri znižuje šance takmer na nulu.'},
+        {icon:'💧',title:'Vodné zdroje',text:'Potoky, rybníky a brehy jazier sú magnety — zvlášť v lete. Ranné sedenia pri vode patria k najproduktívnejším.'},
+        {icon:'🌫️',title:'Hmla = magické svetlo',text:'Hmlisté ráno po chladnej noci ponúka príležitosti pre siluety, ktoré žiadne iné podmienky neponúknu.'},
+        {icon:'🤫',title:'Seďte pokojne, čakajte dlhšie',text:'Väčšina pozorovaní pripadá tým čo čakajú. Seďte aspoň 45 minút bez pohybu. Zver sa upokojí keď nepočuje pohyb.'},
+      ],
+      de:[
+        {icon:'🌅',title:'Goldene Stunde (Morgen & Abend)',text:'Die besten 90 Minuten des Tages. Tiere wechseln aus Deckung zu Äsungsplätzen. 20 Min vor Sonnenaufgang am Wiesenrand Richtung Wald.'},
+        {icon:'🌲',title:'Waldrand-Regel',text:'Wo Wald auf offenes Gelände trifft ist Spot Nr. 1. Tiere nutzen Wald zur Sicherheit, Felder zur Nahrung — sie verweilen am Übergang.'},
+        {icon:'💨',title:'Windrichtung entscheidet',text:'Immer mit dem Wind im Gesicht annähern. Wind der Ihren Geruch zur Beute trägt lässt die Chancen auf nahezu null sinken.'},
+        {icon:'💧',title:'Wasserquellen',text:'Bäche, Teiche und Seeufer sind Magnete — besonders im Sommer. Morgensitzungen am Wasser gehören zu den produktivsten.'},
+        {icon:'🌫️',title:'Nebel = magisches Licht',text:'Ein nebliger Morgen nach einer kalten Nacht schafft Silhouetten-Chancen, die keine anderen Bedingungen bieten.'},
+        {icon:'🤫',title:'Still sitzen, länger warten',text:'Die meisten Sichtungen passieren geduldigen Menschen. Mindestens 45 Min ohne Bewegung. Wild beruhigt sich wenn es nichts hört.'},
+      ],
+    };
+
+    function renderMapTips(){
+      const el=document.getElementById('map-tips-panel');
+      if(!el) return;
+      const tips=MAP_TIPS[lang]||MAP_TIPS.en;
+      const title={en:'📖 How to pick a good spot',cs:'📖 Jak vybrat dobré místo',sk:'📖 Ako vybrať dobré miesto',de:'📖 Wie Sie einen guten Spot wählen'}[lang]||'📖 How to pick a good spot';
+      el.innerHTML=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">${title}</div>`
+        +`<div style="display:flex;flex-direction:column;gap:8px">`
+        +tips.map(tip=>`<div style="display:flex;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--brd2);border-radius:8px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0;line-height:1.3">${tip.icon}</div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">${tip.title}</div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.65">${tip.text}</div></div>
+        </div>`).join('')
+        +`</div>`;
     }
 
     // ═══════════════════════════════════════════
@@ -2379,217 +2417,6 @@ function openGear(id){
     let smartMarker = null;
     let smartCandidates = []; // všichni kandidáti seřazení
     let smartIdx = 0;         // aktuálně zobrazený index
-
-    async function findSmartSpot(){ smartIdx = 0; await _runSmartSpot(); }
-    function showNextSpot(){ smartIdx++; _showCandidate(); }
-
-    async function _runSmartSpot(){
-      const btn = document.getElementById('map-smart-btn');
-      const result = document.getElementById('spot-result');
-      const tl = typeof lang!=='undefined'?lang:'en';
-
-      if(!userLat||!userLng){
-        showToast({en:'📍 Enable location first',cs:'📍 Nejdřív povolte polohu',sk:'📍 Najprv povoľte polohu',de:'📍 Standort zuerst aktivieren'}[tl]);
-        return;
-      }
-
-      btn.classList.add('loading');
-      btn.querySelector('span').textContent = {en:'Searching…',cs:'Hledám…',sk:'Hľadám…',de:'Suche…'}[tl]||'Searching…';
-      result.style.display='none';
-      document.getElementById('spot-next-btn').style.display='none';
-
-      const hour=new Date().getHours();
-      const isGolden=(hour>=4&&hour<=8)||(hour>=18&&hour<=21);
-      const isMidday=hour>=10&&hour<=15;
-      const isNight=hour<4||hour>21;
-      const windKph=window._lastWindKph||0;
-      const windDeg=window._lastWindDeg||0;
-
-      // Distance helper
-      function distM(lat1,lng1,lat2,lng2){
-        const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
-        return Math.sqrt(dL*dL+dN*dN)*6371000;
-      }
-      function bearingDeg(lat1,lng1,lat2,lng2){
-        const dL=(lng2-lng1)*Math.PI/180;
-        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
-        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
-        return(Math.atan2(y,x)*180/Math.PI+360)%360;
-      }
-      function windOk(sLat,sLng){
-        if(windKph<2) return true;
-        const diff=Math.abs(bearingDeg(userLat,userLng,sLat,sLng)-((windDeg+180)%360));
-        return Math.min(diff,360-diff)>45;
-      }
-
-      // ── Overpass query — simple & proven ──
-      let elements=[];
-      const RADII=[8000,15000,30000];
-      for(const r of RADII){
-        try{
-          // Jednoduchý dotaz bez regexů — hledáme plochy s centroidem
-          const q=`[out:json][timeout:30];
-(
-  way["landuse"="meadow"](around:${r},${userLat},${userLng});
-  way["natural"="grassland"](around:${r},${userLat},${userLng});
-  way["natural"="wood"](around:${r},${userLat},${userLng});
-  way["landuse"="forest"](around:${r},${userLat},${userLng});
-  way["natural"="water"](around:${r},${userLat},${userLng});
-  way["landuse"="farmland"](around:${r},${userLat},${userLng});
-);
-out center 100;`;
-          console.log(`[SmartSpot] Trying radius ${r}m…`);
-          const resp=await fetch('https://overpass-api.de/api/interpreter',{
-            method:'POST',
-            headers:{'Content-Type':'application/x-www-form-urlencoded'},
-            body:'data='+encodeURIComponent(q)
-          });
-          if(!resp.ok){ console.warn('[SmartSpot] HTTP',resp.status); continue; }
-          const d=await resp.json();
-          console.log(`[SmartSpot] r=${r}m → ${d.elements?.length||0} elements, with center: ${d.elements?.filter(e=>e.center).length||0}`);
-          const valid=d.elements?.filter(e=>e.center&&e.tags)||([]); 
-          if(valid.length>=2){ elements=valid; break; }
-        }catch(err){ console.warn('[SmartSpot] fetch error:',err); }
-      }
-
-      btn.classList.remove('loading');
-      btn.querySelector('span').textContent={en:'Find ideal spot',cs:'Najít ideální místo',sk:'Nájsť ideálne miesto',de:'Idealspot finden'}[tl]||'Find ideal spot';
-
-      if(!elements.length){
-        console.warn('[SmartSpot] No elements found at all');
-        _showNoSpot(tl); return;
-      }
-
-      // ── Scoring ──
-      const SCORE={meadow:10,grassland:10,scrub:8,farmland:4,wood:7,forest:7,water:9,wetland:8};
-      const forests=elements.filter(e=>['wood','forest'].includes(e.tags.landuse||e.tags.natural));
-      console.log(`[SmartSpot] Scoring ${elements.length} elements, ${forests.length} forests found`);
-
-      function nearForest(lat,lng){
-        return forests.some(f=>f.center&&distM(lat,lng,f.center.lat,f.center.lon)<800);
-      }
-
-      smartCandidates=elements.map(e=>{
-        if(!e.center) return null;
-        const lat=e.center.lat, lng=e.center.lon;
-        const d=distM(userLat,userLng,lat,lng);
-        if(d<20) return null;
-        const type=e.tags.landuse||e.tags.natural||'';
-        let s=(SCORE[type]||3)*10;
-        if(isGolden&&['meadow','grassland'].includes(type)) s+=40;
-        if(isGolden&&nearForest(lat,lng)) s+=30;
-        if(isMidday&&['wood','forest'].includes(type)) s+=35;
-        if(isNight&&['meadow','grassland','farmland'].includes(type)) s+=20;
-        if(['water','wetland'].includes(type)) s+=25;
-        if(nearForest(lat,lng)&&!['wood','forest'].includes(type)) s+=20;
-        if(windOk(lat,lng)) s+=20;
-        s-=Math.sqrt(d)*0.7;
-        return{e,s,dist:d};
-      }).filter(Boolean).sort((a,b)=>b.s-a.s).slice(0,15);
-
-      console.log(`[SmartSpot] Top candidate: score=${smartCandidates[0]?.s?.toFixed(1)}, dist=${smartCandidates[0]?.dist?.toFixed(0)}m, type=${smartCandidates[0]?.e?.tags?.landuse||smartCandidates[0]?.e?.tags?.natural}`);
-
-      if(!smartCandidates.length){ _showNoSpot(tl); return; }
-      smartIdx=0;
-      _showCandidate();
-    }
-
-    function _showCandidate(){
-      const tl=typeof lang!=='undefined'?lang:'en';
-      if(!smartCandidates.length){_showNoSpot(tl);return;}
-      if(smartIdx>=smartCandidates.length) smartIdx=0;
-      const {e:best,dist:bDistRaw}=smartCandidates[smartIdx];
-      const bLat=best.center.lat, bLng=best.center.lon;
-      const bDist=Math.round(bDistRaw);
-      const bType=best.tags?.landuse||best.tags?.natural||'area';
-
-      function bearingLocal(lat1,lng1,lat2,lng2){
-        const dL=(lng2-lng1)*Math.PI/180;
-        const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
-        const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
-        return(Math.atan2(y,x)*180/Math.PI+360)%360;
-      }
-      function distLocal(lat1,lng1,lat2,lng2){
-        const dL=(lat1-lat2)*Math.PI/180,dN=(lng1-lng2)*Math.PI/180;
-        return Math.sqrt(dL*dL+dN*dN)*6371000;
-      }
-      function nearForestLocal(){
-        const forests=smartCandidates.map(c=>c.e).filter(e=>['wood','forest'].includes(e.tags?.landuse||e.tags?.natural));
-        return forests.some(f=>f.center&&distLocal(bLat,bLng,f.center.lat,f.center.lon)<800);
-      }
-      function windOkLocal(){
-        const w=window._lastWindKph||0; if(w<2) return true;
-        const d=window._lastWindDeg||0;
-        const toSpot=bearingLocal(userLat,userLng,bLat,bLng);
-        const diff=Math.abs(toSpot-(d+180)%360);
-        return Math.min(diff,360-diff)>45;
-      }
-
-      const hour=new Date().getHours();
-      const isGolden=(hour>=4&&hour<=8)||(hour>=18&&hour<=21);
-      const isMidday=hour>=10&&hour<=15;
-      const isNight=hour<4||hour>21;
-      const windKph=window._lastWindKph||0;
-      const nF=nearForestLocal();
-      const wOk=windOkLocal();
-
-      const bBear=bearingLocal(userLat,userLng,bLat,bLng);
-      const dirs={en:['N','NE','E','SE','S','SW','W','NW'],cs:['S','SV','V','JV','J','JZ','Z','SZ'],sk:['S','SV','V','JV','J','JZ','Z','SZ'],de:['N','NO','O','SO','S','SW','W','NW']};
-      const dirLabel=dirs[tl][Math.round(bBear/45)%8];
-      const distLabel=bDist>=1000?(bDist/1000).toFixed(1)+'km':bDist+'m';
-
-      const typeLabel={
-        meadow:{en:'meadow',cs:'louka',sk:'lúka',de:'Wiese'},
-        grassland:{en:'grassland',cs:'pastvina',sk:'pastvina',de:'Weide'},
-        farmland:{en:'farmland',cs:'pole',sk:'pole',de:'Feld'},
-        scrub:{en:'scrubland',cs:'křoviny',sk:'kroviny',de:'Gebüsch'},
-        wood:{en:'woodland',cs:'les',sk:'les',de:'Wald'},
-        forest:{en:'forest',cs:'les',sk:'les',de:'Wald'},
-        water:{en:'water',cs:'voda',sk:'voda',de:'Gewässer'},
-        wetland:{en:'wetland',cs:'mokřad',sk:'mokraď',de:'Feuchtgebiet'},
-      }[bType]||{en:bType,cs:bType,sk:bType,de:bType};
-
-      const num=smartIdx>0?` #${smartIdx+1}`:'';
-      const headlines={
-        en:`🎯 SPOT${num}: ${typeLabel.en} (${distLabel} ${dirLabel})`,
-        cs:`🎯 MÍSTO${num}: ${typeLabel.cs} (${distLabel} ${dirLabel})`,
-        sk:`🎯 MIESTO${num}: ${typeLabel.sk} (${distLabel} ${dirLabel})`,
-        de:`🎯 SPOT${num}: ${typeLabel.de} (${distLabel} ${dirLabel})`,
-      };
-
-      const reasons=[];
-      if(isGolden) reasons.push({en:'🌅 Golden hour — wildlife most active',cs:'🌅 Zlatá hodina — zvěř nejaktivnější',sk:'🌅 Zlatá hodina — zver najaktívnejšia',de:'🌅 Goldene Stunde — Wildtiere am aktivsten'}[tl]);
-      if(isMidday) reasons.push({en:'☀️ Midday — seek shaded woodland spots',cs:'☀️ Poledne — zvěř ve stínu a krytu',sk:'☀️ Poludnie — zver v tieni a kryte',de:'☀️ Mittag — Tiere in schattigen Waldgebieten'}[tl]);
-      if(isNight)  reasons.push({en:'🌙 Night — fox, boar & badger active',cs:'🌙 Noc — liška, divočák & jezevec aktivní',sk:'🌙 Noc — líška, diviak & jazvec aktívni',de:'🌙 Nacht — Fuchs, Wildschwein & Dachs aktiv'}[tl]);
-      if(nF) reasons.push({en:'🌲 Near forest edge — animals emerge here at dusk/dawn',cs:'🌲 U okraje lesa — zvěř vychází za soumraku',sk:'🌲 Pri okraji lesa — zver vychádza za súmraku',de:'🌲 Am Waldrand — Tiere kommen bei Dämmerung'}[tl]);
-      if(['water','wetland'].includes(bType)) reasons.push({en:'💧 Water source — attracts deer, otter & heron',cs:'💧 Voda — přitahuje jeleny, vydry, volavky',sk:'💧 Voda — priťahuje jelene, vydry, volavky',de:'💧 Wasser — zieht Hirsche, Otter, Reiher an'}[tl]);
-      if(wOk&&windKph>2) reasons.push({en:`💨 Wind ${windKph}km/h — blowing away from spot`,cs:`💨 Vítr ${windKph}km/h — fouká od místa, pach bezpečný`,sk:`💨 Vietor ${windKph}km/h — fúka od miesta`,de:`💨 Wind ${windKph}km/h — weht vom Spot weg`}[tl]);
-      else if(!wOk&&windKph>2) reasons.push({en:`⚠️ Wind ${windKph}km/h — approach from downwind side`,cs:`⚠️ Vítr ${windKph}km/h — přibliž se z návětrné strany`,sk:`⚠️ Vietor ${windKph}km/h — priblíž sa z náveternej strany`,de:`⚠️ Wind ${windKph}km/h — aus dem Wind annähern`}[tl]);
-      if(!reasons.length) reasons.push({en:'Good natural habitat for wildlife photography',cs:'Vhodný přírodní biotop pro fotografování zvěře',sk:'Vhodný prírodný biotop pre fotografovanie zveri',de:'Guter Naturlebensraum für Wildtierfotografie'}[tl]);
-
-      document.getElementById('spot-headline').textContent=headlines[tl]||headlines.en;
-      document.getElementById('spot-headline').style.cssText='font-size:14px;font-weight:800;color:var(--g1);margin-bottom:6px';
-      document.getElementById('spot-reason').innerHTML=reasons.map(r=>`<div style="margin-bottom:3px">• ${r}</div>`).join('');
-      document.getElementById('spot-result').style.display='block';
-      document.getElementById('spot-next-btn').style.display=smartCandidates.length>1?'inline-flex':'none';
-
-      if(smartMarker){smartMarker.remove();smartMarker=null;}
-      const pulseIcon=L.divIcon({html:`<div class="pulse-marker"></div>`,className:'',iconSize:[22,22],iconAnchor:[11,11]});
-      smartMarker=L.marker([bLat,bLng],{icon:pulseIcon,zIndexOffset:2000}).addTo(rvMap);
-      smartMarker.bindPopup((headlines[tl]||headlines.en)+'<br>'+reasons.join('<br>')).openPopup();
-      rvMap.flyTo([bLat,bLng],14);
-    }
-
-    function _showNoSpot(tl){
-      const result=document.getElementById('spot-result');
-      document.getElementById('spot-headline').textContent={en:'No suitable spots found',cs:'Žádné vhodné místo nenalezeno',sk:'Žiadne vhodné miesto nenájdené',de:'Keine geeigneten Spots gefunden'}[tl]||'No suitable spots found';
-      document.getElementById('spot-reason').textContent={en:'Try enabling location or move to a less urban area.',cs:'Zkus povolit polohu nebo se přesuň do méně zastavěné oblasti.',sk:'Skús povoliť polohu alebo sa presuň do menej zastavaneho územia.',de:'Standort aktivieren oder in ländlichere Gegend wechseln.'}[tl]||'';
-      result.style.display='block';
-      document.getElementById('spot-next-btn').style.display='none';
-    }
-
-    // Zachovat zpětnou kompatibilitu
-    function showNoSpot(tl){ _showNoSpot(tl); }
 
     // Inicializace aplikace po načtení
     window.onload = () => {
