@@ -989,111 +989,74 @@ function renderLocStatus(){
     status.textContent=t('loc_sub');
   }
 }
-function requestLocationFromSettings(){
-  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
-  navigator.geolocation.getCurrentPosition(p=>{
-    userLat=p.coords.latitude; userLng=p.coords.longitude;
-    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
-    onLocationReady();
-    renderLocStatus();
-    showToast('📍 '+t('loc_granted'));
-    _startWatcher(); // od teď automaticky sleduj
-  },()=>{ showToast('Location denied'); });
-}
-
 // ═══════════════════════════════════════════
 // USER LOCATION SYSTEM
+// Povolení pouze na vyžádání uživatelem — nikdy automaticky
 // ═══════════════════════════════════════════
 let userLat = null, userLng = null;
-let _locWatcher = null;
 
 function initUserLocation(){
-  // Jen tichě obnov uloženou polohu — NIKDY neptat se na povolení při startu
+  // Tiše obnov uloženou polohu — ŽÁDNÝ geolocation request
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
     if(saved&&saved.lat&&saved.lng){
       userLat=saved.lat; userLng=saved.lng;
       document.getElementById('rv-loc-strip')?.style.setProperty('display','none');
       onLocationReady();
-      // Poloha byla dříve povolena — spusť watcher tiše (prohlížeč se nebude ptát znovu)
-      _startWatcher();
     }
   }catch{}
 }
 
-function _startWatcher(){
-  if(_locWatcher!==null||!navigator.geolocation) return;
-  _locWatcher = navigator.geolocation.watchPosition(
+// Všechny geolocation requesty přes tuto jedinou funkci
+function _askLocation(onSuccess, onFail){
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); onFail&&onFail(); return; }
+  navigator.geolocation.getCurrentPosition(
     p=>{
-      const newLat=p.coords.latitude, newLng=p.coords.longitude;
-      const moved = userLat ? _geoDistM(userLat,userLng,newLat,newLng) : 999;
-      userLat=newLat; userLng=newLng;
+      userLat=p.coords.latitude; userLng=p.coords.longitude;
       localStorage.setItem('wildify_user_loc',JSON.stringify({lat:userLat,lng:userLng}));
       document.getElementById('rv-loc-strip')?.style.setProperty('display','none');
-      if(moved>5){ onLocationReady(); renderLocStatus(); }
-      applyLocationToMap();
+      onSuccess&&onSuccess();
     },
-    err=>console.log('watchPosition:',err.message),
-    {enableHighAccuracy:true, timeout:15000, maximumAge:20000}
+    e=>{ console.log('geo error:',e.message); onFail&&onFail(); },
+    {enableHighAccuracy:true, timeout:12000, maximumAge:30000}
   );
 }
 
-function _geoDistM(lat1,lng1,lat2,lng2){
-  const dL=(lat1-lat2)*Math.PI/180, dN=(lng1-lng2)*Math.PI/180;
-  return Math.sqrt(dL*dL+dN*dN)*6371000;
-}
-
-function mapRefreshLoc(){
-  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
-  const btn = document.getElementById('map-refresh-btn');
-  if(btn) btn.style.opacity = '0.6';
-  navigator.geolocation.getCurrentPosition(p=>{
-    userLat = p.coords.latitude;
-    userLng = p.coords.longitude;
-    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
-    if(rvMap) rvMap.setView([userLat,userLng],13);
-    applyLocationToMap();
-    renderLocStatus();
-    showToast('📍 '+t('loc_updated'));
-    if(btn) btn.style.opacity = '1';
-    _startWatcher();
-  }, ()=>{
-    showToast(t('loc_denied')||'Location denied');
-    if(btn) btn.style.opacity = '1';
-  }, {enableHighAccuracy:true, timeout:10000});
+function requestLocationFromSettings(){
+  _askLocation(()=>{
+    onLocationReady(); renderLocStatus();
+    showToast('📍 '+t('loc_granted'));
+  }, ()=>showToast(t('loc_denied')||'Location denied'));
 }
 
 function mapGoToMyLoc(){
-  if(userLat && userLng){
-    if(rvMap) rvMap.setView([userLat, userLng], 13);
-    applyLocationToMap();
-    return;
-  }
-  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
-  const btn = document.getElementById('map-loc-btn');
-  if(btn) btn.textContent = '⏳';
-  navigator.geolocation.getCurrentPosition(p=>{
-    userLat = p.coords.latitude;
-    userLng = p.coords.longitude;
-    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
-    onLocationReady();
-    renderLocStatus();
+  if(userLat&&userLng){ if(rvMap) rvMap.setView([userLat,userLng],13); applyLocationToMap(); return; }
+  const btn=document.getElementById('map-loc-btn');
+  if(btn) btn.textContent='⏳';
+  _askLocation(()=>{
+    onLocationReady(); renderLocStatus();
     showToast('📍 '+t('loc_granted'));
-    if(btn) btn.textContent = '📍';
-    _startWatcher();
-  }, ()=>{
-    showToast(t('loc_denied')||'Location access denied');
-    if(btn) btn.textContent = '📍';
-  }, {enableHighAccuracy:true, timeout:10000});
+    if(btn) btn.textContent='📍';
+  }, ()=>{ showToast(t('loc_denied')||'Location denied'); if(btn) btn.textContent='📍'; });
+}
+
+function mapRefreshLoc(){
+  const btn=document.getElementById('map-refresh-btn');
+  if(btn) btn.style.opacity='0.6';
+  _askLocation(()=>{
+    if(rvMap) rvMap.setView([userLat,userLng],13);
+    applyLocationToMap(); renderLocStatus();
+    showToast('📍 '+(t('loc_updated')||'Location updated'));
+    if(btn) btn.style.opacity='1';
+  }, ()=>{ showToast(t('loc_denied')||'Location denied'); if(btn) btn.style.opacity='1'; });
 }
 
 function requestLocation(){
   document.getElementById('loc-banner')?.classList.remove('show');
-  navigator.geolocation.getCurrentPosition(p=>{
-    userLat = p.coords.latitude; userLng = p.coords.longitude;
-    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
-    onLocationReady(); showToast('📍 Location saved!');
-  }, ()=>{ showToast('Location denied'); });
+  _askLocation(()=>{ onLocationReady(); showToast('📍 Location saved!'); });
+}
+function dismissLocation(){
+  document.getElementById('loc-banner')?.classList.remove('show');
 }
 function dismissLocation(){
   document.getElementById('loc-banner')?.classList.remove('show');
