@@ -989,46 +989,51 @@ function renderLocStatus(){
     status.textContent=t('loc_sub');
   }
 }
+function requestLocationFromSettings(){
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat=p.coords.latitude; userLng=p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+    onLocationReady();
+    renderLocStatus();
+    showToast('📍 '+t('loc_granted'));
+  },()=>{ /* silent fail */ });
+}
+
 // ═══════════════════════════════════════════
 // USER LOCATION SYSTEM
 // ═══════════════════════════════════════════
 let userLat = null, userLng = null;
 
 function initUserLocation(){
-  // Tiše obnov uloženou polohu ze storage — bez jakéhokoliv geolocation requestu
+  // Only restore if already granted before - never auto-ask
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
-    if(saved && saved.lat && saved.lng){
-      userLat = saved.lat; userLng = saved.lng;
+    if(saved&&saved.lat&&saved.lng){
+      userLat=saved.lat; userLng=saved.lng;
       const strip = document.getElementById('rv-loc-strip');
       if(strip) strip.style.display = 'none';
       onLocationReady();
     }
-  }catch(e){}
+  }catch{}
 }
 
-function _doGetLocation(onSuccess){
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(
-    function(p){
-      userLat = p.coords.latitude;
-      userLng = p.coords.longitude;
-      localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
-      const strip = document.getElementById('rv-loc-strip');
-      if(strip) strip.style.display = 'none';
-      onSuccess && onSuccess();
-    },
-    function(){ /* denied or unavailable — tiše selže */ },
-    {enableHighAccuracy:true, timeout:15000, maximumAge:60000}
-  );
-}
-
-function requestLocationFromSettings(){
-  _doGetLocation(function(){
-    onLocationReady();
+function mapRefreshLoc(){
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
+  const btn = document.getElementById('map-refresh-btn');
+  if(btn) btn.style.opacity = '0.6';
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat = p.coords.latitude;
+    userLng = p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+    if(rvMap) rvMap.setView([userLat,userLng],13);
+    applyLocationToMap();
     renderLocStatus();
-    showToast('📍 ' + (t('loc_granted') || 'Location active'));
-  });
+    showToast('📍 '+t('loc_updated'));
+    if(btn) btn.style.opacity = '1';
+  }, ()=>{
+    if(btn) btn.style.opacity = '1';
+  }, {enableHighAccuracy:true, timeout:10000});
 }
 
 function mapGoToMyLoc(){
@@ -1037,29 +1042,30 @@ function mapGoToMyLoc(){
     applyLocationToMap();
     return;
   }
-  _doGetLocation(function(){
+  if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
+  const btn = document.getElementById('map-loc-btn');
+  if(btn) btn.textContent = '⏳';
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat = p.coords.latitude;
+    userLng = p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
     onLocationReady();
     renderLocStatus();
-    if(rvMap) rvMap.setView([userLat, userLng], 13);
-    applyLocationToMap();
-  });
-}
-
-function mapRefreshLoc(){
-  const btn = document.getElementById('map-refresh-btn');
-  if(btn) btn.style.opacity = '0.6';
-  _doGetLocation(function(){
-    if(rvMap) rvMap.setView([userLat, userLng], 13);
-    applyLocationToMap();
-    renderLocStatus();
-    showToast('📍 ' + (t('loc_updated') || 'Location updated'));
-    if(btn) btn.style.opacity = '1';
-  });
+    showToast('📍 '+t('loc_granted'));
+    if(btn) btn.textContent = '📍';
+  }, ()=>{
+    if(btn) btn.textContent = '📍';
+  }, {enableHighAccuracy:true, timeout:10000});
 }
 
 function requestLocation(){
   document.getElementById('loc-banner')?.classList.remove('show');
-  _doGetLocation(function(){ onLocationReady(); });
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat = p.coords.latitude; userLng = p.coords.longitude;
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
+    onLocationReady(); showToast('📍 Location saved!');
+  }, ()=>{});
 }
 function dismissLocation(){
   document.getElementById('loc-banner')?.classList.remove('show');
@@ -1068,14 +1074,11 @@ function dismissLocation(){
 function applyLocationToMap(){
   if(!userLat||!userLng) return;
   if(!rvMap) return;
-  // Hide location invite strip
   const strip = document.getElementById('rv-loc-strip');
   if(strip) strip.style.display = 'none';
-  // Fly to user location only if no previously saved map view
   if(!localStorage.getItem('wildify_map_view')){
     rvMap.setView([userLat, userLng], 12);
   }
-  // Remove old user marker if exists
   if(window._userLocMarker){ try{ window._userLocMarker.remove(); }catch{} }
   const icon = L.divIcon({
     html:`<div style="width:14px;height:14px;background:#1565c0;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.45)"></div>`,
@@ -1087,7 +1090,6 @@ function applyLocationToMap(){
 
 function onLocationReady(){
   if(!userLat || !userLng) return;
-  // Pre-fill golden hour select with user location
   const sel = document.getElementById('gh-region');
   if(sel){
     let opt = [...sel.options].find(o=>o.value.startsWith(userLat.toFixed(2).substring(0,4)));
@@ -1096,11 +1098,10 @@ function onLocationReady(){
     opt.textContent = `📍 ${t('map_myloc')} (${userLat.toFixed(2)}°, ${userLng.toFixed(2)}°)`;
     sel.value = opt.value;
   }
-  // Apply to map if already init
   applyLocationToMap();
-  // Fetch weather
   fetchHomeWeather();
 }
+
 
 // 3. Spouštěč při startu
 window.addEventListener('DOMContentLoaded', () => {
