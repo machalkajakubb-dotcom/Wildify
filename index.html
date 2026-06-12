@@ -29,7 +29,7 @@ document.addEventListener('touchend', function(e){
 <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png">
 <link rel="apple-touch-icon" sizes="167x167" href="/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png">
-<title>WILDIFY.EU</title>
+<title>WILDIFY.APP</title>
 
 <meta name="description" content="Wildify - Ultimátní terénní průvodce pro wildlife fotografy. Fotolovy, stopy zvířat a zlatá hodina. The ultimate wildlife photography field guide. Tierfotografie & Spuren.">
 <meta name="keywords" content="wildlife, fotolovy, focení zvířat, stopy zvířat, zlatá hodina, fotografování přírody, fotopasti, príroda, fotografovanie zvierat, stopovanie zvierat, wildlife photography, field guide, animal tracks, exposure calculator, Tierfotografie, Wildtiere, Spuren lesen, Naturfotografie">
@@ -38,7 +38,7 @@ document.addEventListener('touchend', function(e){
 <meta property="og:title" content="Wildify - Wildlife Photography Field Guide">
 <meta property="og:description" content="Vše co potřebuješ pro úspěšný fotolov na jednom místě. Kalkulačka expozice, určování stop a plánovač.">
 <meta property="og:image" content="icon-192.png">
-<meta property="og:url" content="https://wildify.eu/">
+<meta property="og:url" content="https://wildify.app/">
 <meta property="og:type" content="website">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -627,7 +627,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
       </div>
     </button>
   </div>
-  <div style="padding:16px;font-size:11px;color:var(--text3);margin-top:auto">Wildify.eu · v2.0</div>
+  <!-- Social -->
+  <div class="sdr-section">
+    <div class="sdr-section-title">Sledujte nás / Follow us</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <a href="https://instagram.com/wildify.app" target="_blank" rel="noopener" title="Instagram" style="width:38px;height:38px;border-radius:10px;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.15s;font-size:18px" onmouseover="this.style.borderColor='var(--g3)';this.style.background='var(--g6)'" onmouseout="this.style.borderColor='var(--brd)';this.style.background='var(--bg)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#e1306c"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="https://tiktok.com/@wildify.app" target="_blank" rel="noopener" title="TikTok" style="width:38px;height:38px;border-radius:10px;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.15s;font-size:18px" onmouseover="this.style.borderColor='var(--g3)';this.style.background='var(--g6)'" onmouseout="this.style.borderColor='var(--brd)';this.style.background='var(--bg)'">
+        <svg width="16" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--text2)"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+      </a>
+      <a href="mailto:ahoj@wildify.app" title="E-mail" style="width:38px;height:38px;border-radius:10px;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.15s" onmouseover="this.style.borderColor='var(--g3)';this.style.background='var(--g6)'" onmouseout="this.style.borderColor='var(--brd)';this.style.background='var(--bg)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text2)"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+  </div>
+  <div style="padding:14px 18px;font-size:11px;color:var(--text3);margin-top:auto;line-height:1.6">Wildify.app · v2.1</div>
 </div>
 <div id="nav">
   <div class="ni">
@@ -1137,20 +1152,29 @@ function requestLocationFromSettings(){
   if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
   const statusEl = document.getElementById('loc-sdr-status');
   if(statusEl) statusEl.textContent='⏳ Načítám…';
+  // Fast first fix
   navigator.geolocation.getCurrentPosition(p=>{
     userLat=p.coords.latitude; userLng=p.coords.longitude;
     localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
     const strip = document.getElementById('rv-loc-strip');
     if(strip) strip.style.display='none';
-    if(rvMap){ rvMap.setView([userLat,userLng],13); applyLocationToMap(); }
-    onLocationReady();
-    renderLocStatus();
+    if(rvMap){ rvMap.setView([userLat,userLng],14); applyLocationToMap(); }
+    onLocationReady(); renderLocStatus();
     showToast('📍 '+t('loc_granted'));
+    // Refine with high accuracy (Android fix)
+    navigator.geolocation.getCurrentPosition(p2=>{
+      if(!p2.coords.accuracy || p2.coords.accuracy < (p.coords.accuracy||999)){
+        userLat=p2.coords.latitude; userLng=p2.coords.longitude;
+        localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+        if(rvMap) applyLocationToMap();
+        renderLocStatus();
+      }
+    },()=>{},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
   },(err)=>{
     console.warn('Location error:', err.code, err.message);
     showToast('⚠️ '+t('loc_denied'));
     renderLocStatus();
-  },{enableHighAccuracy:true, timeout:15000, maximumAge:0});
+  },{enableHighAccuracy:false, timeout:8000, maximumAge:30000});
 }
 
 // ═══════════════════════════════════════════
@@ -1159,7 +1183,7 @@ function requestLocationFromSettings(){
 let userLat = null, userLng = null;
 
 function initUserLocation(){
-  // Only restore if already granted before - never auto-ask
+  // Restore saved location first for instant UI
   try{
     const saved = JSON.parse(localStorage.getItem('wildify_user_loc')||'null');
     if(saved&&saved.lat&&saved.lng){
@@ -1167,6 +1191,15 @@ function initUserLocation(){
       const strip = document.getElementById('rv-loc-strip');
       if(strip) strip.style.display = 'none';
       onLocationReady();
+      // Silently refresh in background for better Android accuracy
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(p=>{
+          userLat=p.coords.latitude; userLng=p.coords.longitude;
+          localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+          if(rvMap) applyLocationToMap();
+          renderLocStatus();
+        },()=>{},{enableHighAccuracy:true,timeout:20000,maximumAge:60000});
+      }
     }
   }catch{}
 }
@@ -1190,34 +1223,37 @@ function mapRefreshLoc(){
 }
 
 function mapGoToMyLoc(){
-  if(userLat && userLng){
-    if(rvMap) rvMap.setView([userLat, userLng], 13);
-    applyLocationToMap();
-    return;
-  }
   if(!navigator.geolocation){ showToast('Geolocation not supported'); return; }
-  // Show loading state on the strip allow button
   const stripBtn = document.querySelector('#rv-loc-strip button');
   if(stripBtn){ stripBtn.textContent='⏳'; stripBtn.disabled=true; }
   showToast('📡 Načítám polohu…');
+
+  // Phase 1: fast coarse fix (works well on Android too)
   navigator.geolocation.getCurrentPosition(p=>{
     userLat = p.coords.latitude;
     userLng = p.coords.longitude;
-    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat, lng:userLng}));
-    // Hide the location strip
+    localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
     const strip = document.getElementById('rv-loc-strip');
     if(strip) strip.style.display='none';
-    // Fly map to location if map already exists
-    if(rvMap){ rvMap.setView([userLat, userLng], 13); applyLocationToMap(); }
-    onLocationReady();
-    renderLocStatus();
+    if(rvMap){ rvMap.setView([userLat,userLng],14); applyLocationToMap(); }
+    onLocationReady(); renderLocStatus();
     showToast('📍 '+t('loc_granted'));
     if(stripBtn){ stripBtn.textContent=t('loc_yes')||'Allow'; stripBtn.disabled=false; }
+
+    // Phase 2: refine silently with high accuracy (fixes Android ~1km offset)
+    navigator.geolocation.getCurrentPosition(p2=>{
+      if(!p2.coords.accuracy || p2.coords.accuracy < (p.coords.accuracy||999)){
+        userLat=p2.coords.latitude; userLng=p2.coords.longitude;
+        localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+        if(rvMap) applyLocationToMap();
+        renderLocStatus();
+      }
+    },()=>{},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
   }, (err)=>{
     console.warn('Geolocation error:', err.code, err.message);
     showToast('⚠️ '+t('loc_denied'));
     if(stripBtn){ stripBtn.textContent=t('loc_yes')||'Allow'; stripBtn.disabled=false; }
-  }, {enableHighAccuracy:true, timeout:15000, maximumAge:0});
+  }, {enableHighAccuracy:false, timeout:8000, maximumAge:30000});
 }
 
 function requestLocation(){
@@ -1267,6 +1303,18 @@ function onLocationReady(){
 
 
 // 3. Spouštěč při startu
+// Auto-refresh GPS when user returns to the app (tab/app switch)
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible' && userLat && navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(p=>{
+      userLat=p.coords.latitude; userLng=p.coords.longitude;
+      localStorage.setItem('wildify_user_loc', JSON.stringify({lat:userLat,lng:userLng}));
+      if(rvMap) applyLocationToMap();
+      renderLocStatus();
+    },()=>{},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  }
+});
+
 window.addEventListener('DOMContentLoaded', () => {
   // Apply saved theme
   const savedTheme = localStorage.getItem('wildify_theme') || 'light';
