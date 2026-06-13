@@ -23,264 +23,6 @@ document.addEventListener('touchend', function(e){
   if(now-_lastTap<300) e.preventDefault();
   _lastTap=now;
 },{passive:false});
-
-// ── POST MODAL ────────────────────────────────────────────────
-  const POST_DATA = {
-    1: {
-      emoji: '🦌',
-      bg: 'linear-gradient(135deg,#0d2e14,#1b5e30)',
-      badgeClass: 'field',
-      en: { date:'September 2025', time:'8', body:`<p>September is when the forests of Central Europe come alive with one of nature's most dramatic spectacles — the red deer rut. The distant roar of stags echoes through misty valleys at first light, and for wildlife photographers, it is the most rewarding month of the year.</p>
-<h3>Timing Is Everything</h3>
-<p>The peak rut typically runs from mid-September to early October, with the most intense activity in the final two hours before dawn and the first hour after sunrise. Arrive at your location well before first light — ideally 45 minutes ahead — and move slowly and quietly to your pre-scouted position.</p>
-<h3>Gear Recommendations</h3>
-<p>A focal length of at least 500mm is recommended. The deer are highly sensitive to human presence, so reaching distance is essential. A monopod or tripod with a gimbal head will help in the low light of dawn. Wear neutral earth-tone clothing and avoid synthetic fabrics that rustle.</p>
-<h3>Ethical Distance</h3>
-<p>The golden rule is a minimum of 100 metres from any rutting stag. A stag that stops roaring, turns to face you, or begins moving away is a stag you have disturbed. Back off immediately. The rut is physiologically exhausting for the animals — unnecessary stress can genuinely affect their survival through winter.</p>
-<h3>Where to Find Them</h3>
-<p>In Central Europe, the best locations are open forest edges adjacent to meadows, traditional game management areas, and national parks. Scout in summer for fresh trails, wallows and antler rubbing trees — these spots will be active during the rut. Early morning fog is your best friend: it softens light, dampens sound, and creates atmospheric backgrounds.</p>` },
-      cs: { date:'Září 2025', time:'8', body:`<p>Září je měsíc, kdy lesy střední Evropy ožívají jednou z nejdramatičtějších přírodních podívaných — říjí jelena evropského. Vzdálený řev jelenů se rozléhá mlžnými údolími za prvního světla a pro fotografy přírody je to nejhodnotnější měsíc roku.</p>
-<h3>Načasování je vše</h3>
-<p>Vrchol říje zpravidla trvá od poloviny září do začátku října, přičemž nejintenzivnější aktivita probíhá v posledních dvou hodinách před úsvitem a první hodině po východu slunce. Přijeďte na místo dlouho před prvním světlem — ideálně 45 minut dopředu — a pohybujte se pomalu a tiše na předem vytipovanou pozici.</p>
-<h3>Doporučení vybavení</h3>
-<p>Doporučuje se minimálně ohnisko 500 mm. Jeleni jsou velmi citliví na přítomnost člověka, takže dosah je zásadní. Monopod nebo stativ s gimbal hlavou pomůže za slabého ranního světla. Noste neutrální zemité barvy oblečení a vyhýbejte se syntetickým látkám, které šustí.</p>
-<h3>Etická vzdálenost</h3>
-<p>Zlaté pravidlo je minimálně 100 metrů od jakéhokoli říjícího jelena. Jelen, který přestane řvát, otočí se k vám nebo začne odcházet, je jelen, kterého jste vyrušili. Okamžitě ustupte. Říje je fyziologicky vyčerpávající pro zvířata — zbytečný stres může skutečně ovlivnit jejich přežití přes zimu.</p>
-<h3>Kde je najít</h3>
-<p>Ve střední Evropě jsou nejlepší lokality otevřené okraje lesů sousedící s loukami, tradiční myslivecké oblasti a národní parky. Průzkum provádějte v létě — čerstvé stopy, váliště a stromy odřené parohy budou aktivní během říje. Ranní mlha je váš nejlepší přítel: zjemňuje světlo, tlumí zvuky a vytváří atmosferická pozadí.</p>` },
-      sk: { date:'September 2025', time:'8', body:`<p>September je mesiac, keď lesy strednej Európy ožívajú jednou z najdramatickejších prírodných šou — ruja jeleňa európskeho. Vzdialený rev jeleňov sa ozýva hmlistými dolinami pri prvom svite a pre fotografov prírody je to najhodnotnejší mesiac v roku.</p>
-<h3>Načasovanie je všetko</h3>
-<p>Vrchol ruji zvyčajne trvá od polovice septembra do začiatku októbra, pričom najintenzívnejšia aktivita prebieha v posledných dvoch hodinách pred svitaním a prvej hodine po východe slnka. Príďte na miesto dávno pred prvým svetlom — ideálne 45 minút vopred — a pohybujte sa pomaly a ticho na vopred prieskumom overenú pozíciu.</p>
-<h3>Odporúčanie výbavy</h3>
-<p>Odporúča sa minimálne ohnisko 500 mm. Jelene sú veľmi citlivé na ľudskú prítomnosť, preto je dosah kľúčový. Monopod alebo statív s gimbal hlavou pomôže pri slabom rannom svetle. Noste neutrálne zemité farby oblečenia a vyhýbajte sa syntetickým látkam, ktoré šuštia.</p>
-<h3>Etická vzdialenosť</h3>
-<p>Zlaté pravidlo je minimálne 100 metrov od akéhokoľvek jeleňa v ruji. Jeleň, ktorý prestane revať, otočí sa k vám alebo začne odchádzať, je jeleň, ktorého ste vyrušili. Okamžite ustúpte. Ruja je fyziologicky vyčerpávajúca pre zvieratá — zbytočný stres môže skutočne ovplyvniť ich prežitie cez zimu.</p>
-<h3>Kde ich nájsť</h3>
-<p>V strednej Európe sú najlepšie lokality otvorené okraje lesov susediace s lúkami, tradičné poľovné oblasti a národné parky. Robte prieskum v lete — čerstvé stopy, váľanice a stromy odreté parohmi budú aktívne počas ruji. Ranná hmla je váš najlepší priateľ: zjemňuje svetlo, tlmí zvuky a vytvára atmosferické pozadie.</p>` },
-      de: { date:'September 2025', time:'8', body:`<p>Im September erwachen die Wälder Mitteleuropas mit einem der dramatischsten Naturschauspiele — der Rothirsch-Brunft. Das ferne Röhren der Hirsche hallt durch neblige Täler im ersten Morgenlicht, und für Naturfotografen ist es der lohnendste Monat des Jahres.</p>
-<h3>Timing ist alles</h3>
-<p>Die Brunft-Hochsaison dauert typischerweise von Mitte September bis Anfang Oktober, wobei die intensivste Aktivität in den letzten zwei Stunden vor der Morgendämmerung und der ersten Stunde nach Sonnenaufgang stattfindet. Kommen Sie gut vor dem ersten Licht an Ihren Standort — idealerweise 45 Minuten früher — und bewegen Sie sich langsam und leise zu Ihrer vorher erkundeten Position.</p>
-<h3>Ausrüstungsempfehlungen</h3>
-<p>Es wird eine Brennweite von mindestens 500 mm empfohlen. Rothirsche reagieren sehr empfindlich auf menschliche Anwesenheit, daher ist Reichweite entscheidend. Ein Monopod oder Stativ mit Gimbal-Kopf hilft im schwachen Morgenlicht. Tragen Sie neutrale erdfarbene Kleidung und vermeiden Sie synthetische Stoffe, die rascheln.</p>
-<h3>Ethischer Abstand</h3>
-<p>Die goldene Regel ist ein Mindestabstand von 100 Metern zu jedem brunftenden Hirsch. Ein Hirsch, der aufhört zu röhren, sich Ihnen zuwendet oder sich zu entfernen beginnt, ist ein Hirsch, den Sie gestört haben. Ziehen Sie sich sofort zurück. Die Brunft ist physiologisch erschöpfend für die Tiere — unnötiger Stress kann ihr Überleben durch den Winter ernsthaft beeinträchtigen.</p>
-<h3>Wo man sie findet</h3>
-<p>In Mitteleuropa sind die besten Standorte offene Waldränder angrenzend an Wiesen, traditionelle Wildgehege und Nationalparks. Erkunden Sie im Sommer frische Spuren, Suhlen und Scheuerbäume — diese Stellen werden während der Brunft aktiv sein. Frühmorgendlicher Nebel ist Ihr bester Freund: Er dämpft das Licht, dämpft Geräusche und schafft atmosphärische Hintergründe.</p>` },
-    },
-    2: {
-      emoji: '🔭',
-      bg: 'linear-gradient(135deg,#1a237e,#283593)',
-      badgeClass: 'pro',
-      en: { date:'August 2025', time:'6', body:`<p>Few debates in wildlife photography run as long as the 500mm versus 800mm question. Both focal lengths have devoted advocates, and both have genuine weaknesses. After two full seasons testing each across varied European terrain, here is our honest assessment.</p>
-<h3>The Case for 500mm</h3>
-<p>A 500mm f/5.6 PF or f/4 is the sweet spot for most European wildlife work. It is manageable handheld for short periods, fits comfortably on a monopod, and the wider aperture gives you better low-light performance at dawn and dusk — exactly when wildlife is most active. In forest environments where shooting distances are often under 50 metres, 500mm gives you a full frame and room to compose.</p>
-<h3>The Case for 800mm</h3>
-<p>Open habitats — wetlands, moorland, large meadows — are where 800mm earns its place. When a marsh harrier is hunting 150 metres away or a herd of deer is grazing across a valley, the extra reach fills the frame. Modern 800mm PF designs have made the weight more manageable, but it remains a specialised tool.</p>
-<h3>Our Verdict</h3>
-<p>For a single lens covering most Central European wildlife work: 500mm. For dedicated open-country or bird photography: 800mm. If your budget allows one body and one lens, 500mm with a 1.4x converter gives you the flexibility of both worlds at the cost of one stop of light.</p>` },
-      cs: { date:'Srpen 2025', time:'6', body:`<p>Jen málo debat ve wildlife fotografii trvá tak dlouho jako otázka 500 mm versus 800 mm. Obě ohniskové vzdálenosti mají oddané zastánce a obě mají skutečné slabiny. Po dvou celých sezónách testování každé v různém evropském terénu — zde je naše upřímné hodnocení.</p>
-<h3>Argument pro 500 mm</h3>
-<p>Objektiv 500 mm f/5,6 PF nebo f/4 je sladký bod pro většinu evropské wildlife práce. Je zvládnutelný z ruky na krátké periody, pohodlně sedí na monopodu a širší clona vám dává lepší výkon za slabého světla za svítání a soumraku. V lesním prostředí, kde vzdálenosti snímání jsou často pod 50 metrů, vám 500 mm dá celý záběr s prostorem pro kompozici.</p>
-<h3>Argument pro 800 mm</h3>
-<p>Otevřené biotopy — mokřady, vřesoviště, velké louky — jsou tam, kde 800 mm dokazuje své místo. Když moták pochřopní loví 150 metrů daleko nebo stádo jelenů se pase přes údolí, extra dosah vyplní záběr. Moderní konstrukce 800 mm PF učinily hmotnost zvládnutelnější, ale stále je to specializovaný nástroj.</p>
-<h3>Náš verdikt</h3>
-<p>Pro jeden objektiv pokrývající většinu středoevropské wildlife práce: 500 mm. Pro dedikovanou fotografii v otevřeném terénu nebo ptáků: 800 mm. Pokud váš rozpočet dovolí jedno tělo a jeden objektiv, 500 mm s konvertorem 1,4× vám dá flexibilitu obou světů za cenu jednoho stupně světla.</p>` },
-      sk: { date:'August 2025', time:'6', body:`<p>Len málo diskusií vo wildlife fotografii trvá tak dlho ako otázka 500 mm verzus 800 mm. Obe ohniskové vzdialenosti majú oddaných zástancov a obe majú skutočné slabiny. Po dvoch sezónach testovania oboch v rôznych európskych terénoch — tu je naše úprimné hodnotenie.</p>
-<h3>Argument pre 500 mm</h3>
-<p>Objektív 500 mm f/5.6 PF alebo f/4 je ideálna voľba pre väčšinu európskej wildlife práce. Je zvládnuteľný z ruky po krátke obdobia, pohodlne sedí na monopode a širší otvor clony vám dáva lepší výkon pri slabom svetle za svitu a súmraku. V lesnom prostredí, kde sú vzdialenosti často pod 50 metrov, vám 500 mm dá plný záber s priestorom na kompozíciu.</p>
-<h3>Argument pre 800 mm</h3>
-<p>Otvorené biotopy — mokrade, rašeliniská, rozľahlé lúky — sú miesta, kde 800 mm dokazuje svoju hodnotu. Keď kaňa močiarna loví 150 metrov ďalej alebo stádo jeleňov pasie na druhom svahu doliny, extra dosah vypĺňa záber. Moderné dizajny 800 mm PF urobili váhu zvládnuteľnejšou, ale stále ide o špecializovaný nástroj.</p>
-<h3>Náš verdikt</h3>
-<p>Pre jeden objektív pokrývajúci väčšinu stredoeurópskej wildlife práce: 500 mm. Pre dedikovanú fotografiu v otvorenom teréne alebo vtákov: 800 mm. Ak váš rozpočet dovolí jedno telo a jeden objektív, 500 mm s konvertorom 1,4× vám dá flexibilitu oboch svetov za cenu jedného stupňa svetla.</p>` },
-      de: { date:'August 2025', time:'6', body:`<p>Wenige Debatten in der Wildlife-Fotografie dauern so lange wie die Frage 500 mm versus 800 mm. Beide Brennweiten haben überzeugte Befürworter, und beide haben echte Schwächen. Nach zwei vollen Feldsaisons beim Testen beider in verschiedenen europäischen Geländen — hier ist unsere ehrliche Bewertung.</p>
-<h3>Das Argument für 500 mm</h3>
-<p>Ein 500 mm f/5,6 PF oder f/4 ist der Sweet Spot für die meisten europäischen Wildlife-Aufgaben. Es ist für kurze Zeiträume freihändig handhabbar, sitzt bequem auf einem Monopod und die breitere Blende gibt Ihnen bei Morgen- und Abenddämmerung — genau wenn Wildlife am aktivsten ist — eine bessere Leistung bei schwachem Licht. In Waldumgebungen, wo Aufnahmeabstände oft unter 50 Metern liegen, gibt Ihnen 500 mm einen vollen Bildausschnitt mit Raum für die Komposition.</p>
-<h3>Das Argument für 800 mm</h3>
-<p>Offene Lebensräume — Feuchtgebiete, Moorlandschaften, große Wiesen — sind wo 800 mm seinen Platz verdient. Wenn eine Rohrweihe 150 Meter entfernt jagt oder eine Hirschherde über ein Tal grast, füllt die zusätzliche Reichweite den Bildrahmen. Moderne 800-mm-PF-Designs haben das Gewicht handlicher gemacht, aber es bleibt ein Spezialwerkzeug.</p>
-<h3>Unser Urteil</h3>
-<p>Für ein einzelnes Objektiv, das die meisten mitteleuropäischen Wildlife-Aufgaben abdeckt: 500 mm. Für dedizierte Offenland- oder Vogelfotografie: 800 mm. Wenn Ihr Budget ein Gehäuse und ein Objektiv erlaubt, gibt Ihnen 500 mm mit einem 1,4×-Konverter die Flexibilität beider Welten auf Kosten einer Lichtstufe.</p>` },
-    },
-    3: {
-      emoji: '🌅',
-      bg: 'linear-gradient(135deg,#4a1a00,#bf360c)',
-      badgeClass: 'pro',
-      en: { date:'July 2025', time:'5', body:`<p>Experienced wildlife photographers do not simply wake up early. They plan their golden hour the day before, position themselves in darkness, and wait. The difference between arriving at sunrise and being ready at sunrise is the difference between a missed shot and a career image.</p>
-<h3>Calculate Your Window</h3>
-<p>Golden hour is roughly the 40 minutes after sunrise and before sunset, but the quality of light changes minute by minute. Use a sun position app (PhotoPills, The Photographer's Ephemeris) to know exactly where the sun will rise relative to your subject. A backlit deer in rising fog is extraordinary. The same scene with flat overhead light is ordinary.</p>
-<h3>Exposure in Changing Light</h3>
-<p>The biggest technical challenge of golden hour is the rapid change in exposure value — up to 5 stops in 30 minutes. Use Auto ISO with a fixed minimum shutter speed rather than full auto exposure. Set your shutter speed to at least 1/1000s for moving animals, let the camera manage ISO, and check your histogram every few minutes.</p>
-<h3>Position Yourself the Night Before</h3>
-<p>If you are driving to a location on the morning, you have already lost. Walk your position the evening before. Know exactly where you will stand, which direction the light will come from, and what your background will be. Wildlife moves predictably at first light — the animals will be where they always are. The question is whether you are ready for them.</p>` },
-      cs: { date:'Červenec 2025', time:'5', body:`<p>Zkušení fotografové přírody se prostě jen brzy nevzbudí. Zlatou hodinu plánují den předem, umístí se ve tmě a čekají. Rozdíl mezi příchodem na východ slunce a připraveností na východ slunce je rozdíl mezi zmeškaným záběrem a kariérním snímkem.</p>
-<h3>Vypočítejte si své okno</h3>
-<p>Zlatá hodina je zhruba 40 minut po východu a před západem slunce, ale kvalita světla se mění minutu po minutě. Použijte aplikaci pro polohu slunce (PhotoPills, The Photographer's Ephemeris), abyste věděli přesně, kde vyjde slunce ve vztahu k vašemu subjektu. Jelen osvětlený zezadu v ranní mlze je mimořádný. Stejná scéna při plochém světle shora je obyčejná.</p>
-<h3>Expozice v měnícím se světle</h3>
-<p>Největší technickou výzvou zlaté hodiny je rychlá změna expoziční hodnoty — až 5 clonových čísel za 30 minut. Použijte Auto ISO s pevnou minimální rychlostí závěrky místo plné automatiky. Nastavte rychlost závěrky minimálně na 1/1000 s pro pohybující se zvířata, nechte fotoaparát spravovat ISO a každých pár minut kontrolujte histogram.</p>
-<h3>Umístěte se předchozí večer</h3>
-<p>Pokud jedete na místo ráno, už jste prohráli. Projděte svou pozici předchozí večer. Vězte přesně, kde budete stát, z jakého směru přijde světlo a jaké bude vaše pozadí. Zvířata se pohybují předvídatelně za prvního světla — budou tam, kde vždy jsou. Otázka je, zda jste na ně připraveni.</p>` },
-      sk: { date:'July 2025', time:'5', body:`<p>Skúsení fotografovia prírody sa jednoducho len skoro nevzbudia. Zlatú hodinu plánujú deň vopred, umiestnia sa v tme a čakajú. Rozdiel medzi príchodom na východ slnka a pripravenosťou na východ slnka je rozdiel medzi zmeškným záberom a kariérnym snímkom.</p>
-<h3>Vypočítajte si svoje okno</h3>
-<p>Zlatá hodina je zhruba 40 minút po východe a pred západom slnka, ale kvalita svetla sa mení minútu po minúte. Použite aplikáciu na sledovanie polohy slnka (PhotoPills, The Photographer's Ephemeris), aby ste vedeli presne, kde slnko vyjde vzhľadom k vášmu subjektu. Zospodu osvetlený jeleň v rannej hmle je výnimočný. Rovnaká scéna pri plochom svetle zhora je obyčajná.</p>
-<h3>Expozícia v meniacom sa svetle</h3>
-<p>Najväčšou technickou výzvou zlatej hodiny je rýchla zmena expozičnej hodnoty — až 5 stupňov za 30 minút. Použite Auto ISO s pevnou minimálnou rýchlosťou uzávierky namiesto plnej automatiky. Nastavte rýchlosť uzávierky minimálne na 1/1000 s pre pohybujúce sa zvieratá, nechajte fotoaparát spravovať ISO a každých niekoľko minút kontrolujte histogram.</p>
-<h3>Umiestnite sa predchádzajúci večer</h3>
-<p>Ak šoférujete na miesto ráno, už ste prehrali. Prejdite svoju pozíciu predchádzajúci večer. Vedzte presne, kde budete stáť, z ktorého smeru príde svetlo a aké bude vaše pozadie. Zvieratá sa pohybujú predvídateľne pri prvom svetle — budú tam, kde vždy sú. Otázka je, či ste na ne pripravení.</p>` },
-      de: { date:'Juli 2025', time:'5', body:`<p>Erfahrene Naturfotografen wachen nicht einfach früh auf. Sie planen ihre goldene Stunde am Vortag, positionieren sich in der Dunkelheit und warten. Der Unterschied zwischen dem Ankommen beim Sonnenaufgang und dem Bereit-Sein beim Sonnenaufgang ist der Unterschied zwischen einem verpassten Schuss und einem Karriere-Bild.</p>
-<h3>Berechnen Sie Ihr Fenster</h3>
-<p>Die goldene Stunde ist ungefähr die 40 Minuten nach Sonnenaufgang und vor Sonnenuntergang, aber die Lichtqualität ändert sich von Minute zu Minute. Verwenden Sie eine Sonnenpositions-App (PhotoPills, The Photographer's Ephemeris), um genau zu wissen, wo die Sonne relativ zu Ihrem Motiv aufgeht. Ein gegenlichtbeleuchteter Hirsch im aufsteigenden Nebel ist außergewöhnlich. Die gleiche Szene mit flachem Licht von oben ist gewöhnlich.</p>
-<h3>Belichtung in wechselndem Licht</h3>
-<p>Die größte technische Herausforderung der goldenen Stunde ist die schnelle Änderung des Belichtungswerts — bis zu 5 Blendenstufen in 30 Minuten. Verwenden Sie Auto-ISO mit einer festen Mindest-Verschlusszeit statt vollautomatischer Belichtung. Stellen Sie Ihre Verschlusszeit auf mindestens 1/1000 s für sich bewegende Tiere ein, lassen Sie die Kamera das ISO verwalten und überprüfen Sie alle paar Minuten Ihr Histogramm.</p>
-<h3>Positionieren Sie sich am Vorabend</h3>
-<p>Wenn Sie am Morgen zu einem Standort fahren, haben Sie bereits verloren. Gehen Sie Ihre Position am Vorabend ab. Wissen Sie genau, wo Sie stehen werden, aus welcher Richtung das Licht kommt und was Ihr Hintergrund sein wird. Wildlife bewegt sich bei erstem Licht vorhersehbar — die Tiere werden dort sein, wo sie immer sind. Die Frage ist, ob Sie für sie bereit sind.</p>` },
-    },
-    4: {
-      emoji: '🐺',
-      bg: 'linear-gradient(135deg,#1a1a2e,#2d2d44)',
-      badgeClass: 'field',
-      en: { date:'June 2025', time:'10', body:`<p>In three years of pursuing wolves in the Carpathians and the Bohemian Forest, I accumulated over 400 camera trap nights, walked more than 600 kilometres of transects, and spent 87 pre-dawn sessions in a hide. I have four publishable photographs. This is not a failure story.</p>
-<h3>Year One: Learning the Territory</h3>
-<p>The first year is not about photography. It is about understanding how wolves use a landscape. Where do they cross roads? Where do they drink? Which game trails do they use before dawn? I walked with a forester, read track reports, and placed cameras at every crossing I could find. I did not photograph a single wolf. I photographed every other species in the forest.</p>
-<h3>Year Two: The Infrastructure</h3>
-<p>I built two permanent hides — one at a confirmed water source, one at a forest road crossing with regular wolf tracks. I learned that wolves are extraordinarily sensitive to human scent, far more than deer or boar. Everything went into sealed bags. I stopped using scented soap three days before any session.</p>
-<h3>Year Three: The Photograph</h3>
-<p>On a February morning at minus twelve degrees, at 5:47am, a wolf paused for eleven seconds on the forest road. I had four frames before it was gone. The photograph is not dramatic. It shows a wolf walking away in blue pre-dawn light, looking back over its shoulder. It is the best image I have ever made.</p>` },
-      cs: { date:'Červen 2025', time:'10', body:`<p>Za tři roky sledování vlků v Karpatech a Šumavě jsem nasbíral přes 400 nočních záběrů z fotopastí, přešel více než 600 kilometrů transektů a strávil 87 předsvítáních v zásedu. Mám čtyři publikovatelné fotografie. Toto není příběh o neúspěchu.</p>
-<h3>Rok první: Poznávání teritoria</h3>
-<p>První rok není o fotografování. Je o pochopení toho, jak vlci využívají krajinu. Kde překračují cesty? Kde pijí? Které zvěřní stezky používají před úsvitem? Chodil jsem s lesním správcem, četl hlášení o stopách a umísťoval fotopasti na každém přechodu, který jsem mohl najít. Nevyfotografoval jsem jediného vlka. Vyfotografoval jsem každý jiný druh v lese.</p>
-<h3>Rok druhý: Infrastruktura</h3>
-<p>Postavil jsem dva trvalé záseky — jeden u ověřeného vodního zdroje, druhý u lesní cesty s pravidelným výskytem vlčích stop. Zjistil jsem, že vlci jsou mimořádně citliví na lidský pach, daleko více než jeleni nebo prasata. Vše šlo do uzavřených sáčků. Přestal jsem používat vonné mýdlo tři dny před jakýmkoli zasedáním.</p>
-<h3>Rok třetí: Fotografie</h3>
-<p>Únorového rána při mínus dvanácti stupních, v 5:47, vlk se zastavil na jedenáct sekund na lesní cestě. Měl jsem čtyři snímky předtím, než zmizel. Fotografie není dramatická. Zobrazuje vlka odcházejícího v modrém předsvítáním světle, dívajícího se zpět přes rameno. Je to nejlepší záběr, jaký jsem kdy udělal.</p>` },
-      sk: { date:'June 2025', time:'10', body:`<p>Za tri roky sledovania vlkov v Karpatoch a Českom lese som nahromadil viac ako 400 nočných záberov z fotopastí, prešiel viac ako 600 kilometrov transektov a strávil 87 pred-úsvitových sedení v záhrade. Mám štyri publikovateľné fotografie. Toto nie je príbeh o neúspechu.</p>
-<h3>Rok prvý: Spoznávanie územia</h3>
-<p>Prvý rok nie je o fotografii. Je o pochopení toho, ako vlci využívajú krajinu. Kde prechádzajú cesty? Kde pijú? Ktoré zverné chodníky používajú pred svitaním? Chodil som s lesníkom, čítal hlásenia o stopách a umiestnil kamery na každom prechode, ktorý som mohol nájsť. Neofotografoval som ani jedného vlka. Ofotografoval som každý iný druh v lese.</p>
-<h3>Rok druhý: Infraštruktúra</h3>
-<p>Postavil som dve trvalé záhradky — jednu pri potvrdenom vodnom zdroji, druhú pri lesnej ceste s pravidelnými vlčími stopami. Zistil som, že vlci sú mimoriadne citlivé na ľudský pach, oveľa viac ako jelene alebo diviaky. Všetko išlo do uzatvorených vreciek. Prestal som používať parfumované mydlo tri dni pred akýmkoľvek sedením.</p>
-<h3>Rok tretí: Fotografia</h3>
-<p>V februárové ráno pri mínus dvanástich stupňoch, o 5:47, vlk sa zastavil na jedenásť sekúnd na lesnej ceste. Mal som štyri záznamy predtým, ako zmizol. Fotografia nie je dramatická. Zobrazuje vlka odchádzajúceho v modrom pred-úsvitovom svetle, pozerajúceho sa späť cez plece. Je to najlepší záber, aký som kedy urobil.</p>` },
-      de: { date:'Juni 2025', time:'10', body:`<p>In drei Jahren der Wolf-Verfolgung in den Karpaten und dem Böhmerwald sammelte ich über 400 Kamerafallen-Nächte, lief mehr als 600 Kilometer Transekte und verbrachte 87 Vor-Morgengrauen-Sitzungen in einem Versteck. Ich habe vier veröffentlichbare Fotografien. Das ist keine Misserfolgsgeschichte.</p>
-<h3>Jahr eins: Das Territorium kennenlernen</h3>
-<p>Das erste Jahr dreht sich nicht um Fotografie. Es geht darum zu verstehen, wie Wölfe eine Landschaft nutzen. Wo überqueren sie Straßen? Wo trinken sie? Welche Wildwechsel nutzen sie vor dem Morgengrauen? Ich wanderte mit einem Förster, las Spurenberichte und platzierte Kameras an jedem Übergang, den ich finden konnte. Ich fotografierte keinen einzigen Wolf. Ich fotografierte jede andere Art im Wald.</p>
-<h3>Jahr zwei: Die Infrastruktur</h3>
-<p>Ich baute zwei permanente Verstecke — eines an einer bestätigten Wasserquelle, eines an einem Forstweg mit regelmäßigen Wolfsspuren. Ich erfuhr, dass Wölfe außerordentlich empfindlich auf menschlichen Geruch reagieren, weit mehr als Hirsche oder Wildschweine. Alles kam in versiegelte Tüten. Ich hörte drei Tage vor jeder Sitzung auf, duftendes Seife zu verwenden.</p>
-<h3>Jahr drei: Die Fotografie</h3>
-<p>An einem Februarmorgen bei minus zwölf Grad, um 5:47 Uhr, hielt ein Wolf elf Sekunden auf dem Forstweg an. Ich hatte vier Aufnahmen, bevor er weg war. Das Foto ist nicht dramatisch. Es zeigt einen Wolf, der im blauen Vormorgengrauen-Licht weggeht und über die Schulter zurückblickt. Es ist das beste Bild, das ich je gemacht habe.</p>` },
-    },
-    5: {
-      emoji: '🎒',
-      bg: 'linear-gradient(135deg,#1c1c1c,#3a3a3a)',
-      badgeClass: 'gear',
-      en: { date:'May 2025', time:'7', body:`<p>Your camera bag is the piece of equipment you use every single day in the field, yet most photographers spend more time researching lenses than bags. After eight months and six bags tested across muddy forest floors, river crossings and 12-hour days in the Białowieża, here is what we found.</p>
-<h3>What Actually Matters</h3>
-<p>Weight distribution matters more than total weight. A 6kg bag with a proper hip belt feels lighter after six hours than a 4kg bag without one. Rain covers matter — not the thin emergency ones, but integrated waterproof construction or a cover that deploys in five seconds in a downpour. Access matters: top-loading bags look clean but are miserable when you need your second lens quickly.</p>
-<h3>Our Top Picks</h3>
-<p><strong>Best overall:</strong> F-Stop Tilopa 50L — bomber construction, modular ICU system, proper hip support. Heavy when loaded but nothing comes close for a full-day shoot.<br>
-<strong>Best for mobility:</strong> Shimoda Explore 40 — lighter, excellent back system, quick side access. The choice for photographers who cover ground.<br>
-<strong>Best budget:</strong> Lowepro ProTrekker 450AW II — not perfect but reliable, weatherproof and widely available for repair parts.</p>
-<h3>What to Avoid</h3>
-<p>Rolling camera cases on location. Bags without any hip transfer. Bags where the camera compartment opens toward your back — accessing gear while wearing the bag becomes a contortion exercise. And any bag that requires removing it fully to access a single lens.</p>` },
-      cs: { date:'Květen 2025', time:'7', body:`<p>Váš fotografický batoh je vybavení, které používáte každý den v terénu, přesto většina fotografů tráví více času výzkumem objektivů než batohů. Po osmi měsících a šesti testovaných batohů přes blátivé lesní podlahy, říční brody a 12hodinové dny v Białowieże — zde je to, co jsme zjistili.</p>
-<h3>Co skutečně záleží</h3>
-<p>Rozložení váhy záleží více než celková hmotnost. Batoh 6 kg s řádným bederním pásem se po šesti hodinách cítí lehčeji než batoh 4 kg bez něj. Kryt proti dešti záleží — ne ty tenké nouzové, ale integrovaná voděodolná konstrukce nebo kryt, který se nasadí za pět sekund při náhlém lijáku. Přístup záleží: batohy s horním vstupem vypadají čistě, ale jsou nepříjemné, když rychle potřebujete druhý objektiv.</p>
-<h3>Naše top tipy</h3>
-<p><strong>Celkově nejlepší:</strong> F-Stop Tilopa 50L — robustní konstrukce, modulární systém ICU, řádná bederní podpora. Těžký při plném naložení, ale nic se mu nepřibližuje pro celodenní natáčení.<br>
-<strong>Nejlepší pro mobilitu:</strong> Shimoda Explore 40 — lehčí, vynikající systém zad, rychlý boční přístup. Volba pro fotografy, kteří hodně chodí.<br>
-<strong>Nejlepší rozpočtová volba:</strong> Lowepro ProTrekker 450AW II — ne dokonalý, ale spolehlivý, odolný vůči počasí a snadno dostupný.</p>
-<h3>Čemu se vyhnout</h3>
-<p>Kolečkové kufry na fotovybavení v terénu. Batohy bez jakéhokoli přenosu na boky. Batohy, kde se přihrádka na fotoaparát otevírá směrem k zádům — přístup k vybavení při nošení batohu se stává krkolomným cvičením. A jakýkoli batoh, který vyžaduje úplné sundání pro přístup k jedinému objektivu.</p>` },
-      sk: { date:'May 2025', time:'7', body:`<p>Váš fotografický batoh je vybavenie, ktoré používate každý deň v teréne, napriek tomu väčšina fotografov trávi viac času výskumom objektívov ako batohov. Po ôsmich mesiacoch a šiestich otestovaných batohoch cez blató lesných podlaží, riečne brody a 12-hodinové dni v Białowieži — tu je to, čo sme zistili.</p>
-<h3>Čo skutočne záleží</h3>
-<p>Rozloženie váhy záleží viac ako celková hmotnosť. Batoh s hmotnosťou 6 kg s riadnym bedrovým popruhom sa po šiestich hodinách cíti ľahší ako batoh 4 kg bez neho. Kryt proti dažďu záleží — nie tie tenké núdzové, ale integrovaná vodotesná konštrukcia alebo kryt, ktorý sa nasadí za päť sekúnd pri náhlom daždi. Prístup záleží: batohy s vrchným vstupom vyzerajú čisto, ale sú nepríjemné, keď rýchlo potrebujete druhý objektív.</p>
-<h3>Naše top odporúčania</h3>
-<p><strong>Celkovo najlepší:</strong> F-Stop Tilopa 50L — robustná konštrukcia, modulárny systém ICU, riadna bedrová podpora. Ťažký pri plnom naložení, ale nič sa mu nepribližuje pre celodenné natáčanie.<br>
-<strong>Najlepší pre mobilitu:</strong> Shimoda Explore 40 — ľahší, vynikajúci systém chrbta, rýchly bočný prístup. Voľba pre fotografov, ktorí veľa chodia.<br>
-<strong>Najlepší rozpočtový:</strong> Lowepro ProTrekker 450AW II — nie dokonalý, ale spoľahlivý, odolný voči počasiu a široko dostupný.</p>
-<h3>Čomu sa vyhnúť</h3>
-<p>Kolieskové kufre na kamerovú techniku v teréne. Batohy bez akéhokoľvek prenosu na boky. Batohy, kde sa priehradka na fotoaparát otvára smerom k chrbtu — prístup k vybaveniu pri nosení batoha sa stáva krkolomným cvičením. A akýkoľvek batoh, ktorý vyžaduje úplné zloženie pre prístup k jednému objektívu.</p>` },
-      de: { date:'Mai 2025', time:'7', body:`<p>Ihre Kameratasche ist das Ausrüstungsstück, das Sie jeden Tag im Gelände verwenden, dennoch verbringen die meisten Fotografen mehr Zeit damit, Objektive zu recherchieren als Taschen. Nach acht Monaten und sechs getesteten Taschen über schlammige Waldböden, Flussquerungen und 12-Stunden-Tage in der Białowieża — hier ist, was wir herausgefunden haben.</p>
-<h3>Was wirklich zählt</h3>
-<p>Die Gewichtsverteilung ist wichtiger als das Gesamtgewicht. Eine 6-kg-Tasche mit einem ordentlichen Hüftgurt fühlt sich nach sechs Stunden leichter an als eine 4-kg-Tasche ohne einen. Regenschutz ist wichtig — nicht die dünnen Notfall-Abdeckungen, sondern integrierte wasserdichte Konstruktion oder eine Abdeckung, die sich in fünf Sekunden bei einem Regenguss entfaltet. Zugang ist wichtig: Top-Loading-Taschen sehen sauber aus, sind aber mühsam, wenn Sie schnell ein zweites Objektiv benötigen.</p>
-<h3>Unsere Top-Empfehlungen</h3>
-<p><strong>Insgesamt bester:</strong> F-Stop Tilopa 50L — robuste Konstruktion, modulares ICU-System, ordentliche Hüftunterstützung. Schwer wenn vollgepackt, aber nichts kommt für ganztägige Aufnahmen nahe.<br>
-<strong>Bester für Mobilität:</strong> Shimoda Explore 40 — leichter, ausgezeichnetes Rückensystem, schneller Seitenzugang. Die Wahl für Fotografen, die viel Strecke machen.<br>
-<strong>Bestes Budget:</strong> Lowepro ProTrekker 450AW II — nicht perfekt, aber zuverlässig, wetterfest und weit verfügbar für Ersatzteile.</p>
-<h3>Was man vermeiden sollte</h3>
-<p>Rollende Kamerakoffer im Gelände. Taschen ohne jegliche Hüftübertragung. Taschen, bei denen das Kamerafach zur Rückseite hin öffnet — das Zugreifen auf Ausrüstung beim Tragen der Tasche wird zur Verrenkungsübung. Und jede Tasche, die vollständiges Abnehmen für den Zugriff auf ein einziges Objektiv erfordert.</p>` },
-    },
-    6: {
-      emoji: '🍃',
-      bg: 'linear-gradient(135deg,#1b5e20,#2e7d32)',
-      badgeClass: 'ethics',
-      en: { date:'April 2025', time:'4', body:`<p>The most common rationalisation in wildlife photography is some version of "the animal didn't seem stressed." Animals are exquisitely good at concealing stress responses from predators — which is exactly what you appear to be when you approach with a large lens. Behavioural calm is not physiological calm.</p>
-<h3>The Science of Disturbance</h3>
-<p>Research on ungulates, raptors and wading birds consistently shows that flight initiation distance — the point at which an animal flees — understates the actual disturbance threshold by 30 to 50 percent. By the time an animal moves away, its cortisol levels have already been elevated for several minutes. In nesting birds, this translates directly to reduced breeding success.</p>
-<h3>The 50-Metre Minimum</h3>
-<p>Fifty metres is a floor, not a target. Many species require 200 metres or more. The practical rule is: if your approach changed the animal's behaviour in any way — it stopped feeding, raised its head, changed direction — you are already too close. The correct response is to retreat, not to freeze and hope it settles.</p>
-<h3>Better Ethics, Better Photos</h3>
-<p>Counterintuitively, ethical distance produces better photographs. An animal that has not detected you behaves naturally. It feeds, moves, interacts. An animal that has detected you but not fled is alert, head-up, watching. The natural behaviour photograph is almost always the stronger image. Patience at distance is both the ethical choice and the technical one.</p>` },
-      cs: { date:'Duben 2025', time:'4', body:`<p>Nejčastější racionalizace ve wildlife fotografii je nějaká varianta „zvíře nevypadalo stresovaně." Zvířata jsou výjimečně dobrá v skrývání stresových reakcí před predátory — což přesně jste vy, když se přiblížíte s velkým objektivem. Klidné chování není fyziologický klid.</p>
-<h3>Věda o vyrušování</h3>
-<p>Výzkum na kopytníkách, dravých ptácích a brodivých ptácích konzistentně ukazuje, že vzdálenost zahájení útěku — bod, kdy zvíře uteče — podhodnocuje skutečný práh vyrušení o 30 až 50 procent. V době, kdy se zvíře vzdálí, jsou jeho hladiny kortizolu již několik minut zvýšené. U hnízdících ptáků se to přímo projevuje v snížené úspěšnosti hnízdění.</p>
-<h3>Minimálně 50 metrů</h3>
-<p>Padesát metrů je minimální hranice, nikoli cíl. Mnoho druhů vyžaduje 200 metrů nebo více. Praktické pravidlo je: pokud váš přístup jakýmkoli způsobem změnil chování zvířete — přestalo se pást, zvedlo hlavu, změnilo směr — jste již příliš blízko. Správnou reakcí je ustoupit, nikoli zmrznout a doufat, že se uklidní.</p>
-<h3>Lepší etika, lepší fotografie</h3>
-<p>Paradoxně, etická vzdálenost produkuje lepší fotografie. Zvíře, které vás neodhalilo, se chová přirozeně. Pase se, pohybuje, interaguje. Zvíře, které vás odhalilo, ale neuteklo, je ostražité, s hlavou nahoře, sleduje. Fotografie přirozeného chování je téměř vždy silnější záběr. Trpělivost na vzdálenosti je etická i technická volba.</p>` },
-      sk: { date:'April 2025', time:'4', body:`<p>Najčastejšie zdôvodnenie vo wildlife fotografii je nejaká variácia "zviera nevyzeralo stresovane." Zvieratá sú mimoriadne dobré v skrývaní stresových reakcií pred predátormi — čím presne vy vyzeráte, keď sa priblížite s veľkým objektívom. Pokojné správanie nie je fyziologický pokoj.</p>
-<h3>Veda o rušení</h3>
-<p>Výskum na kopytníkoch, dravcoch a brodivých vtákoch konzistentne ukazuje, že vzdialenosť iniciovania úteku — bod, kedy zviera utečie — podhodnocuje skutočný prah rušenia o 30 až 50 percent. V čase, keď sa zviera vzdiali, jeho hladiny kortizolu sú už niekoľko minút zvýšené. U hniezdiacich vtákov sa to priamo prejavuje v zníženej úspešnosti rozmnožovania.</p>
-<h3>Minimálnych 50 metrov</h3>
-<p>Päťdesiat metrov je spodná hranica, nie cieľ. Mnohé druhy vyžadujú 200 metrov alebo viac. Praktické pravidlo je: ak váš príchod akýmkoľvek spôsobom zmenil správanie zvieraťa — prestalo sa pásť, zdvihlo hlavu, zmenilo smer — ste už príliš blízko. Správnou reakciou je ustúpiť, nie zmraziť sa a dúfať, že sa upokojí.</p>
-<h3>Lepšia etika, lepšie fotografie</h3>
-<p>Paradoxne, etická vzdialenosť produkuje lepšie fotografie. Zviera, ktoré vás neodhalilo, sa správa prirodzene. Pasie sa, pohybuje, interaguje. Zviera, ktoré vás odhalilo, ale neutieklo, je ostražité, s hlavou nahor, sleduje. Fotografia prirodzeného správania je takmer vždy silnejší záber. Trpezlivosť na vzdialenosti je etická aj technická voľba.</p>` },
-      de: { date:'April 2025', time:'4', body:`<p>Die häufigste Rationalisierung in der Wildlife-Fotografie ist eine Variante von "das Tier wirkte nicht gestresst." Tiere sind außerordentlich gut darin, Stressreaktionen vor Raubtieren zu verbergen — was genau das ist, was Sie erscheinen, wenn Sie sich mit einem großen Objektiv nähern. Verhaltensruhe ist nicht physiologische Ruhe.</p>
-<h3>Die Wissenschaft der Störung</h3>
-<p>Forschungen an Huftieren, Greifvögeln und Watvögeln zeigen konsistent, dass die Fluchtinitiierungsdistanz — der Punkt, an dem ein Tier flieht — den tatsächlichen Störungsschwellenwert um 30 bis 50 Prozent unterschätzt. Bis ein Tier sich entfernt, sind seine Kortisol-Spiegel bereits seit mehreren Minuten erhöht. Bei Brutvögeln führt dies direkt zu reduziertem Bruterfolg.</p>
-<h3>Das 50-Meter-Minimum</h3>
-<p>Fünfzig Meter ist ein Untergrenze, kein Ziel. Viele Arten benötigen 200 Meter oder mehr. Die praktische Regel lautet: Wenn Ihr Annähern das Verhalten des Tieres in irgendeiner Weise verändert hat — es hörte auf zu fressen, hob den Kopf, änderte die Richtung — sind Sie bereits zu nah. Die richtige Reaktion ist, sich zurückzuziehen, nicht einzufrieren und zu hoffen, dass es sich beruhigt.</p>
-<h3>Bessere Ethik, bessere Fotos</h3>
-<p>Kontraintuitiv produziert ethischer Abstand bessere Fotografien. Ein Tier, das Sie nicht entdeckt hat, verhält sich natürlich. Es frisst, bewegt sich, interagiert. Ein Tier, das Sie entdeckt hat, aber nicht geflohen ist, ist wachsam, Kopf hoch, beobachtend. Das Natürlichkeits-Verhaltens-Foto ist fast immer das stärkere Bild. Geduld auf Abstand ist sowohl die ethische als auch die technische Wahl.</p>` },
-    },
-  };
-
-  function openPostModal(n){
-    const d = POST_DATA[n];
-    if(!d) return;
-    const L = d[lang] || d.en;
-    // Hero
-    const hero = document.getElementById('pm-hero');
-    hero.style.background = d.bg;
-    hero.innerHTML = `<span style="font-size:88px;z-index:1">${d.emoji}</span><div class="pm-hero-overlay"></div>`;
-    // Badge
-    const badge = document.getElementById('pm-badge');
-    badge.className = 'post-badge ' + d.badgeClass;
-    badge.setAttribute('data-t','posts_art'+n+'_badge');
-    badge.textContent = t('posts_art'+n+'_badge');
-    // Meta
-    document.getElementById('pm-meta').innerHTML =
-      `<span>📅 ${L.date}</span><span style="opacity:.4">·</span><span>⏱ ${L.time} ${t('posts_min')}</span>`;
-    // Title
-    const title = document.getElementById('pm-title');
-    title.setAttribute('data-t','posts_art'+n+'_title');
-    title.textContent = t('posts_art'+n+'_title');
-    // Body
-    document.getElementById('pm-body').innerHTML = L.body;
-    // Close btn translation
-    const closeBtn = document.querySelector('#post-modal .pm-footer .post-read-btn');
-    if(closeBtn) closeBtn.textContent = '✕ ' + t('modal_close');
-    // Open
-    document.getElementById('post-modal-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePostModal(){
-    document.getElementById('post-modal-overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  // Close on Escape key
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closePostModal(); });
-// ── END POST MODAL ────────────────────────────────────────────
-
 </script>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
@@ -883,64 +625,94 @@ body.dark .post-badge.ethics{background:var(--g6);color:var(--g3)}
 /* ═══════════════════════════════════════════════════════════ */
 
 
-/* ─── POST ARTICLE MODAL ──────────────────── */
-#post-modal-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.65);z-index:800;
-  align-items:flex-start;justify-content:center;
-  padding:20px 16px;overflow-y:auto;
-  backdrop-filter:blur(4px)
+/* ═══ POSTS ═════════════════════════════════ */
+.post-card{
+  display:flex;flex-direction:column;
+  background:var(--bg3);border:1.5px solid var(--brd2);border-radius:16px;
+  overflow:hidden;cursor:pointer;transition:.2s;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:18px
 }
-#post-modal-overlay.open{display:flex}
-#post-modal{
-  background:var(--bg3);border-radius:20px;
-  width:100%;max-width:680px;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
-  overflow:hidden;margin:auto;
-  animation:pmSlideIn .25s ease
+.post-card:hover{box-shadow:0 8px 28px rgba(27,94,48,.13);transform:translateY(-2px)}
+@media(min-width:640px){
+  .post-card{flex-direction:row}
+  .post-thumb{width:240px;flex-shrink:0}
 }
-@keyframes pmSlideIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.pm-hero{
-  width:100%;aspect-ratio:16/9;
-  display:flex;align-items:center;justify-content:center;
-  font-size:88px;position:relative;flex-shrink:0
+.post-thumb{
+  aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0d2e14,#1b5e30);
+  position:relative;overflow:hidden
 }
-.pm-hero-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.55) 100%)
+@media(min-width:640px){.post-thumb{aspect-ratio:unset;min-height:180px}}
+.post-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.post-thumb-emoji{font-size:64px;z-index:1;user-select:none}
+.post-card-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.post-card-title{font-size:16px;font-weight:800;line-height:1.28;letter-spacing:-.02em;color:var(--text);margin:0}
+.post-card-excerpt{font-size:13px;color:var(--text3);line-height:1.7;flex:1;margin:0}
+.post-card-meta{font-size:11px;color:var(--text3)}
+.post-read-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 18px;background:var(--g1);color:#fff;border-radius:24px;
+  font-size:12px;font-weight:700;border:none;cursor:pointer;
+  transition:.15s;width:fit-content;font-family:var(--font)
 }
-.pm-header{padding:28px 28px 0}
-.pm-badge-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.pm-title{font-size:24px;font-weight:800;line-height:1.22;letter-spacing:-.025em;color:var(--text);margin-bottom:8px}
-@media(max-width:480px){.pm-title{font-size:20px}}
-.pm-meta{font-size:12px;color:var(--text3);display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--brd2)}
-.pm-body{
-  padding:24px 28px 32px;
-  font-size:14.5px;line-height:1.82;color:var(--text2)
+.post-read-btn:hover{background:var(--g2);transform:translateY(-1px)}
+.post-badge{
+  display:inline-flex;align-items:center;padding:3px 11px;border-radius:20px;
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;width:fit-content
 }
-.pm-body p{margin-bottom:16px}
-.pm-body p:last-child{margin-bottom:0}
-.pm-body h3{
-  font-size:16px;font-weight:800;color:var(--text);
-  margin:28px 0 10px;letter-spacing:-.015em;
-  padding-left:14px;border-left:3px solid var(--g3)
+.post-badge.field{background:#e8f5e9;color:#1b5e20}
+.post-badge.pro{background:#fff3e0;color:#bf360c}
+.post-badge.gear{background:#e3f2fd;color:#0d47a1}
+.post-badge.ethics{background:var(--g6);color:var(--g1)}
+body.dark .post-badge.field{background:#1b3a1e;color:#81c784}
+body.dark .post-badge.pro{background:#3e1f00;color:#ffb74d}
+body.dark .post-badge.gear{background:#0d2138;color:#64b5f6}
+body.dark .post-badge.ethics{background:#0c2114;color:var(--g3)}
+
+/* ─── MODAL ──────────────────────────────── */
+.post-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:900;align-items:flex-start;justify-content:center;
+  padding:20px 16px;overflow-y:auto;backdrop-filter:blur(4px)
 }
-.pm-body strong{color:var(--text);font-weight:700}
-.pm-close-btn{
-  position:absolute;top:14px;right:14px;
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(0,0,0,.35);border:none;
-  color:#fff;font-size:18px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:.15s;z-index:2;backdrop-filter:blur(4px)
+.post-modal-overlay.open{display:flex}
+.post-modal-box{
+  background:var(--bg3);border-radius:20px;width:100%;max-width:700px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;margin:auto;
+  animation:pmIn .22s ease
 }
-.pm-close-btn:hover{background:rgba(0,0,0,.55)}
-.pm-hero-wrap{position:relative}
-.pm-footer{
-  padding:16px 28px 24px;border-top:1px solid var(--brd2);
-  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap
+@keyframes pmIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.post-modal-close{
+  position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.4);border:none;color:#fff;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:2;backdrop-filter:blur(4px)
 }
-.pm-footer-brand{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.05em}
+.post-modal-close:hover{background:rgba(0,0,0,.65)}
+.post-modal-thumb{
+  width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0d2e14,#1b5e30);position:relative;overflow:hidden
+}
+.post-modal-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pm-img-wrap,.post-modal-thumb{position:relative}
+.post-modal-inner{padding:22px 26px 26px}
+.post-modal-title{font-size:22px;font-weight:800;line-height:1.22;letter-spacing:-.025em;color:var(--text);margin:0 0 8px}
+@media(max-width:500px){.post-modal-title{font-size:18px}}
+.post-modal-meta{font-size:12px;color:var(--text3);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--brd2)}
+.post-modal-body{font-size:14px;line-height:1.85;color:var(--text2);margin-top:14px}
+.post-modal-body p{margin-bottom:14px}
+.post-modal-body p:last-child{margin-bottom:0}
+.post-modal-body h3{font-size:15px;font-weight:800;color:var(--text);margin:22px 0 8px;
+  padding-left:12px;border-left:3px solid var(--g3)}
+
+/* ─── JAZYKOVÉ PŘEPÍNÁNÍ ─────────────────── */
+.pt-cs,.pt-en,.pt-sk,.pt-de{display:none}
+.lang-cs .pt-cs,.lang-en .pt-en,.lang-sk .pt-sk,.lang-de .pt-de{display:inline}
+.post-modal-body.pt-cs,.post-modal-body.pt-en,
+.post-modal-body.pt-sk,.post-modal-body.pt-de{display:none}
+.lang-cs .post-modal-body.pt-cs,
+.lang-en .post-modal-body.pt-en,
+.lang-sk .post-modal-body.pt-sk,
+.lang-de .post-modal-body.pt-de{display:block}
 
 </style>
 </head>
@@ -1339,265 +1111,599 @@ body.dark .post-badge.ethics{background:var(--g6);color:var(--g3)}
 </div>
 
 
-<!-- POSTS ═══════════════════════════════════════════════════════════
-     Jak přidat článek:
-     1. Zkopíruj blok <article class="post-card"> níže
-     2. Vlož ho do .posts-grid
-     3. Přepiš texty (title, excerpt) — v každém ze 4 jazyků
-     4. Pro foto: nahraď emoji za <img src="URL" alt="">
-     ════════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════
+     POSTS SEKCE
+     Jak upravit článek:
+       1. Najdi článek níže (ČLÁNEK 1, ČLÁNEK 2...)
+       2. V <div class="post-card"> uprav náhledový text
+       3. V <div class="post-modal-content"> uprav obsah
+       4. Fotka náhledu: změň src="" v <img> tagu,
+          nebo nech emoji pokud foto nemáš
+       5. Foto v obsahu: stejně — src="" v <img>
+════════════════════════════════════════════ -->
 <div class="sec" id="s-posts">
-  <div class="sh"><span style="color:var(--g3)">📢</span><span data-t="n_posts">Posts</span></div>
+<div class="sh">📢 <span data-t="n_posts">Posts</span></div>
 
-  <div class="posts-layout">
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 1
+═══════════════════════════════════════════ -->
 
-    <!-- ── FEATURED ČLÁNEK ──────────────────────────────────── -->
-    <article class="post-card post-featured">
-      <div class="post-img" style="background:linear-gradient(135deg,#0d2e14,#1b5e30)">
-        <span class="post-img-emoji">🦌</span>
-        <div class="post-img-overlay"></div>
-        <!-- Vlastní foto: smaž emoji výše a odkomentuj:
-        <img src="URL-fotky.jpg" alt="Red Deer Rut"> -->
-      </div>
-      <div class="post-body">
-        <span class="post-badge field" data-t="posts_art1_badge">Field Notes</span>
-        <h2 class="post-title" data-t="posts_art1_title">How to Photograph the Red Deer Rut</h2>
-        <p class="post-excerpt" data-t="posts_art1_excerpt">September in Central European forests is the most intense month for wildlife photographers. Here is everything you need — gear, approach, timing and ethical distance for the most dramatic wildlife spectacle in Europe.</p>
-        <div class="post-meta">
-          <span>📅 September 2025</span>
-          <span class="post-meta-dot">·</span>
-          <span>⏱ 8 <span data-t="posts_min">min read</span></span>
-        </div>
-        <button class="post-read-btn" onclick="openPostModal(1)">
-          <span data-t="posts_read">Read Full Story</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-      </div>
-    </article>
-
-    <!-- ── ODDĚLOVAČ ─────────────────────────────────────────── -->
-    <div class="posts-divider">
-      <div class="posts-divider-line"></div>
-      <span class="posts-divider-label" data-t="posts_pro">Pro Tips</span>
-      <div class="posts-divider-line"></div>
-    </div>
-
-    <!-- ── GRID KARET ────────────────────────────────────────── -->
-    <div class="posts-grid">
-
-      <!-- Článek 2 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#1a237e,#283593)">
-          <span class="post-img-emoji">🔭</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge pro" data-t="posts_art2_badge">Pro Tips</span>
-          <h2 class="post-title" data-t="posts_art2_title">500 mm vs 800 mm — Which Lens for Wildlife?</h2>
-          <p class="post-excerpt" data-t="posts_art2_excerpt">We tested both focal lengths over two seasons in the field. The answer depends on your terrain, your subject and how far you are willing to carry your kit.</p>
-          <div class="post-meta">
-            <span>📅 August 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 6 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(2)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-      <!-- Článek 3 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#4a1a00,#bf360c)">
-          <span class="post-img-emoji">🌅</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge pro" data-t="posts_art3_badge">Pro Tips</span>
-          <h2 class="post-title" data-t="posts_art3_title">Golden Hour Mastery — Light, Settings and Positioning</h2>
-          <p class="post-excerpt" data-t="posts_art3_excerpt">The 40 minutes around sunrise separate good wildlife photos from extraordinary ones. Learn how to calculate the window, position in advance and nail exposure in fast-changing light.</p>
-          <div class="post-meta">
-            <span>📅 July 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 5 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(3)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-    </div><!-- /posts-grid Pro Tips -->
-
-    <!-- ── ODDĚLOVAČ ─────────────────────────────────────────── -->
-    <div class="posts-divider">
-      <div class="posts-divider-line"></div>
-      <span class="posts-divider-label" data-t="posts_field">Field Notes</span>
-      <div class="posts-divider-line"></div>
-    </div>
-
-    <div class="posts-grid">
-
-      <!-- Článek 4 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#1a1a2e,#2d2d44)">
-          <span class="post-img-emoji"><img src="/images/fox-cubs.jpeg" alt="Fox Cubs"></span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge field" data-t="posts_art4_badge">Field Notes</span>
-          <h2 class="post-title" data-t="posts_art4_title">Fox Cubs</h2>
-          <p class="post-excerpt" data-t="posts_art4_excerpt">Fox photography in Central Europe is one of the hardest challenges in wildlife photography. Camera traps, pre-dawn hikes and long cold nights — this is what patience really looks like.</p>
-          <div class="post-meta">
-            <span>📅 June 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 10 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(4)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-      <!-- Článek 5 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#263238,#37474f)">
-          <span class="post-img-emoji">🌫️</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge field" data-t="posts_field">Field Notes</span>
-          <h2 class="post-title">Fog, Frost and Patience — Winter Wildlife Photography</h2>
-          <p class="post-excerpt">Winter is the underrated season for wildlife photographers. Tracks in snow tell stories. Bare trees open sightlines. And cold fog creates atmosphere that summer simply cannot match.</p>
-          <div class="post-meta">
-            <span>📅 January 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 7 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(5)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-    </div><!-- /posts-grid Field Notes -->
-
-    <!-- ── ODDĚLOVAČ ─────────────────────────────────────────── -->
-    <div class="posts-divider">
-      <div class="posts-divider-line"></div>
-      <span class="posts-divider-label" data-t="posts_gear">Gear Review</span>
-      <div class="posts-divider-line"></div>
-    </div>
-
-    <div class="posts-grid">
-
-      <!-- Článek 6 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#1c1c1c,#3a3a3a)">
-          <span class="post-img-emoji">🎒</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge gear" data-t="posts_art5_badge">Gear Review</span>
-          <h2 class="post-title" data-t="posts_art5_title">Best Camera Bags for Full-Day Hikes</h2>
-          <p class="post-excerpt" data-t="posts_art5_excerpt">We tested six bags over eight months in rain, mud and cold mornings to find the best options for photographers who hike to their subjects.</p>
-          <div class="post-meta">
-            <span>📅 May 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 7 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(6)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-      <!-- Článek 7 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#311b92,#4527a0)">
-          <span class="post-img-emoji">📷</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge gear" data-t="posts_gear">Gear Review</span>
-          <h2 class="post-title">Sony A9 III vs Nikon Z9 — Wildlife Autofocus Battle</h2>
-          <p class="post-excerpt">Both cameras promise to lock on to a running deer at 120 fps. We put that claim to the test in real field conditions — forest, open meadow and fading light at dusk.</p>
-          <div class="post-meta">
-            <span>📅 March 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 9 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(6)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-    </div><!-- /posts-grid Gear -->
-
-    <!-- ── ODDĚLOVAČ ─────────────────────────────────────────── -->
-    <div class="posts-divider">
-      <div class="posts-divider-line"></div>
-      <span class="posts-divider-label" data-t="posts_ethics">Ethics</span>
-      <div class="posts-divider-line"></div>
-    </div>
-
-    <div class="posts-grid">
-
-      <!-- Článek 8 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
-          <span class="post-img-emoji">🍃</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge ethics" data-t="posts_art6_badge">Ethics</span>
-          <h2 class="post-title" data-t="posts_art6_title">The 50-Metre Rule — Why Distance Is Everything</h2>
-          <p class="post-excerpt" data-t="posts_art6_excerpt">A great photo that stressed the animal is not a great photo. We explore the science of disturbance distances and why ethical photographers consistently make better images by stepping back.</p>
-          <div class="post-meta">
-            <span>📅 April 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 4 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(6)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-      <!-- Článek 9 -->
-      <article class="post-card">
-        <div class="post-img" style="background:linear-gradient(135deg,#33691e,#558b2f)">
-          <span class="post-img-emoji">🦉</span>
-          <div class="post-img-overlay"></div>
-        </div>
-        <div class="post-body">
-          <span class="post-badge ethics" data-t="posts_ethics">Ethics</span>
-          <h2 class="post-title">Never Use Playback Calls — Here Is Why</h2>
-          <p class="post-excerpt">Playing recorded bird calls to attract owls or rare songbirds is common practice. It is also one of the most harmful things you can do. The science and the alternatives explained.</p>
-          <div class="post-meta">
-            <span>📅 February 2025</span>
-            <span class="post-meta-dot">·</span>
-            <span>⏱ 5 <span data-t="posts_min">min read</span></span>
-          </div>
-          <button class="post-read-btn" onclick="openPostModal(6)">
-            <span data-t="posts_read">Read Full Story</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </article>
-
-    </div><!-- /posts-grid Ethics -->
-
-  </div><!-- /posts-layout -->
+<!-- NÁHLED 1 -->
+<div class="post-card" onclick="openModal('modal-1')">
+  <div class="post-thumb">
+    <!-- FOTKA NÁHLEDU: vlož src="https://..." nebo ponech emoji -->
+    <span class="post-thumb-emoji">🦌</span>
+    <!-- <img src="https://TVOJE-FOTO.jpg" alt=""> -->
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge field">
+      <span class="pt-cs">Terénní zápisky</span>
+      <span class="pt-en">Field Notes</span>
+      <span class="pt-sk">Terénne zápisky</span>
+      <span class="pt-de">Feldnotizen</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">Jak fotit říji jelena evropského</span>
+      <span class="pt-en">How to Photograph the Red Deer Rut</span>
+      <span class="pt-sk">Ako fotografovať ruju jeleňa</span>
+      <span class="pt-de">Rothirsch-Brunft fotografieren</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">Září je nejintenzivnější měsíc pro fotografy přírody. Vybavení, přístup, načasování a etická vzdálenost pro nejdramatičtější wildlife podívanou v Evropě.</span>
+      <span class="pt-en">September is the most intense month for wildlife photographers. Gear, approach, timing and ethical distance for the most dramatic spectacle in Europe.</span>
+      <span class="pt-sk">September je najintenzívnejší mesiac pre fotografov prírody. Vybavenie, prístup, načasovanie a etická vzdialenosť pre najdramatickejšiu šou v Európe.</span>
+      <span class="pt-de">September ist der intensivste Monat für Naturfotografen. Ausrüstung, Annäherung, Timing und ethischer Abstand für das dramatischste Spektakel Europas.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Září 2025</span><span class="pt-en">September 2025</span><span class="pt-sk">September 2025</span><span class="pt-de">September 2025</span> &nbsp;·&nbsp; ⏱ 8 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-1')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
 </div>
+
+<!-- OBSAH 1 (modal) -->
+<div id="modal-1" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-1'))">✕</button>
+    <div class="post-modal-thumb">
+      <!-- FOTKA V MODALU: vlož src="https://..." nebo ponech emoji -->
+      <span class="post-thumb-emoji" style="font-size:96px">🦌</span>
+      <!-- <img src="https://TVOJE-FOTO.jpg" alt=""> -->
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge field" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Terénní zápisky</span><span class="pt-en">Field Notes</span><span class="pt-sk">Terénne zápisky</span><span class="pt-de">Feldnotizen</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">Jak fotit říji jelena evropského</span>
+        <span class="pt-en">How to Photograph the Red Deer Rut</span>
+        <span class="pt-sk">Ako fotografovať ruju jeleňa</span>
+        <span class="pt-de">Rothirsch-Brunft fotografieren</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Září 2025</span><span class="pt-en">September 2025</span><span class="pt-sk">September 2025</span><span class="pt-de">September 2025</span> · ⏱ 8 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+
+      <!-- ── TEXT ČLÁNKU 1 ─────────────────────────── -->
+      <div class="pt-cs post-modal-body">
+        <p>Září je měsíc, kdy lesy střední Evropy ožívají jednou z nejdramatičtějších přírodních podívaných — říjí jelena evropského. Vzdálený řev jelenů se rozléhá mlžnými údolími za prvního světla a pro fotografy přírody je to nejhodnotnější měsíc roku.</p>
+        <h3>Načasování je vše</h3>
+        <p>Vrchol říje zpravidla trvá od poloviny září do začátku října. Nejintenzivnější aktivita probíhá v posledních dvou hodinách před úsvitem a první hodině po východu slunce. Přijeďte na místo ideálně 45 minut před prvním světlem a pohybujte se pomalu a tiše na předem vytipovanou pozici.</p>
+        <h3>Doporučení vybavení</h3>
+        <p>Doporučuje se minimálně ohnisko 500 mm. Jeleni jsou velmi citliví na přítomnost člověka, takže dosah je zásadní. Monopod nebo stativ s gimbal hlavou pomůže za slabého ranního světla. Noste neutrální zemité barvy a vyhýbejte se syntetickým látkám, které šustí.</p>
+        <h3>Etická vzdálenost</h3>
+        <p>Zlaté pravidlo je minimálně 100 metrů od jakéhokoli říjícího jelena. Jelen, který přestane řvát nebo se otočí k vám, je jelen, kterého jste vyrušili. Okamžitě ustupte — říje je fyziologicky vyčerpávající a zbytečný stres může ovlivnit přežití přes zimu.</p>
+        <h3>Kde je najít</h3>
+        <p>Nejlepší lokality jsou otevřené okraje lesů sousedící s loukami a národní parky. Ranní mlha zjemňuje světlo a vytváří atmosferická pozadí — tato kombinace dělá ze září nejfotogeničtější měsíc roku.</p>
+      </div>
+      <div class="pt-en post-modal-body">
+        <p>September is when the forests of Central Europe come alive with one of nature's most dramatic spectacles — the red deer rut. The distant roar of stags echoes through misty valleys at first light, and for wildlife photographers, it is the most rewarding month of the year.</p>
+        <h3>Timing Is Everything</h3>
+        <p>The peak rut typically runs from mid-September to early October, with the most intense activity in the final two hours before dawn and the first hour after sunrise. Arrive at your location ideally 45 minutes before first light and move slowly and quietly to your pre-scouted position.</p>
+        <h3>Gear Recommendations</h3>
+        <p>A focal length of at least 500mm is recommended. The deer are highly sensitive to human presence, so reach is essential. A monopod or gimbal head will help in the low light of dawn. Wear neutral earth-tone clothing and avoid synthetic fabrics that rustle.</p>
+        <h3>Ethical Distance</h3>
+        <p>The golden rule is a minimum of 100 metres from any rutting stag. A stag that stops roaring or turns to face you is a stag you have disturbed. Back off immediately — the rut is physiologically exhausting and unnecessary stress can affect their survival through winter.</p>
+        <h3>Where to Find Them</h3>
+        <p>The best locations are open forest edges adjacent to meadows and national parks. Early morning fog softens the light and creates atmospheric backgrounds — this combination makes September the most photogenic month of the year.</p>
+      </div>
+      <div class="pt-sk post-modal-body">
+        <p>September je mesiac, keď lesy strednej Európy ožívajú jednou z najdramatickejších prírodných šou — ruja jeleňa európskeho. Vzdialený rev jeleňov sa ozýva hmlistými dolinami pri prvom svite a pre fotografov prírody je to najhodnotnejší mesiac v roku.</p>
+        <h3>Načasovanie je všetko</h3>
+        <p>Vrchol ruji zvyčajne trvá od polovice septembra do začiatku októbra. Príďte na miesto ideálne 45 minút pred prvým svetlom a pohybujte sa pomaly a ticho na vopred prieskumom overenú pozíciu.</p>
+        <h3>Etická vzdialenosť</h3>
+        <p>Zlaté pravidlo je minimálne 100 metrov od akéhokoľvek jeleňa v ruji. Jeleň, ktorý prestane revať alebo sa otočí k vám, je jeleň, ktorého ste vyrušili. Okamžite ustúpte.</p>
+        <h3>Kde ich nájsť</h3>
+        <p>Najlepšie lokality sú otvorené okraje lesov susediace s lúkami a národné parky. Ranná hmla zjemňuje svetlo a vytvára atmosferické pozadie.</p>
+      </div>
+      <div class="pt-de post-modal-body">
+        <p>Im September erwachen die Wälder Mitteleuropas mit der Rothirsch-Brunft. Das Röhren der Hirsche hallt durch neblige Täler im ersten Morgenlicht — für Naturfotografen ist es der lohnendste Monat des Jahres.</p>
+        <h3>Timing ist alles</h3>
+        <p>Die Brunft-Hochsaison dauert von Mitte September bis Anfang Oktober. Kommen Sie idealerweise 45 Minuten vor dem ersten Licht an und bewegen Sie sich langsam zu Ihrer vorher erkundeten Position.</p>
+        <h3>Ethischer Abstand</h3>
+        <p>Die goldene Regel ist ein Mindestabstand von 100 Metern zu jedem brunftenden Hirsch. Ein Hirsch, der aufhört zu röhren oder sich Ihnen zuwendet, ist ein gestörter Hirsch. Ziehen Sie sich sofort zurück.</p>
+        <h3>Wo man sie findet</h3>
+        <p>Die besten Standorte sind offene Waldränder angrenzend an Wiesen und Nationalparks. Frühmorgendlicher Nebel schafft atmosphärische Hintergründe.</p>
+      </div>
+      <!-- ── KONEC TEXTU ČLÁNKU 1 ────────────────── -->
+
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-1'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 2
+═══════════════════════════════════════════ -->
+
+<!-- NÁHLED 2 -->
+<div class="post-card" onclick="openModal('modal-2')">
+  <div class="post-thumb">
+    <span class="post-thumb-emoji">🔭</span>
+    <!-- <img src="https://TVOJE-FOTO.jpg" alt=""> -->
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge pro">
+      <span class="pt-cs">Pro tipy</span><span class="pt-en">Pro Tips</span><span class="pt-sk">Pro tipy</span><span class="pt-de">Pro-Tipps</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">500 mm vs 800 mm — Který objektiv pro wildlife?</span>
+      <span class="pt-en">500 mm vs 800 mm — Which Lens for Wildlife?</span>
+      <span class="pt-sk">500 mm vs 800 mm — Ktorý objektív pre wildlife?</span>
+      <span class="pt-de">500 mm vs 800 mm — Welches Objektiv für Wildlife?</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">Testovali jsme obě ohniskové vzdálenosti přes dvě sezóny v terénu. Odpověď závisí na terénu, subjektu a ochotě nosit těžší výbavu.</span>
+      <span class="pt-en">We tested both focal lengths over two seasons. The answer depends on your terrain, your subject and how far you are willing to carry your kit.</span>
+      <span class="pt-sk">Testovali sme obe ohniskové vzdialenosti počas dvoch sezón. Odpoveď závisí od terénu, subjektu a ochoty nosiť ťažší kit.</span>
+      <span class="pt-de">Wir testeten beide Brennweiten über zwei Feldsaisons. Die Antwort hängt von Ihrem Gelände und Motiv ab.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Srpen 2025</span><span class="pt-en">August 2025</span><span class="pt-sk">August 2025</span><span class="pt-de">August 2025</span> &nbsp;·&nbsp; ⏱ 6 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-2')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
+</div>
+
+<!-- OBSAH 2 (modal) -->
+<div id="modal-2" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-2'))">✕</button>
+    <div class="post-modal-thumb" style="background:linear-gradient(135deg,#1a237e,#283593)">
+      <span class="post-thumb-emoji" style="font-size:96px">🔭</span>
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge pro" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Pro tipy</span><span class="pt-en">Pro Tips</span><span class="pt-sk">Pro tipy</span><span class="pt-de">Pro-Tipps</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">500 mm vs 800 mm — Který objektiv pro wildlife?</span>
+        <span class="pt-en">500 mm vs 800 mm — Which Lens for Wildlife?</span>
+        <span class="pt-sk">500 mm vs 800 mm — Ktorý objektív pre wildlife?</span>
+        <span class="pt-de">500 mm vs 800 mm — Welches Objektiv für Wildlife?</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Srpen 2025</span><span class="pt-en">August 2025</span><span class="pt-sk">August 2025</span><span class="pt-de">August 2025</span> · ⏱ 6 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+      <div class="pt-cs post-modal-body">
+        <p>Jen málo debat ve wildlife fotografii trvá tak dlouho jako otázka 500 mm versus 800 mm. Po dvou celých sezónách testování v různém evropském terénu zde je naše upřímné hodnocení.</p>
+        <h3>Argument pro 500 mm</h3>
+        <p>Objektiv 500 mm f/5,6 PF nebo f/4 je ideální pro většinu evropské wildlife práce. Je zvládnutelný z ruky, sedí na monopodu a širší clona dává lepší výkon za slabého světla. V lesním prostředí s vzdálenostmi pod 50 metrů vám 500 mm dá celý záběr s prostorem pro kompozici.</p>
+        <h3>Argument pro 800 mm</h3>
+        <p>Otevřené biotopy — mokřady, vřesoviště, velké louky — jsou tam kde 800 mm září. Moderní konstrukce 800 mm PF učinily hmotnost zvládnutelnější, ale stále jde o specializovaný nástroj pro konkrétní situace.</p>
+        <h3>Verdikt</h3>
+        <p>Pro jeden objektiv pokrývající většinu středoevropské wildlife: 500 mm. S konvertorem 1,4× máte flexibilitu obou světů za cenu jednoho stupně světla.</p>
+      </div>
+      <div class="pt-en post-modal-body">
+        <p>Few debates in wildlife photography run as long as the 500mm versus 800mm question. After two full seasons testing each in varied European terrain, here is our honest assessment.</p>
+        <h3>The Case for 500mm</h3>
+        <p>A 500mm f/5.6 PF or f/4 is the sweet spot for most European wildlife work. It is manageable handheld, sits on a monopod, and the wider aperture gives better low-light performance at dawn and dusk — exactly when wildlife is most active.</p>
+        <h3>The Case for 800mm</h3>
+        <p>Open habitats — wetlands, moorland, large meadows — are where 800mm earns its place. Modern 800mm PF designs have made weight more manageable, but it remains a specialised tool for specific situations.</p>
+        <h3>Verdict</h3>
+        <p>For one lens covering most Central European wildlife: 500mm. With a 1.4x converter you get flexibility of both worlds at the cost of one stop of light.</p>
+      </div>
+      <div class="pt-sk post-modal-body">
+        <p>Len málo diskusií vo wildlife fotografii trvá tak dlho ako otázka 500 mm verzus 800 mm. Po dvoch sezónach testovania oboch v rôznych európskych terénoch — tu je naše úprimné hodnotenie.</p>
+        <h3>Argument pre 500 mm</h3>
+        <p>Objektív 500 mm f/5,6 PF alebo f/4 je ideálna voľba pre väčšinu európskej wildlife práce. Je zvládnuteľný z ruky, sedí na monopode a širší otvor clony dáva lepší výkon pri slabom svetle.</p>
+        <h3>Verdikt</h3>
+        <p>Pre jeden objektív pokrývajúci väčšinu stredoeurópskej wildlife práce: 500 mm. S konvertorom 1,4× máte flexibilitu oboch svetov za cenu jedného stupňa svetla.</p>
+      </div>
+      <div class="pt-de post-modal-body">
+        <p>Wenige Debatten in der Wildlife-Fotografie dauern so lange wie die 500-mm-versus-800-mm-Frage. Nach zwei Feldsaisons beim Testen beider in verschiedenen europäischen Geländen — hier ist unsere ehrliche Bewertung.</p>
+        <h3>Das Argument für 500 mm</h3>
+        <p>Ein 500-mm-Objektiv ist der Sweet Spot für die meisten europäischen Wildlife-Aufgaben. Es ist freihändig handhabbar und die breitere Blende liefert bessere Leistung bei schwachem Licht.</p>
+        <h3>Fazit</h3>
+        <p>Für ein einzelnes Objektiv für die meisten mitteleuropäischen Wildlife-Aufgaben: 500 mm. Mit einem 1,4×-Konverter erhalten Sie die Flexibilität beider Welten.</p>
+      </div>
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-2'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 3
+═══════════════════════════════════════════ -->
+
+<!-- NÁHLED 3 -->
+<div class="post-card" onclick="openModal('modal-3')">
+  <div class="post-thumb" style="background:linear-gradient(135deg,#4a1a00,#bf360c)">
+    <span class="post-thumb-emoji">🌅</span>
+    <!-- <img src="https://TVOJE-FOTO.jpg" alt=""> -->
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge pro">
+      <span class="pt-cs">Pro tipy</span><span class="pt-en">Pro Tips</span><span class="pt-sk">Pro tipy</span><span class="pt-de">Pro-Tipps</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">Zlatá hodina — světlo, nastavení a poloha</span>
+      <span class="pt-en">Golden Hour — Light, Settings and Positioning</span>
+      <span class="pt-sk">Zlatá hodina — svetlo, nastavenia a pozícia</span>
+      <span class="pt-de">Goldene Stunde — Licht, Einstellungen und Position</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">40 minut kolem východu slunce odděluje dobré snímky od mimořádných. Naučte se vypočítat okno a zvládnout expozici v měnícím se světle.</span>
+      <span class="pt-en">The 40 minutes around sunrise separate good photos from extraordinary ones. Learn to calculate the window and nail exposure in fast-changing light.</span>
+      <span class="pt-sk">40 minút okolo východu slnka oddeľuje dobré snímky od mimoriadnych. Naučte sa vypočítať okno a zvládnuť expozíciu.</span>
+      <span class="pt-de">Die 40 Minuten rund um den Sonnenaufgang trennen gute von außergewöhnlichen Fotos. Lernen Sie das Fenster zu berechnen.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Červenec 2025</span><span class="pt-en">July 2025</span><span class="pt-sk">Júl 2025</span><span class="pt-de">Juli 2025</span> &nbsp;·&nbsp; ⏱ 5 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-3')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
+</div>
+
+<!-- OBSAH 3 (modal) -->
+<div id="modal-3" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-3'))">✕</button>
+    <div class="post-modal-thumb" style="background:linear-gradient(135deg,#4a1a00,#bf360c)">
+      <span class="post-thumb-emoji" style="font-size:96px">🌅</span>
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge pro" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Pro tipy</span><span class="pt-en">Pro Tips</span><span class="pt-sk">Pro tipy</span><span class="pt-de">Pro-Tipps</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">Zlatá hodina — světlo, nastavení a poloha</span>
+        <span class="pt-en">Golden Hour — Light, Settings and Positioning</span>
+        <span class="pt-sk">Zlatá hodina — svetlo, nastavenia a pozícia</span>
+        <span class="pt-de">Goldene Stunde — Licht, Einstellungen und Position</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Červenec 2025</span><span class="pt-en">July 2025</span><span class="pt-sk">Júl 2025</span><span class="pt-de">Juli 2025</span> · ⏱ 5 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+      <div class="pt-cs post-modal-body">
+        <p>Zkušení fotografové přírody se prostě jen brzy nevzbudí. Zlatou hodinu plánují den předem, umístí se ve tmě a čekají. Rozdíl mezi příchodem na východ slunce a připraveností na východ slunce je rozdíl mezi zmeškaným záběrem a kariérním snímkem.</p>
+        <h3>Vypočítejte si okno</h3>
+        <p>Použijte aplikaci pro polohu slunce — PhotoPills nebo The Photographer's Ephemeris — abyste věděli přesně, kde vyjde slunce ve vztahu k vašemu subjektu. Jelen osvětlený zezadu v ranní mlze je mimořádný. Stejná scéna při plochém světle shora je obyčejná.</p>
+        <h3>Expozice v měnícím se světle</h3>
+        <p>Největší výzva je rychlá změna expoziční hodnoty — až 5 clonových čísel za 30 minut. Použijte Auto ISO s pevnou minimální rychlostí závěrky minimálně 1/1000 s pro pohybující se zvířata a každých pár minut kontrolujte histogram.</p>
+        <h3>Umístěte se předchozí večer</h3>
+        <p>Pokud jedete na místo ráno, už jste prohráli. Projděte svou pozici předchozí večer. Vězte přesně, kde budete stát a z jakého směru přijde světlo. Zvířata budou tam, kde vždy jsou — otázka je, zda jste na ně připraveni.</p>
+      </div>
+      <div class="pt-en post-modal-body">
+        <p>Experienced wildlife photographers do not simply wake up early. They plan their golden hour the day before, position themselves in darkness, and wait. The difference between arriving at sunrise and being ready at sunrise is the difference between a missed shot and a career image.</p>
+        <h3>Calculate Your Window</h3>
+        <p>Use a sun position app — PhotoPills or The Photographer's Ephemeris — to know exactly where the sun will rise relative to your subject. A backlit deer in rising fog is extraordinary. The same scene with flat overhead light is ordinary.</p>
+        <h3>Exposure in Changing Light</h3>
+        <p>The biggest challenge is the rapid change in exposure value — up to 5 stops in 30 minutes. Use Auto ISO with a fixed minimum shutter speed of at least 1/1000s for moving animals and check your histogram every few minutes.</p>
+        <h3>Position Yourself the Night Before</h3>
+        <p>If you are driving to the location on the morning, you have already lost. Walk your position the evening before. Know exactly where you will stand and which direction the light will come from. The animals will be where they always are — the question is whether you are ready.</p>
+      </div>
+      <div class="pt-sk post-modal-body">
+        <p>Skúsení fotografovia prírody sa jednoducho len skoro nevzbudia. Zlatú hodinu plánujú deň vopred, umiestnia sa v tme a čakajú. Rozdiel medzi príchodom na východ slnka a pripravenosťou je rozdiel medzi zmeškným záberom a kariérnym snímkom.</p>
+        <h3>Vypočítajte si okno</h3>
+        <p>Použite aplikáciu PhotoPills alebo The Photographer's Ephemeris aby ste vedeli presne, kde slnko vyjde vzhľadom k vášmu subjektu. Zospodu osvetlený jeleň v rannej hmle je výnimočný.</p>
+        <h3>Umiestnite sa predchádzajúci večer</h3>
+        <p>Prejdite svoju pozíciu predchádzajúci večer. Vedzte presne kde budete stáť a z ktorého smeru príde svetlo. Zvieratá budú tam kde vždy sú — otázka je, či ste na ne pripravení.</p>
+      </div>
+      <div class="pt-de post-modal-body">
+        <p>Erfahrene Naturfotografen wachen nicht einfach früh auf. Sie planen ihre goldene Stunde am Vortag, positionieren sich in der Dunkelheit und warten. Der Unterschied zwischen dem Ankommen beim Sonnenaufgang und dem Bereit-Sein ist ein Karriere-Bild.</p>
+        <h3>Berechnen Sie Ihr Fenster</h3>
+        <p>Verwenden Sie PhotoPills oder The Photographer's Ephemeris um genau zu wissen, wo die Sonne relativ zu Ihrem Motiv aufgeht. Ein gegenlichtbeleuchteter Hirsch im Nebel ist außergewöhnlich.</p>
+        <h3>Positionieren Sie sich am Vorabend</h3>
+        <p>Gehen Sie Ihre Position am Vorabend ab. Die Tiere werden dort sein, wo sie immer sind — die Frage ist, ob Sie für sie bereit sind.</p>
+      </div>
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-3'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 4
+═══════════════════════════════════════════ -->
+
+<!-- NÁHLED 4 -->
+<div class="post-card" onclick="openModal('modal-fox')">
+  <div class="post-thumb" style="background:linear-gradient(135deg,#6d3b1e,#a65e38)">
+    <span class="post-thumb-emoji">🦊</span>
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge field">
+      <span class="pt-cs">Terénní zápisky</span><span class="pt-en">Field Notes</span><span class="pt-sk">Terénne zápisky</span><span class="pt-de">Feldnotizen</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">Tajemství liščat v brlohu</span>
+      <span class="pt-en">Secrets of the Fox Cubs</span>
+      <span class="pt-sk">Tajomstvá líščat v brlohu</span>
+      <span class="pt-de">Geheimnisse der Fuchswelpen</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">Sledovat vyrůstající liščata je jednou z nejemotivnějších zkušeností. Hodiny čekání v maskování a absolutní tichost jsou klíčem k zachycení jejich hravého světa.</span>
+      <span class="pt-en">Watching fox cubs grow up is one of the most emotional experiences. Hours of waiting in camouflage and absolute silence are the key to capturing their playful world.</span>
+      <span class="pt-sk">Sledovať vyrastajúce líšťatá je jednou z najemotívnejších skúseností. Hodiny čakania v maskovaní a absolútna tichosť sú kľúčom k zachyteniu ich hravého sveta.</span>
+      <span class="pt-de">Die Beobachtung heranwachsender Fuchswelpen ist eine der emotionalsten Erfahrungen. Stundenlanges Warten in Tarnung und absolute Stille sind der Schlüssel, um ihre verspielte Welt festzuhalten.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Duben 2026</span><span class="pt-en">April 2026</span><span class="pt-sk">Apríl 2026</span><span class="pt-de">April 2026</span> &nbsp;·&nbsp; ⏱ 8 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-fox')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
+</div>
+
+<!-- OBSAH MODAL (fox) -->
+<div id="modal-fox" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-fox'))">✕</button>
+    <div class="post-modal-thumb" style="background:linear-gradient(135deg,#6d3b1e,#a65e38)">
+      <span class="post-thumb-emoji" style="font-size:96px">🦊</span>
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge field" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Terénní zápisky</span><span class="pt-en">Field Notes</span><span class="pt-sk">Terénne zápisky</span><span class="pt-de">Feldnotizen</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">Tajemství liščat v noře</span>
+        <span class="pt-en">Secrets of the Fox Cubs</span>
+        <span class="pt-sk">Tajomstvá líščat v brlohu</span>
+        <span class="pt-de">Geheimnisse der Fuchswelpen</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Duben 2026</span><span class="pt-en">April 2026</span><span class="pt-sk">Apríl 2026</span><span class="pt-de">April 2026</span> · ⏱ 8 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+      
+      <div class="pt-cs post-modal-body">
+        <p>Jaro je obdobím, kdy se život v lese probouzí, ale pro fotografa divoké přírody to znamená jednu věc: návrat k liščímu brlohu. Strávil jsem celou sezónu sledováním rodinky lišek, abych zachytil ten moment, kdy liščata poprvé opouštějí bezpečí podzemí.</p>
+        <h3>Fáze 1: Respekt a lokalizace</h3>
+        <p>Nejdůležitější pravidlo? Nerušit. Vše začalo pozorováním z uctivé vzdálenosti pomocí binokuláru. Trvalo týdny, než jsem si vybudoval pozici, která lišky neobtěžovala, aniž by o mně věděly.</p>
+        <h3>Fáze 2: Nekonečné čekání</h3>
+        <p>Liščata jsou aktivní hlavně za šera. Moje rána začínala ve 4:00, kdy jsem se plížil do krytu. Často jsem čekal pět hodin, než se objevila první malá hlavička.</p>
+        <h3>Fáze 3: Hravost</h3>
+        <p>Když se konečně osmělila, začala ta pravá podívaná. Skákání, přetahování o větvičky a vzájemné oťukávání. Zmizely hodiny strávené čekáním v nepohodlí. Mám snímek, kdy se jedno lišče dívá přímo do objektivu, zatímco sourozenec ho tahá za ocas. Čistá radost.</p>
+      </div>
+
+      <div class="pt-en post-modal-body">
+        <p>Spring is the time when life in the forest awakens, but for a wildlife photographer, it means one thing: returning to the fox den. I spent the entire season observing a fox family to capture the moment the cubs first leave the safety of the underground.</p>
+        <h3>Phase 1: Respect and Location</h3>
+        <p>The most important rule? Do not disturb. It started with observation from a respectful distance using binoculars. It took weeks to establish a position that didn't bother the foxes while remaining undetected.</p>
+        <h3>Phase 2: Endless Waiting</h3>
+        <p>Fox cubs are active mainly at dusk. My mornings began at 4:00 am, sneaking into the hide. I often waited five hours before the first little head appeared.</p>
+        <h3>Phase 3: Playfulness</h3>
+        <p>When they finally felt safe, the real show began. Jumping, tug-of-war over twigs, and wrestling. The hours spent waiting in discomfort vanished. I have a shot where one cub looks straight into the lens while its sibling pulls its tail. Pure joy.</p>
+      </div>
+
+      <div class="pt-sk post-modal-body">
+        <p>Jar je obdobím, kedy sa život v lese prebúdza, ale pre fotografa divokej prírody to znamená jedno: návrat k líščiemu brlohu. Strávil som celú sezónu sledovaním rodinky líšok, aby som zachytil moment, kedy líšťatá prvýkrát opúšťajú bezpečie podzemia.</p>
+        <h3>Fáza 1: Rešpekt a lokalizácia</h3>
+        <p>Najdôležitejšie pravidlo? Nerušiť. Všetko sa začalo pozorovaním z úctivej vzdialenosti. Trvalo týždne, kým som si vybudoval pozíciu, ktorá líšky neobťažovala, bez toho aby o mne vedeli.</p>
+        <h3>Fáza 2: Nekonečné čakanie</h3>
+        <p>Líšťatá sú aktívne hlavne za šera. Moje rána začínali o 4:00, keď som sa plížil do krytu. Často som čakal päť hodín, kým sa objavila prvá malá hlavička.</p>
+        <h3>Fáza 3: Hravosť</h3>
+        <p>Keď sa konečne osmelili, začalo sa pravé divadlo. Skákanie, preťahovanie o konáriky a vzájomné oťukávanie. Zmizli hodiny strávené čakaním v nepohodlí. Mám snímku, kde sa jedno líšťa pozerá priamo do objektívu, zatiaľ čo súrodenec ho ťahá za chvost. Čistá radosť.</p>
+      </div>
+
+      <div class="pt-de post-modal-body">
+        <p>Der Frühling ist die Zeit, in der das Leben im Wald erwacht, aber für einen Wildtierfotografen bedeutet das eines: die Rückkehr zum Fuchsbau. Ich habe die ganze Saison damit verbracht, eine Fuchsfamilie zu beobachten, um den Moment einzufangen, in dem die Welpen zum ersten Mal die Sicherheit des Untergrunds verlassen.</p>
+        <h3>Phase 1: Respekt und Standort</h3>
+        <p>Die wichtigste Regel? Nicht stören. Alles begann mit der Beobachtung aus respektvoller Entfernung. Es dauerte Wochen, bis ich eine Position gefunden hatte, die die Füchse nicht störte, ohne dass sie von mir wussten.</p>
+        <h3>Phase 2: Endloses Warten</h3>
+        <p>Fuchswelpen sind vor allem in der Dämmerung aktiv. Meine Morgen begannen um 4:00 Uhr, als ich mich in das Versteck schlich. Oft wartete ich fünf Stunden, bis sich das erste kleine Köpfchen zeigte.</p>
+        <h3>Phase 3: Verspieltheit</h3>
+        <p>Als sie sich endlich trauten, begann das wahre Spektakel. Springen, Tauziehen an Zweigen und gegenseitiges Raufen. Die Stunden des Wartens in Unbehagen waren vergessen. Ich habe eine Aufnahme, auf der ein Welpe direkt in die Linse schaut, während sein Geschwisterchen ihn am Schwanz zieht. Reine Freude.</p>
+      </div>
+
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-fox'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 5
+═══════════════════════════════════════════ -->
+
+<!-- NÁHLED 5 -->
+<div class="post-card" onclick="openModal('modal-tripod')">
+  <div class="post-thumb" style="background:linear-gradient(135deg,#1c1c1c,#4a4a4a)">
+    <span class="post-thumb-emoji">🔭</span>
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge gear">
+      <span class="pt-cs">Recenze vybavení</span><span class="pt-en">Gear Review</span><span class="pt-sk">Recenzia vybavenia</span><span class="pt-de">Ausrüstungs-Test</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">Jak vybrat správný stativ</span>
+      <span class="pt-en">How to Choose the Right Tripod</span>
+      <span class="pt-sk">Ako si vybrať správny statív</span>
+      <span class="pt-de">Wie man das richtige Stativ wählt</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">Ne každý stativ je stejný. Od lehkých karbonových noh až po robustní hlavy. Zjistili jsme, na co si při výběru dát pozor.</span>
+      <span class="pt-en">Not every tripod is the same. From lightweight carbon legs to robust heads. Here is what to watch out for.</span>
+      <span class="pt-sk">Nie každý statív je rovnaký. Od ľahkých karbónových nôh až po robustné hlavy. Zistili sme, na čo si dať pozor.</span>
+      <span class="pt-de">Nicht jedes Stativ ist gleich. Von leichten Carbonbeinen bis zu robusten Köpfen. Hier ist, worauf man achten muss.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Červen 2026</span><span class="pt-en">June 2026</span><span class="pt-sk">Jún 2026</span><span class="pt-de">Juni 2026</span> &nbsp;·&nbsp; ⏱ 6 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-tripod')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
+</div>
+
+<div id="modal-tripod" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-tripod'))">✕</button>
+    <div class="post-modal-thumb" style="background:linear-gradient(135deg,#1c1c1c,#4a4a4a)">
+      <span class="post-thumb-emoji" style="font-size:96px">🔭</span>
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge gear" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Recenze vybavení</span><span class="pt-en">Gear Review</span><span class="pt-sk">Recenzia vybavenia</span><span class="pt-de">Ausrüstungs-Test</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">Jak vybrat správný stativ</span>
+        <span class="pt-en">How to Choose the Right Tripod</span>
+        <span class="pt-sk">Ako si vybrať správny statív</span>
+        <span class="pt-de">Wie man das richtige Stativ wählt</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Červen 2026</span><span class="pt-en">June 2026</span><span class="pt-sk">Jún 2026</span><span class="pt-de">Juni 2026</span> · ⏱ 6 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+      
+      <div class="pt-cs post-modal-body">
+        <p>Stativ je základním kamenem ostré krajinářské fotografie. Mnoho fotografů dělá chybu, že investuje tisíce do objektivů, ale stativ koupí v akci v supermarketu. Zde je stručný průvodce výběrem.</p>
+        <h3>Materiál: Hliník vs. Karbon</h3>
+        <p>Hliník je levný a odolný, ale těžký. Karbon je lehký a skvěle pohlcuje vibrace, což je klíčové při dlouhých expozicích. Pokud cestujete pěšky, karbon je nezbytností.</p>
+        <h3>Typ hlavy: Kulová vs. Páková</h3>
+        <p>Kulová hlava (ball head) nabízí rychlost a flexibilitu – ideální pro divokou přírodu. Páková hlava (pan-tilt) je přesnější pro precizní krajinářskou kompozici a architekturu.</p>
+        <h3>Stabilita a zatížení</h3>
+        <p>Vždy kontrolujte nosnost. Váš stativ by měl unést minimálně dvojnásobek váhy vašeho nejtěžšího těla s objektivem. Nezapomeňte: stativ je jen tak stabilní jako jeho nejslabší článek.</p>
+      </div>
+
+      <div class="pt-en post-modal-body">
+        <p>The tripod is the cornerstone of sharp landscape photography. Many photographers make the mistake of investing thousands in lenses but buying a cheap supermarket tripod. Here is a brief guide on how to choose.</p>
+        <h3>Material: Aluminum vs. Carbon</h3>
+        <p>Aluminum is cheap and durable but heavy. Carbon fiber is lightweight and excellent at absorbing vibrations, which is crucial for long exposures. If you hike, carbon is a necessity.</p>
+        <h3>Head Type: Ball vs. Pan-Tilt</h3>
+        <p>Ball heads offer speed and flexibility – ideal for wildlife. Pan-tilt heads are more precise for landscape composition and architecture.</p>
+        <h3>Stability and Load Capacity</h3>
+        <p>Always check the load capacity. Your tripod should handle at least twice the weight of your heaviest camera and lens combo. Remember: a tripod is only as stable as its weakest link.</p>
+      </div>
+
+      <div class="pt-sk post-modal-body">
+        <p>Statív je základným kameňom ostrej krajinárskej fotografie. Mnohí fotografi robia chybu, že investujú tisíce do objektívov, ale statív kúpia v akcii v supermarkete. Tu je stručný sprievodca výberom.</p>
+        <h3>Materiál: Hliník vs. Karbón</h3>
+        <p>Hliník je lacný a odolný, ale ťažký. Karbón je ľahký a skvele pohlcuje vibrácie, čo je kľúčové pri dlhých expozíciách. Ak cestujete pešo, karbón je nevyhnutnosťou.</p>
+        <h3>Typ hlavy: Guľová vs. Páková</h3>
+        <p>Guľová hlava ponúka rýchlosť a flexibilitu – ideálne pre divokú prírodu. Páková hlava je presnejšia pre precíznu krajinársku kompozíciu a architektúru.</p>
+        <h3>Stabilita a zaťaženie</h3>
+        <p>Vždy kontrolujte nosnosť. Váš statív by mal uniesť minimálne dvojnásobok váhy vášho najťažšieho tela s objektívom. Nezabudnite: statív je len taký stabilný ako jeho najslabší článok.</p>
+      </div>
+
+      <div class="pt-de post-modal-body">
+        <p>Das Stativ ist der Grundstein für scharfe Landschaftsfotografie. Viele Fotografen machen den Fehler, Tausende in Objektive zu investieren, aber ein billiges Stativ im Supermarkt zu kaufen. Hier ist ein kurzer Leitfaden zur Auswahl.</p>
+        <h3>Material: Aluminium vs. Carbon</h3>
+        <p>Aluminium ist günstig und langlebig, aber schwer. Carbon ist leicht und absorbiert Vibrationen hervorragend, was bei Langzeitbelichtungen entscheidend ist. Wenn Sie wandern, ist Carbon ein Muss.</p>
+        <h3>Kopftyp: Kugelkopf vs. 3-Wege-Neiger</h3>
+        <p>Ein Kugelkopf bietet Schnelligkeit und Flexibilität – ideal für die Tierfotografie. Ein 3-Wege-Neiger ist präziser für Landschaften und Architektur.</p>
+        <h3>Stabilität und Traglast</h3>
+        <p>Überprüfen Sie immer die Traglast. Ihr Stativ sollte mindestens das Doppelte des Gewichts Ihrer schwersten Kamera-Objektiv-Kombination tragen können. Denken Sie daran: Ein Stativ ist nur so stabil wie sein schwächstes Glied.</p>
+      </div>
+
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-tripod'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+```
+
+
+<!-- ═══════════════════════════════════════════
+     ČLÁNEK 6
+═══════════════════════════════════════════ -->
+
+<!-- NÁHLED 6 -->
+<div class="post-card" onclick="openModal('modal-6')">
+  <div class="post-thumb" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+    <span class="post-thumb-emoji">🍃</span>
+    <!-- <img src="https://TVOJE-FOTO.jpg" alt=""> -->
+  </div>
+  <div class="post-card-body">
+    <span class="post-badge ethics">
+      <span class="pt-cs">Etika</span><span class="pt-en">Ethics</span><span class="pt-sk">Etika</span><span class="pt-de">Ethik</span>
+    </span>
+    <h2 class="post-card-title">
+      <span class="pt-cs">Pravidlo 50 metrů — proč je vzdálenost vše</span>
+      <span class="pt-en">The 50-Metre Rule — Why Distance Is Everything</span>
+      <span class="pt-sk">Pravidlo 50 metrov — prečo je vzdialenosť všetko</span>
+      <span class="pt-de">Die 50-Meter-Regel — warum Abstand alles ist</span>
+    </h2>
+    <p class="post-card-excerpt">
+      <span class="pt-cs">Skvělá fotka, která zvíře stresovala, není skvělá fotka. Zkoumáme vědu o distančních vzdálenostech a proč etičtí fotografové tvoří lepší snímky tím, že ustoupí.</span>
+      <span class="pt-en">A great photo that stressed the animal is not a great photo. We explore the science of disturbance distances and why ethical photographers make better images by stepping back.</span>
+      <span class="pt-sk">Skvelá fotka, ktorá zviera stresovala, nie je skvelá fotka. Skúmame vedu o vzdialenostiach rušenia a prečo etickí fotografi tvoria lepšie snímky tým, že ustúpia.</span>
+      <span class="pt-de">Ein großartiges Foto, das das Tier gestresst hat, ist kein großartiges Foto. Wir untersuchen die Wissenschaft der Störungsabstände.</span>
+    </p>
+    <div class="post-card-meta">📅 <span class="pt-cs">Duben 2025</span><span class="pt-en">April 2025</span><span class="pt-sk">Apríl 2025</span><span class="pt-de">April 2025</span> &nbsp;·&nbsp; ⏱ 4 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+    <button class="post-read-btn" onclick="event.stopPropagation();openModal('modal-6')">
+      <span class="pt-cs">Číst celý článek</span><span class="pt-en">Read Full Story</span><span class="pt-sk">Čítať celý článok</span><span class="pt-de">Ganzen Artikel lesen</span> →
+    </button>
+  </div>
+</div>
+
+<!-- OBSAH 6 (modal) -->
+<div id="modal-6" class="post-modal-overlay" onclick="if(event.target===this)closeModal(this)">
+  <div class="post-modal-box">
+    <button class="post-modal-close" onclick="closeModal(document.getElementById('modal-6'))">✕</button>
+    <div class="post-modal-thumb" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+      <span class="post-thumb-emoji" style="font-size:96px">🍃</span>
+    </div>
+    <div class="post-modal-inner">
+      <span class="post-badge ethics" style="margin-bottom:12px;display:inline-flex">
+        <span class="pt-cs">Etika</span><span class="pt-en">Ethics</span><span class="pt-sk">Etika</span><span class="pt-de">Ethik</span>
+      </span>
+      <h1 class="post-modal-title">
+        <span class="pt-cs">Pravidlo 50 metrů — proč je vzdálenost vše</span>
+        <span class="pt-en">The 50-Metre Rule — Why Distance Is Everything</span>
+        <span class="pt-sk">Pravidlo 50 metrov — prečo je vzdialenosť všetko</span>
+        <span class="pt-de">Die 50-Meter-Regel — warum Abstand alles ist</span>
+      </h1>
+      <div class="post-modal-meta">📅 <span class="pt-cs">Duben 2025</span><span class="pt-en">April 2025</span><span class="pt-sk">Apríl 2025</span><span class="pt-de">April 2025</span> · ⏱ 4 <span class="pt-cs">min čtení</span><span class="pt-en">min read</span><span class="pt-sk">min čítania</span><span class="pt-de">Min.</span></div>
+      <div class="pt-cs post-modal-body">
+        <p>Nejčastější racionalizace ve wildlife fotografii je varianta „zvíře nevypadalo stresovaně." Zvířata jsou výjimečně dobrá v skrývání stresových reakcí před predátory — což přesně jste vy, když se přiblížíte s velkým objektivem. Klidné chování není fyziologický klid.</p>
+        <h3>Věda o vyrušování</h3>
+        <p>Výzkum na kopytníkách a dravých ptácích konzistentně ukazuje, že vzdálenost zahájení útěku — bod, kdy zvíře uteče — podhodnocuje skutečný práh vyrušení o 30 až 50 procent. V době, kdy se zvíře vzdálí, jsou jeho hladiny kortizolu již několik minut zvýšené. U hnízdících ptáků se to přímo projevuje ve snížené úspěšnosti hnízdění.</p>
+        <h3>Minimálně 50 metrů</h3>
+        <p>Padesát metrů je minimální hranice, nikoli cíl. Mnoho druhů vyžaduje 200 metrů nebo více. Praktické pravidlo: pokud váš přístup jakýmkoli způsobem změnil chování zvířete, jste již příliš blízko. Správnou reakcí je ustoupit.</p>
+        <h3>Lepší etika, lepší fotografie</h3>
+        <p>Paradoxně, etická vzdálenost produkuje lepší fotografie. Zvíře, které vás neodhalilo, se chová přirozeně — pase se, pohybuje, interaguje. Zvíře, které vás odhalilo ale neuteklo, je ostražité a nehybné. Fotografie přirozeného chování je téměř vždy silnější záběr.</p>
+      </div>
+      <div class="pt-en post-modal-body">
+        <p>The most common rationalisation in wildlife photography is some version of "the animal didn't seem stressed." Animals are exquisitely good at concealing stress responses from predators — which is exactly what you appear to be when you approach with a large lens. Behavioural calm is not physiological calm.</p>
+        <h3>The Science of Disturbance</h3>
+        <p>Research on ungulates and raptors consistently shows that flight initiation distance understates the actual disturbance threshold by 30 to 50 percent. By the time an animal moves away, its cortisol levels have already been elevated for several minutes. In nesting birds, this translates directly to reduced breeding success.</p>
+        <h3>The 50-Metre Minimum</h3>
+        <p>Fifty metres is a floor, not a target. Many species require 200 metres or more. The practical rule: if your approach changed the animal's behaviour in any way, you are already too close. The correct response is to retreat.</p>
+        <h3>Better Ethics, Better Photos</h3>
+        <p>Counterintuitively, ethical distance produces better photographs. An animal that has not detected you behaves naturally — it feeds, moves, interacts. An animal that has detected you is alert and still. The natural behaviour photograph is almost always the stronger image.</p>
+      </div>
+      <div class="pt-sk post-modal-body">
+        <p>Najčastejšie zdôvodnenie vo wildlife fotografii je variácia "zviera nevyzeralo stresovane." Zvieratá sú mimoriadne dobré v skrývaní stresových reakcií pred predátormi — čím presne vy vyzeráte, keď sa priblížite s veľkým objektívom.</p>
+        <h3>Veda o rušení</h3>
+        <p>Výskum na kopytníkoch a dravcoch konzistentne ukazuje, že vzdialenosť iniciovania úteku podhodnocuje skutočný prah rušenia o 30 až 50 percent. U hniezdiacich vtákov sa to priamo prejavuje v zníženej úspešnosti rozmnožovania.</p>
+        <h3>Lepšia etika, lepšie fotografie</h3>
+        <p>Paradoxne, etická vzdialenosť produkuje lepšie fotografie. Zviera, ktoré vás neodhalilo, sa správa prirodzene. Fotografia prirodzeného správania je takmer vždy silnejší záber.</p>
+      </div>
+      <div class="pt-de post-modal-body">
+        <p>Die häufigste Rationalisierung in der Wildlife-Fotografie ist eine Variante von "das Tier wirkte nicht gestresst." Tiere sind außerordentlich gut darin, Stressreaktionen vor Raubtieren zu verbergen — was genau Sie erscheinen, wenn Sie sich mit einem großen Objektiv nähern.</p>
+        <h3>Die Wissenschaft der Störung</h3>
+        <p>Forschungen zeigen, dass die Fluchtinitiierungsdistanz den tatsächlichen Störungsschwellenwert um 30 bis 50 Prozent unterschätzt. Bei Brutvögeln führt dies direkt zu reduziertem Bruterfolg.</p>
+        <h3>Bessere Ethik, bessere Fotos</h3>
+        <p>Kontraintuitiv produziert ethischer Abstand bessere Fotografien. Ein Tier, das Sie nicht entdeckt hat, verhält sich natürlich. Das Natürlichkeits-Foto ist fast immer das stärkere Bild.</p>
+      </div>
+      <button class="post-read-btn" style="background:var(--text3);margin-top:8px" onclick="closeModal(document.getElementById('modal-6'))">
+        <span class="pt-cs">Zavřít</span><span class="pt-en">Close</span><span class="pt-sk">Zavrieť</span><span class="pt-de">Schließen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /s-posts -->
 <!-- /POSTS -->
 
 <!-- AMBASSADORS -->
@@ -1681,7 +1787,7 @@ ss_shadow:'Light',ss_s_sun:'Sun',ss_s_shade:'Shade',
 ar_title:'⏳ Activity Radar',ar_sub:'Live activity chances based on current time & light.',ar_note:'Updates every 30 s · European field data',
 fl_title:'🔭 Focal Length & Crop Factor',fl_lens_lbl:'Lens focal length',fl_sensor_lbl:'Sensor',
 cl_title:'✅ Pre-Session Checklist',cl_reset:'Reset',
-wt_title:'🌤 Weather & Shooting Tips',sdr_follow:'Follow us',modal_close:'Close',n_posts:'Posts',posts_read:'Read Full Story',posts_field:'Field Notes',posts_pro:'Pro Tips',posts_gear:'Gear Review',posts_ethics:'Ethics',posts_min:'min read',posts_art1_badge:'Field Notes',posts_art1_title:'How to Photograph the Red Deer Rut',posts_art1_excerpt:'September in Central European forests is the most intense month for wildlife photographers. Here is everything you need — gear, approach, timing and ethical distance for the most dramatic wildlife spectacle in Europe.',posts_art2_badge:'Pro Tips',posts_art2_title:'500 mm vs 800 mm — Which Lens for Wildlife?',posts_art2_excerpt:'We tested both focal lengths over two seasons in the field. The answer depends on your terrain, your subject and how far you are willing to carry your kit.',posts_art3_badge:'Pro Tips',posts_art3_title:'Golden Hour Mastery — Light, Settings and Positioning',posts_art3_excerpt:'The 40 minutes around sunrise separate good wildlife photos from extraordinary ones. Learn how to calculate the window, position in advance and nail exposure in fast-changing light.',posts_art4_badge:'Field Notes',posts_art4_title:'Three Years Waiting for the Wolf',posts_art4_excerpt:'Wolf photography in Central Europe is one of the hardest challenges in wildlife photography. Camera traps, pre-dawn hikes and long cold nights — this is what patience really looks like.',posts_art5_badge:'Gear Review',posts_art5_title:'Best Camera Bags for Full-Day Hikes',posts_art5_excerpt:'We tested six bags over eight months in rain, mud and cold mornings to find the best options for photographers who hike to their subjects.',posts_art6_badge:'Ethics',posts_art6_title:'The 50-Metre Rule — Why Distance Is Everything',posts_art6_excerpt:'A great photo that stressed the animal is not a great photo. We explore the science of disturbance distances and why ethical photographers consistently make better images by stepping back.'},
+wt_title:'🌤 Weather & Shooting Tips',sdr_follow:'Follow us',n_posts:'Posts',posts_read:'Read Full Story',posts_field:'Field Notes',posts_pro:'Pro Tips',posts_gear:'Gear Review',posts_ethics:'Ethics',posts_min:'min read',posts_art1_badge:'Field Notes',posts_art1_title:'How to Photograph the Red Deer Rut',posts_art1_excerpt:'September in Central European forests is the most intense month for wildlife photographers. Here is everything you need — gear, approach, timing and ethical distance for the most dramatic wildlife spectacle in Europe.',posts_art2_badge:'Pro Tips',posts_art2_title:'500 mm vs 800 mm — Which Lens for Wildlife?',posts_art2_excerpt:'We tested both focal lengths over two seasons in the field. The answer depends on your terrain, your subject and how far you are willing to carry your kit.',posts_art3_badge:'Pro Tips',posts_art3_title:'Golden Hour Mastery — Light, Settings and Positioning',posts_art3_excerpt:'The 40 minutes around sunrise separate good wildlife photos from extraordinary ones. Learn how to calculate the window, position in advance and nail exposure in fast-changing light.',posts_art4_badge:'Field Notes',posts_art4_title:'Three Years Waiting for the Wolf',posts_art4_excerpt:'Wolf photography in Central Europe is one of the hardest challenges in wildlife photography. Camera traps, pre-dawn hikes and long cold nights — this is what patience really looks like.',posts_art5_badge:'Gear Review',posts_art5_title:'Best Camera Bags for Full-Day Hikes',posts_art5_excerpt:'We tested six bags over eight months in rain, mud and cold mornings to find the best options for photographers who hike to their subjects.',posts_art6_badge:'Ethics',posts_art6_title:'The 50-Metre Rule — Why Distance Is Everything',posts_art6_excerpt:'A great photo that stressed the animal is not a great photo. We explore the science of disturbance distances and why ethical photographers consistently make better images by stepping back.'},
 cs:{n_home:'Domů',n_cat:'Katalog',n_rv:'Mapa',n_pl:'Plán',n_tl:'Nástroje',n_amb:'Ambasadoři',n_gear:'Vybavení',n_et:'Etika',rv_info:'Klikni na mapu pro přidání špendlíku. Vše je uloženo offline.',rv_saved:'Uložené body',rv_clear:'Smazat vše',
 gear_sub:'Vybavení používané fotografy zvěře ve střední Evropě. Klikni na položku pro detail a odkaz ke koupi.',gear_buy:'Zobrazit & Koupit',gear_disclaimer:'Odkazy jsou pouze orientační. Doporučujeme porovnat ceny u místních prodejců.',
 hero_t:'Terénní průvodce pro wildlife fotografy',hero_s:'Nejpraktičtější průvodce pro wildlife fotografy v Evropě.',
@@ -1709,7 +1815,7 @@ ss_shadow:'Světlo',ss_s_sun:'Slunce',ss_s_shade:'Stín',
 ar_title:'⏳ Activity Radar',ar_sub:'Aktuální šance aktivity podle denní doby a světla.',ar_note:'Aktualizuje každých 30 s · evropská terénní data',
 fl_title:'🔭 Ohnisková vzdálenost & crop faktor',fl_lens_lbl:'Ohnisková vzdálenost objektivu',fl_sensor_lbl:'Snímač',
 cl_title:'✅ Předsezónní checklist',cl_reset:'Reset',
-wt_title:'🌤 Počasí & tipy pro fotografování',sdr_follow:'Sledujte nás',modal_close:'Zavřít',n_posts:'Příspěvky',posts_read:'Číst celý článek',posts_field:'Terénní zápisky',posts_pro:'Pro tipy',posts_gear:'Recenze vybavení',posts_ethics:'Etika',posts_min:'min čtení',posts_art1_badge:'Terénní zápisky',posts_art1_title:'Jak fotit říji jelena evropského',posts_art1_excerpt:'Září v lesích střední Evropy je nejintenzivnějším měsícem pro fotografy přírody. Vše co potřebujete — vybavení, přístup, načasování a etická vzdálenost pro nejdramatičtější wildlife spektákl v Evropě.',posts_art2_badge:'Pro tipy',posts_art2_title:'500 mm vs 800 mm — Který objektiv pro wildlife?',posts_art2_excerpt:'Testovali jsme obě ohniskové vzdálenosti přes dvě sezóny v terénu. Odpověď závisí na vašem terénu, subjektu a ochotě nosit těžší výbavu.',posts_art3_badge:'Pro tipy',posts_art3_title:'Zlatá hodina — světlo, nastavení a poloha',posts_art3_excerpt:'40 minut kolem východu slunce odděluje dobré snímky od mimořádných. Naučte se vypočítat okno, předem se umístit a zvládnout expozici v rychle se měnícím světle.',posts_art4_badge:'Terénní zápisky',posts_art4_title:'Tři roky čekání na vlka',posts_art4_excerpt:'Fotografování vlků ve střední Evropě je jednou z nejtěžších výzev v wildlife fotografii. Fotopasti, přednočíchání a dlouhé studené noci — takto vypadá skutečná trpělivost.',posts_art5_badge:'Recenze vybavení',posts_art5_title:'Nejlepší batohy pro celodenní terénní výlety',posts_art5_excerpt:'Testovali jsme šest batohů po dobu osmi měsíců v dešti, blátě a chladných ránech, abychom našli nejlepší možnosti pro fotografy, kteří ke svým subjektům chodí pěšky.',posts_art6_badge:'Etika',posts_art6_title:'Pravidlo 50 metrů — proč je vzdálenost vše',posts_art6_excerpt:'Skvělá fotka, která zvíře stresovala, není skvělá fotka. Zkoumáme vědu o vzdálenostech rušení a proč etičtí fotografové opakovaně tvoří lepší snímky tím, že ustoupí.'},
+wt_title:'🌤 Počasí & tipy pro fotografování',sdr_follow:'Sledujte nás',n_posts:'Příspěvky',posts_read:'Číst celý článek',posts_field:'Terénní zápisky',posts_pro:'Pro tipy',posts_gear:'Recenze vybavení',posts_ethics:'Etika',posts_min:'min čtení',posts_art1_badge:'Terénní zápisky',posts_art1_title:'Jak fotit říji jelena evropského',posts_art1_excerpt:'Září v lesích střední Evropy je nejintenzivnějším měsícem pro fotografy přírody. Vše co potřebujete — vybavení, přístup, načasování a etická vzdálenost pro nejdramatičtější wildlife spektákl v Evropě.',posts_art2_badge:'Pro tipy',posts_art2_title:'500 mm vs 800 mm — Který objektiv pro wildlife?',posts_art2_excerpt:'Testovali jsme obě ohniskové vzdálenosti přes dvě sezóny v terénu. Odpověď závisí na vašem terénu, subjektu a ochotě nosit těžší výbavu.',posts_art3_badge:'Pro tipy',posts_art3_title:'Zlatá hodina — světlo, nastavení a poloha',posts_art3_excerpt:'40 minut kolem východu slunce odděluje dobré snímky od mimořádných. Naučte se vypočítat okno, předem se umístit a zvládnout expozici v rychle se měnícím světle.',posts_art4_badge:'Terénní zápisky',posts_art4_title:'Tři roky čekání na vlka',posts_art4_excerpt:'Fotografování vlků ve střední Evropě je jednou z nejtěžších výzev v wildlife fotografii. Fotopasti, přednočíchání a dlouhé studené noci — takto vypadá skutečná trpělivost.',posts_art5_badge:'Recenze vybavení',posts_art5_title:'Nejlepší batohy pro celodenní terénní výlety',posts_art5_excerpt:'Testovali jsme šest batohů po dobu osmi měsíců v dešti, blátě a chladných ránech, abychom našli nejlepší možnosti pro fotografy, kteří ke svým subjektům chodí pěšky.',posts_art6_badge:'Etika',posts_art6_title:'Pravidlo 50 metrů — proč je vzdálenost vše',posts_art6_excerpt:'Skvělá fotka, která zvíře stresovala, není skvělá fotka. Zkoumáme vědu o vzdálenostech rušení a proč etičtí fotografové opakovaně tvoří lepší snímky tím, že ustoupí.'},
 sk:{n_home:'Domov',n_cat:'Katalóg',n_rv:'Mapa',n_pl:'Plán',n_tl:'Nástroje',n_amb:'Ambasádori',n_gear:'Vybavenie',n_et:'Etika',rv_info:'Klikni na mapu pre pridanie špendlíka. Všetko je uložené offline.',rv_saved:'Uložené body',rv_clear:'Zmazať všetko',
 gear_sub:'Vybavenie používané fotografmi zveri v strednej Európe. Klikni na položku pre detail a odkaz na kúpu.',gear_buy:'Zobraziť & Kúpiť',gear_disclaimer:'Odkazy sú len orientačné. Odporúčame porovnať ceny u miestnych predajcov.',
 hero_t:'Terénný sprievodca pre wildlife fotografov',hero_s:'Najpraktickejší sprievodca pre wildlife fotografov v Európe.',
@@ -1733,7 +1839,7 @@ wc_title:'📸 Wildify Technical Card',wc_sub:'Nahraj fotku — bude rozostretá
 ec_title:'📷 Kalkulačka expozície',ec_sub:'Zadaj podmienky → dostaneš odporúčaný čas uzávierky a clonu.',
 fl_title:'🔭 Ohnisková vzdialenosť & crop faktor',fl_lens_lbl:'Ohnisková vzdialenosť objektívu',fl_sensor_lbl:'Snímač',
 cl_title:'✅ Predsezónný checklist',cl_reset:'Reset',
-wt_title:'🌤 Počasie & tipy pre fotografovanie',sdr_follow:'Sledujte nás',modal_close:'Zavrieť',n_posts:'Príspevky',posts_read:'Čítať celý článok',posts_field:'Terénne zápisky',posts_pro:'Pro tipy',posts_gear:'Recenzia vybavenia',posts_ethics:'Etika',posts_min:'min čítania',posts_art1_badge:'Terénne zápisky',posts_art1_title:'Ako fotografovať ruju jeleňa európskeho',posts_art1_excerpt:'September v lesoch strednej Európy je najintenzívnejším mesiacom pre fotografov prírody. Všetko čo potrebujete — vybavenie, prístup, načasovanie a etická vzdialenosť pre najdramatickejšiu wildlife show v Európe.',posts_art2_badge:'Pro tipy',posts_art2_title:'500 mm vs 800 mm — Ktorý objektív pre wildlife?',posts_art2_excerpt:'Testovali sme obe ohniskové vzdialenosti počas dvoch sezón v teréne. Odpoveď závisí od vášho terénu, subjektu a ochoty nosiť ťažší kit.',posts_art3_badge:'Pro tipy',posts_art3_title:'Zlatá hodina — svetlo, nastavenia a pozícia',posts_art3_excerpt:'40 minút okolo východu slnka oddeľuje dobré snímky od mimoriadnych. Naučte sa vypočítať okno, vopred sa umiestniť a zvládnuť expozíciu v rýchlo sa meniacom svetle.',posts_art4_badge:'Terénne zápisky',posts_art4_title:'Tri roky čakania na vlka',posts_art4_excerpt:'Fotografovanie vlkov v strednej Európe je jednou z najťažších výziev vo wildlife fotografii. Fotopasce, pred-úsvitové túry a dlhé studené noci — takto vyzerá skutočná trpezlivosť.',posts_art5_badge:'Recenzia vybavenia',posts_art5_title:'Najlepšie batohy pre celodenné terénne výlety',posts_art5_excerpt:'Testovali sme šesť batohov počas ôsmich mesiacov v daždi, blate a chladných ránoch, aby sme našli najlepšie možnosti pre fotografov, ktorí k svojim subjektom chodia pešo.',posts_art6_badge:'Etika',posts_art6_title:'Pravidlo 50 metrov — prečo je vzdialenosť všetko',posts_art6_excerpt:'Skvelá fotka, ktorá zviera stresovala, nie je skvelá fotka. Skúmame vedu o vzdialenostiach rušenia a prečo etickí fotografi opakovane tvoria lepšie snímky tým, že ustúpia.'},
+wt_title:'🌤 Počasie & tipy pre fotografovanie',sdr_follow:'Sledujte nás',n_posts:'Príspevky',posts_read:'Čítať celý článok',posts_field:'Terénne zápisky',posts_pro:'Pro tipy',posts_gear:'Recenzia vybavenia',posts_ethics:'Etika',posts_min:'min čítania',posts_art1_badge:'Terénne zápisky',posts_art1_title:'Ako fotografovať ruju jeleňa európskeho',posts_art1_excerpt:'September v lesoch strednej Európy je najintenzívnejším mesiacom pre fotografov prírody. Všetko čo potrebujete — vybavenie, prístup, načasovanie a etická vzdialenosť pre najdramatickejšiu wildlife show v Európe.',posts_art2_badge:'Pro tipy',posts_art2_title:'500 mm vs 800 mm — Ktorý objektív pre wildlife?',posts_art2_excerpt:'Testovali sme obe ohniskové vzdialenosti počas dvoch sezón v teréne. Odpoveď závisí od vášho terénu, subjektu a ochoty nosiť ťažší kit.',posts_art3_badge:'Pro tipy',posts_art3_title:'Zlatá hodina — svetlo, nastavenia a pozícia',posts_art3_excerpt:'40 minút okolo východu slnka oddeľuje dobré snímky od mimoriadnych. Naučte sa vypočítať okno, vopred sa umiestniť a zvládnuť expozíciu v rýchlo sa meniacom svetle.',posts_art4_badge:'Terénne zápisky',posts_art4_title:'Tri roky čakania na vlka',posts_art4_excerpt:'Fotografovanie vlkov v strednej Európe je jednou z najťažších výziev vo wildlife fotografii. Fotopasce, pred-úsvitové túry a dlhé studené noci — takto vyzerá skutočná trpezlivosť.',posts_art5_badge:'Recenzia vybavenia',posts_art5_title:'Najlepšie batohy pre celodenné terénne výlety',posts_art5_excerpt:'Testovali sme šesť batohov počas ôsmich mesiacov v daždi, blate a chladných ránoch, aby sme našli najlepšie možnosti pre fotografov, ktorí k svojim subjektom chodia pešo.',posts_art6_badge:'Etika',posts_art6_title:'Pravidlo 50 metrov — prečo je vzdialenosť všetko',posts_art6_excerpt:'Skvelá fotka, ktorá zviera stresovala, nie je skvelá fotka. Skúmame vedu o vzdialenostiach rušenia a prečo etickí fotografi opakovane tvoria lepšie snímky tým, že ustúpia.'},
 de:{n_home:'Start',n_cat:'Katalog',n_rv:'Karte',n_pl:'Planer',n_tl:'Werkzeuge',n_amb:'Botschafter',n_gear:'Ausrüstung',n_et:'Ethik',rv_info:'Klicke auf die Karte um einen Pin hinzuzufügen. Alles wird offline gespeichert.',rv_saved:'Gespeicherte Punkte',rv_clear:'Alle löschen',
 gear_sub:'Ausrüstung von Wildtierfotografen in Mitteleuropa. Klicke für Details und Kauflink.',gear_buy:'Ansehen & Kaufen',gear_disclaimer:'Links sind nur Referenz. Wir empfehlen Preisvergleich bei lokalen Händlern.',
 hero_t:'Geländeführer für Wildlife-Fotografie',hero_s:'Europas praktischster Ratgeber für Wildlife-Fotografen.',
@@ -1757,7 +1863,7 @@ wc_title:'📸 Wildify Technical Card',wc_sub:'Foto hochladen — unscharf mit d
 ec_title:'📷 Belichtungsrechner',ec_sub:'Bedingungen eingeben → empfohlene Verschlusszeit und Blende.',
 fl_title:'🔭 Brennweite & Crop-Faktor',fl_lens_lbl:'Brennweite des Objektivs',fl_sensor_lbl:'Sensor',
 cl_title:'✅ Vor-Session Checkliste',cl_reset:'Zurücksetzen',
-wt_title:'🌤 Wetter & Aufnahme-Tipps',sdr_follow:'Folge uns',modal_close:'Schließen',n_posts:'Beiträge',posts_read:'Ganzen Artikel lesen',posts_field:'Feldnotizen',posts_pro:'Pro-Tipps',posts_gear:'Ausrüstungs-Test',posts_ethics:'Ethik',posts_min:'Min. Lesezeit',posts_art1_badge:'Feldnotizen',posts_art1_title:'Rothirsch-Brunft fotografieren — der komplette Feldführer',posts_art1_excerpt:'Der September in mitteleuropäischen Wäldern ist der intensivste Monat für Naturfotografen. Alles was Sie brauchen — Ausrüstung, Annäherung, Timing und ethischer Abstand für das dramatischste Wildlife-Spektakel Europas.',posts_art2_badge:'Pro-Tipps',posts_art2_title:'500 mm vs 800 mm — Welches Objektiv für Wildlife?',posts_art2_excerpt:'Wir testeten beide Brennweiten über zwei Feldsaisons. Die Antwort hängt von Ihrem Gelände, Ihrem Motiv und der Bereitschaft ab, schweres Gepäck zu tragen.',posts_art3_badge:'Pro-Tipps',posts_art3_title:'Goldene Stunde meistern — Licht, Einstellungen und Position',posts_art3_excerpt:'Die 40 Minuten rund um den Sonnenaufgang trennen gute von außergewöhnlichen Wildlife-Fotos. Lernen Sie das Fenster zu berechnen, sich vorher zu positionieren und die Belichtung im sich schnell ändernden Licht zu beherrschen.',posts_art4_badge:'Feldnotizen',posts_art4_title:'Drei Jahre auf den Wolf warten',posts_art4_excerpt:'Wolf-Fotografie in Mitteleuropa ist eine der härtesten Herausforderungen der Wildlife-Fotografie. Fotofallen, Vormorgen-Wanderungen und lange kalte Nächte — so sieht echte Geduld aus.',posts_art5_badge:'Ausrüstungs-Test',posts_art5_title:'Beste Kamerarucksäcke für ganztägige Touren',posts_art5_excerpt:'Wir testeten sechs Rucksäcke über acht Monate in Regen, Schlamm und kalten Morgenstunden, um die besten Optionen für Fotografen zu finden, die zu ihren Motiven wandern.',posts_art6_badge:'Ethik',posts_art6_title:'Die 50-Meter-Regel — warum Abstand alles ist',posts_art6_excerpt:'Ein großartiges Foto, das das Tier gestresst hat, ist kein großartiges Foto. Wir untersuchen die Wissenschaft der Störungsabstände und warum ethische Fotografen durch Zurücktreten konsequent bessere Bilder machen.'}
+wt_title:'🌤 Wetter & Aufnahme-Tipps',sdr_follow:'Folge uns',n_posts:'Beiträge',posts_read:'Ganzen Artikel lesen',posts_field:'Feldnotizen',posts_pro:'Pro-Tipps',posts_gear:'Ausrüstungs-Test',posts_ethics:'Ethik',posts_min:'Min. Lesezeit',posts_art1_badge:'Feldnotizen',posts_art1_title:'Rothirsch-Brunft fotografieren — der komplette Feldführer',posts_art1_excerpt:'Der September in mitteleuropäischen Wäldern ist der intensivste Monat für Naturfotografen. Alles was Sie brauchen — Ausrüstung, Annäherung, Timing und ethischer Abstand für das dramatischste Wildlife-Spektakel Europas.',posts_art2_badge:'Pro-Tipps',posts_art2_title:'500 mm vs 800 mm — Welches Objektiv für Wildlife?',posts_art2_excerpt:'Wir testeten beide Brennweiten über zwei Feldsaisons. Die Antwort hängt von Ihrem Gelände, Ihrem Motiv und der Bereitschaft ab, schweres Gepäck zu tragen.',posts_art3_badge:'Pro-Tipps',posts_art3_title:'Goldene Stunde meistern — Licht, Einstellungen und Position',posts_art3_excerpt:'Die 40 Minuten rund um den Sonnenaufgang trennen gute von außergewöhnlichen Wildlife-Fotos. Lernen Sie das Fenster zu berechnen, sich vorher zu positionieren und die Belichtung im sich schnell ändernden Licht zu beherrschen.',posts_art4_badge:'Feldnotizen',posts_art4_title:'Drei Jahre auf den Wolf warten',posts_art4_excerpt:'Wolf-Fotografie in Mitteleuropa ist eine der härtesten Herausforderungen der Wildlife-Fotografie. Fotofallen, Vormorgen-Wanderungen und lange kalte Nächte — so sieht echte Geduld aus.',posts_art5_badge:'Ausrüstungs-Test',posts_art5_title:'Beste Kamerarucksäcke für ganztägige Touren',posts_art5_excerpt:'Wir testeten sechs Rucksäcke über acht Monate in Regen, Schlamm und kalten Morgenstunden, um die besten Optionen für Fotografen zu finden, die zu ihren Motiven wandern.',posts_art6_badge:'Ethik',posts_art6_title:'Die 50-Meter-Regel — warum Abstand alles ist',posts_art6_excerpt:'Ein großartiges Foto, das das Tier gestresst hat, ist kein großartiges Foto. Wir untersuchen die Wissenschaft der Störungsabstände und warum ethische Fotografen durch Zurücktreten konsequent bessere Bilder machen.'}
 }; // Konec objektu překladů TT
 
 // 1. Logika pro start: VŽDY začít v 'en', pokud uživatel už dříve nezvolil jinak
@@ -1769,6 +1875,7 @@ const t = k => TT[lang]?.[k] ?? TT.en[k] ?? k;
 // 2. Funkce pro změnu a trvalé uložení jazyka
 function setLang(l) {
   lang = l;
+  setPostLangClass(l);
   
   // Zapíše volbu do paměti prohlížeče (zůstane tam i po zavření/obnovení)
   localStorage.setItem('wildify_lang', l);
@@ -1991,6 +2098,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+  setPostLangClass(lang||'en');
   // Apply saved theme
   const savedTheme = localStorage.getItem('wildify_theme') || 'light';
   if(savedTheme === 'dark') document.body.classList.add('dark');
@@ -2548,17 +2656,21 @@ function wcRender(){
     ctx.fillText(it.val, cx, textTop+lblFs+valFs*1.3);
   });
 
-  // --- WATERMARK — vpravo dole, malé a nenápadné, nepřekrývá SS ---
+  // --- WATERMARK at bottom — modern pill ---
   const wmText='WILDIFY.APP';
-  const wmFs=Math.round(Math.min(SIZE_W,SIZE_H)*0.013); // menší font
-  ctx.font=`600 ${wmFs}px "DM Sans","Inter",system-ui,sans-serif`;
-  ctx.textAlign='right';
-  const wmPad=wmFs*0.7;
-  ctx.fillStyle='rgba(255,255,255,0.45)';
-  ctx.letterSpacing='0.08em';
-  ctx.fillText(wmText, SIZE_W-wmPad, SIZE_H-wmPad);
-  ctx.letterSpacing='0';
+  const wmFs=Math.round(Math.min(SIZE_W,SIZE_H)*0.018);
+  ctx.font=`700 ${wmFs}px "DM Sans","Inter",system-ui,sans-serif`;
   ctx.textAlign='center';
+  const wmW=ctx.measureText(wmText).width;
+  const wmPx=wmFs*0.9,wmPy=wmFs*0.5;
+  const wmBoxW=wmW+wmPx*2,wmBoxH=wmFs+wmPy*2;
+  const wmBX=SIZE_W/2-wmBoxW/2,wmBY=SIZE_H-wmBoxH-SIZE_H*0.022;
+  ctx.beginPath();ctx.roundRect(wmBX,wmBY,wmBoxW,wmBoxH,wmBoxH/2);
+  ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.78)';
+  ctx.letterSpacing='0.1em';
+  ctx.fillText(wmText,SIZE_W/2,wmBY+wmBoxH*0.72);
+  ctx.letterSpacing='0';
 }
 
     function wcDownload(){
@@ -2834,18 +2946,18 @@ function wcRender(){
 // ═══════════════════════════════════════════════════════════════════
 const AMBASSADORS = [
       {
-        name: 'Jakub Wildlife Photography',
+        name: '---',
         role: {en:'Wildlife Photographer', cs:'Wildlife fotograf', sk:'Wildlife fotograf', de:'Naturfotograf'},
-        photo: '/images/jakub-pfp.jpg',                         // ← sem dej URL fotky, nebo nechej emoji
+        photo: '🦅',                         // ← sem dej URL fotky, nebo nechej emoji
         photoFallback: '🦅',
         bio: {
-          en: 'Jakub has been documenting European wildlife for over a year. He specializes in large mammals in Western Czechia.',
-          cs: 'Jakub dokumentuje evropskou faunu přes 1 rok. Specializuje se na velké savce v západních Čechách.',
-          sk: 'Jakub dokumentuje európsku faunu viac ako rok. Špecializuje sa na veľké cicavce v západných Čechách.',
-          de: 'Jakub dokumentiert die europäische Tierwelt seit über einem Jahr. Er spezialisiert sich auf Großsäuger in Westböhmen.'
+          en: '--- has been documenting European wildlife for over 15 years. Specializes in raptors and large mammals in the Carpathian mountains.',
+          cs: '--- dokumentuje evropskou faunu přes 15 let. Specializuje se na dravce a velké savce v Karpatech.',
+          sk: '--- dokumentuje európsku faunu viac ako 15 rokov. Špecializuje sa na dravcov a veľké cicavce.',
+          de: '--- dokumentiert europäische Tierwelt seit 15 Jahren. Spezialisiert auf Greifvögel und Großsäuger.'
         },
         social: [
-          {platform:'Instagram', url:'https://www.instagram.com/jakub.photoss'},   // ← doplň správné URL
+          {platform:'Instagram', url:'https://instagram.com/'},   // ← doplň správné URL
           {platform:'Web',       url:'https://'}                  // ← nebo smaž co nepotřebuješ
         ],
         portfolio: [
@@ -3706,26 +3818,29 @@ function startActivityRadar(){
 </div>
 
 
-<!-- POST ARTICLE MODAL -->
-<div id="post-modal-overlay" onclick="if(event.target===this)closePostModal()">
-  <div id="post-modal">
-    <div class="pm-hero-wrap">
-      <div class="pm-hero" id="pm-hero"></div>
-      <button class="pm-close-btn" onclick="closePostModal()">✕</button>
-    </div>
-    <div class="pm-header">
-      <div class="pm-badge-row">
-        <span class="post-badge" id="pm-badge"></span>
-        <span class="pm-meta" id="pm-meta"></span>
-      </div>
-      <h1 class="pm-title" id="pm-title"></h1>
-    </div>
-    <div class="pm-body" id="pm-body"></div>
-    <div class="pm-footer">
-      <span class="pm-footer-brand">WILDIFY.APP</span>
-      <button class="post-read-btn" style="margin:0;padding:8px 16px;font-size:12px" onclick="closePostModal()" data-t="modal_close">✕ Close</button>
-    </div>
-  </div>
-</div>
+<script>
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(el){
+  el.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.post-modal-overlay.open')
+      .forEach(m=>closeModal(m));
+  }
+});
+
+// Nastavit CSS třídu jazyka na <html> pro Posts sekci
+function setPostLangClass(l){
+  var h=document.documentElement;
+  ['lang-cs','lang-en','lang-sk','lang-de'].forEach(function(c){h.classList.remove(c);});
+  h.classList.add('lang-'+(l||'en'));
+}
+</script>
+
 </body>
 </html>
